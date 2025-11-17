@@ -65,7 +65,7 @@ services:
   #   networks:
   #     - cdp-tenant
 
-  cdp-node-backend-template:
+  ahwr-payment-proxy:
     build:
       context: .
       target: development

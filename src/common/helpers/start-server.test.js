@@ -1,38 +1,44 @@
-import hapi from '@hapi/hapi'
+import * as startServer from './start-server.js'
+import { config } from '../../config.js'
+
+const mockServerStart = jest.fn()
+const mockLoggerInfo = jest.fn()
+
+jest.mock('../../server.js', () => {
+  return {
+    ...jest.requireActual('../../server.js'),
+    createServer: jest.fn(() => ({
+      start: mockServerStart,
+      logger: {
+        info: mockLoggerInfo
+      }
+    }))
+  }
+})
 
 describe('#startServer', () => {
-  let createServerSpy
-  let hapiServerSpy
-  let startServerImport
-  let createServerImport
-
   beforeAll(async () => {
-    vi.stubEnv('PORT', '3098')
-    createServerImport = await import('../../server.js')
-    startServerImport = await import('./start-server.js')
-
-    createServerSpy = vi.spyOn(createServerImport, 'createServer')
-    hapiServerSpy = vi.spyOn(hapi, 'server')
+    config.set('port', 3099)
   })
 
   afterAll(() => {
-    vi.resetAllMocks()
+    jest.resetAllMocks()
   })
 
   describe('When server starts', () => {
     test('Should start up server as expected', async () => {
-      await startServerImport.startServer()
+      await startServer.startServer()
 
-      expect(createServerSpy).toHaveBeenCalled()
-      expect(hapiServerSpy).toHaveBeenCalled()
+      expect(mockServerStart).toHaveBeenCalled()
+      expect(mockLoggerInfo).toHaveBeenCalled()
     })
   })
 
   describe('When server start fails', () => {
     test('Should log failed startup message', async () => {
-      createServerSpy.mockRejectedValue(new Error('Server failed to start'))
+      mockServerStart.mockRejectedValue(new Error('Server failed to start'))
 
-      await expect(startServerImport.startServer()).rejects.toThrow(
+      await expect(startServer.startServer()).rejects.toThrow(
         'Server failed to start'
       )
     })

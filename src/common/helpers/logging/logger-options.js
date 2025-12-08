@@ -13,7 +13,15 @@ const formatters = {
       serviceName
     })
   },
-  'pino-pretty': { transport: { target: 'pino-pretty' } }
+  'pino-pretty': {
+    transport: {
+      target: 'pino-pretty',
+      options: {
+        singleLine: true,
+        colorize: true
+      }
+    }
+  }
 }
 
 export const loggerOptions = {

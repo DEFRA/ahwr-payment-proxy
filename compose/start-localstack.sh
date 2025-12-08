@@ -4,7 +4,7 @@ export AWS_DEFAULT_REGION=eu-west-2
 export AWS_ACCESS_KEY_ID=test
 export AWS_SECRET_ACCESS_KEY=test
 
-unction create_topic() {
+function create_topic() {
   local topic_name=$1
   local topic_arn=$(awslocal sns create-topic --name $topic_name --query "TopicArn" --output text)
   echo $topic_arn

@@ -1,39 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="jest tests" tests="20" failures="0" errors="0" time="1.071">
-  <testsuite name="#startServer" errors="0" failures="0" skipped="0" timestamp="2025-12-08T17:08:16" time="0.721" tests="2">
+<testsuites name="jest tests" tests="20" failures="0" errors="0" time="0.921">
+  <testsuite name="#startServer" errors="0" failures="0" skipped="0" timestamp="2025-12-08T17:10:51" time="0.574" tests="2">
     <testcase classname="#startServer When server starts Should start up server as expected" name="#startServer When server starts Should start up server as expected" time="0.001">
     </testcase>
-    <testcase classname="#startServer When server start fails Should log failed startup message" name="#startServer When server start fails Should log failed startup message" time="0.006">
+    <testcase classname="#startServer When server start fails Should log failed startup message" name="#startServer When server start fails Should log failed startup message" time="0.007">
     </testcase>
   </testsuite>
-  <testsuite name="Lock Functions" errors="0" failures="0" skipped="0" timestamp="2025-12-08T17:08:17" time="0.019" tests="4">
-    <testcase classname="Lock Functions acquireLock should acquire lock and return it" name="Lock Functions acquireLock should acquire lock and return it" time="0.001">
-    </testcase>
-    <testcase classname="Lock Functions acquireLock should log error and return null if lock cannot be acquired" name="Lock Functions acquireLock should log error and return null if lock cannot be acquired" time="0">
-    </testcase>
-    <testcase classname="Lock Functions requireLock should acquire lock and return it" name="Lock Functions requireLock should acquire lock and return it" time="0">
-    </testcase>
-    <testcase classname="Lock Functions requireLock should throw error if lock cannot be acquired" name="Lock Functions requireLock should throw error if lock cannot be acquired" time="0.003">
-    </testcase>
-  </testsuite>
-  <testsuite name="setupProxy" errors="0" failures="0" skipped="0" timestamp="2025-12-08T17:08:17" time="0.04" tests="2">
-    <testcase classname="setupProxy Should not setup proxy if the environment variable is not set" name="setupProxy Should not setup proxy if the environment variable is not set" time="0">
-    </testcase>
-    <testcase classname="setupProxy Should setup proxy if the environment variable is set" name="setupProxy Should setup proxy if the environment variable is set" time="0">
-    </testcase>
-  </testsuite>
-  <testsuite name="#mongoDb" errors="0" failures="0" skipped="0" timestamp="2025-12-08T17:08:17" time="0.159" tests="4">
+  <testsuite name="#mongoDb" errors="0" failures="0" skipped="0" timestamp="2025-12-08T17:10:52" time="0.164" tests="4">
     <testcase classname="#mongoDb Set up Server should have expected MongoDb decorators" name="#mongoDb Set up Server should have expected MongoDb decorators" time="0.001">
     </testcase>
     <testcase classname="#mongoDb Set up MongoDb should have expected database name" name="#mongoDb Set up MongoDb should have expected database name" time="0">
     </testcase>
     <testcase classname="#mongoDb Set up MongoDb should have expected namespace" name="#mongoDb Set up MongoDb should have expected namespace" time="0">
     </testcase>
-    <testcase classname="#mongoDb Shut down Should close Mongo client on server stop" name="#mongoDb Shut down Should close Mongo client on server stop" time="0">
+    <testcase classname="#mongoDb Shut down Should close Mongo client on server stop" name="#mongoDb Shut down Should close Mongo client on server stop" time="0.001">
     </testcase>
   </testsuite>
-  <testsuite name="#metrics" errors="0" failures="0" skipped="0" timestamp="2025-12-08T17:08:17" time="0.045" tests="6">
-    <testcase classname="#metrics When metrics is not enabled Should not call metric" name="#metrics When metrics is not enabled Should not call metric" time="0.001">
+  <testsuite name="#metrics" errors="0" failures="0" skipped="0" timestamp="2025-12-08T17:10:52" time="0.041" tests="6">
+    <testcase classname="#metrics When metrics is not enabled Should not call metric" name="#metrics When metrics is not enabled Should not call metric" time="0">
     </testcase>
     <testcase classname="#metrics When metrics is not enabled Should not call flush" name="#metrics When metrics is not enabled Should not call flush" time="0">
     </testcase>
@@ -46,10 +30,26 @@
     <testcase classname="#metrics When metrics throws Should log expected error" name="#metrics When metrics throws Should log expected error" time="0">
     </testcase>
   </testsuite>
-  <testsuite name="#convictValidateMongoUri" errors="0" failures="0" skipped="0" timestamp="2025-12-08T17:08:17" time="0.033" tests="2">
+  <testsuite name="setupProxy" errors="0" failures="0" skipped="0" timestamp="2025-12-08T17:10:52" time="0.039" tests="2">
+    <testcase classname="setupProxy Should not setup proxy if the environment variable is not set" name="setupProxy Should not setup proxy if the environment variable is not set" time="0.001">
+    </testcase>
+    <testcase classname="setupProxy Should setup proxy if the environment variable is set" name="setupProxy Should setup proxy if the environment variable is set" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="#convictValidateMongoUri" errors="0" failures="0" skipped="0" timestamp="2025-12-08T17:10:52" time="0.033" tests="2">
     <testcase classname="#convictValidateMongoUri With correct mongo-uri, Should not throw" name="#convictValidateMongoUri With correct mongo-uri, Should not throw" time="0.005">
     </testcase>
-    <testcase classname="#convictValidateMongoUri With invalid mongo-uri, Should throw" name="#convictValidateMongoUri With invalid mongo-uri, Should throw" time="0.006">
+    <testcase classname="#convictValidateMongoUri With invalid mongo-uri, Should throw" name="#convictValidateMongoUri With invalid mongo-uri, Should throw" time="0.007">
+    </testcase>
+  </testsuite>
+  <testsuite name="Lock Functions" errors="0" failures="0" skipped="0" timestamp="2025-12-08T17:10:52" time="0.018" tests="4">
+    <testcase classname="Lock Functions acquireLock should acquire lock and return it" name="Lock Functions acquireLock should acquire lock and return it" time="0.001">
+    </testcase>
+    <testcase classname="Lock Functions acquireLock should log error and return null if lock cannot be acquired" name="Lock Functions acquireLock should log error and return null if lock cannot be acquired" time="0">
+    </testcase>
+    <testcase classname="Lock Functions requireLock should acquire lock and return it" name="Lock Functions requireLock should acquire lock and return it" time="0">
+    </testcase>
+    <testcase classname="Lock Functions requireLock should throw error if lock cannot be acquired" name="Lock Functions requireLock should throw error if lock cannot be acquired" time="0.004">
     </testcase>
   </testsuite>
 </testsuites>

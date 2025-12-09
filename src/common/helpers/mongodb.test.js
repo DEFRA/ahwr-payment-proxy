@@ -1,22 +1,40 @@
-import { Db, MongoClient } from 'mongodb'
-import { LockManager } from 'mongo-locks'
+import { createServer } from '../../server.js'
+
+const mockCreateIndex = jest.fn()
+const mockCollection = jest.fn(() => {
+  return {
+    createIndex: mockCreateIndex
+  }
+})
+const mockDb = jest.fn((databaseName) => {
+  return {
+    collection: mockCollection,
+    databaseName,
+    namespace: databaseName
+  }
+})
+
+jest.mock('mongodb', () => ({
+  ...jest.requireActual('mongodb'),
+  MongoClient: {
+    connect: jest.fn(() => ({
+      db: mockDb,
+      close: jest.fn()
+    }))
+  }
+}))
 
 describe('#mongoDb', () => {
   let server
 
   describe('Set up', () => {
     beforeAll(async () => {
-      // Dynamic import needed due to config being updated by vitest-mongodb
-      const { createServer } = await import('../../server.js')
-
       server = await createServer()
       await server.initialize()
     })
 
     test('Server should have expected MongoDb decorators', () => {
-      expect(server.db).toBeInstanceOf(Db)
-      expect(server.mongoClient).toBeInstanceOf(MongoClient)
-      expect(server.locker).toBeInstanceOf(LockManager)
+      expect(server.db).toEqual(mockDb('ahwr-payment-proxy'))
     })
 
     test('MongoDb should have expected database name', () => {
@@ -30,15 +48,12 @@ describe('#mongoDb', () => {
 
   describe('Shut down', () => {
     beforeAll(async () => {
-      // Dynamic import needed due to config being updated by vitest-mongodb
-      const { createServer } = await import('../../server.js')
-
       server = await createServer()
       await server.initialize()
     })
 
     test('Should close Mongo client on server stop', async () => {
-      const closeSpy = vi.spyOn(server.mongoClient, 'close')
+      const closeSpy = jest.spyOn(server.mongoClient, 'close')
       await server.stop({ timeout: 1000 })
 
       expect(closeSpy).toHaveBeenCalledWith(true)

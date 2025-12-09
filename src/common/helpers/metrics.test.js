@@ -3,23 +3,21 @@ import { StorageResolution, Unit } from 'aws-embedded-metrics'
 import { config } from '../../config.js'
 import { metricsCounter } from './metrics.js'
 
-const mockPutMetric = vi.fn()
-const mockFlush = vi.fn()
-const mockLoggerError = vi.fn()
+const mockPutMetric = jest.fn()
+const mockFlush = jest.fn()
+const mockLoggerError = jest.fn()
 
-vi.mock('aws-embedded-metrics', async (importOriginal) => {
-  const awsEmbeddedMetrics = await importOriginal()
-
+jest.mock('aws-embedded-metrics', () => {
   return {
-    ...awsEmbeddedMetrics,
-    createMetricsLogger: () => ({
+    ...jest.requireActual('aws-embedded-metrics'),
+    createMetricsLogger: jest.fn(() => ({
       putMetric: mockPutMetric,
       flush: mockFlush
-    })
+    }))
   }
 })
-vi.mock('./logging/logger.js', () => ({
-  createLogger: () => ({ error: (...args) => mockLoggerError(...args) })
+jest.mock('./logging/logger.js', () => ({
+  getLogger: () => ({ error: (...args) => mockLoggerError(...args) })
 }))
 
 const mockMetricsName = 'mock-metrics-name'

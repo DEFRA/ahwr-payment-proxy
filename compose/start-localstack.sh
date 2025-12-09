@@ -67,15 +67,7 @@ function create_topic_and_queue() {
 
 create_topic_and_queue "ahwr_payment_request" "ahwr_payment_request_queue" &
 create_topic_and_queue "ahwr_payment_update" "ahwr_application_backend_queue" &
-create_topic_and_queue "ffc_pay_request" "ffc_pay_request_queue" &
-create_topic_and_queue "ffc_pay_request_response" "ffc_pay_request_response_queue" &
-create_topic_and_queue "ffc_pay_data_request" "ffc_pay_request_queue" &
-create_topic_and_queue "ffc_pay_data_request_response" "ffc_pay_request_response_queue" &
 
 wait
-
-awslocal sqs list-queues
-awslocal sns list-topics
-awslocal s3api list-buckets
 
 echo "SNS/SQS/S3 ready"

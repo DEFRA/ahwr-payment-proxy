@@ -9,6 +9,7 @@ convict.addFormats(convictFormatWithValidator)
 const isProduction = process.env.NODE_ENV === 'production'
 const isTest = process.env.NODE_ENV === 'test'
 const usePrettyPrint = process.env.USE_PRETTY_PRINT === 'true'
+const msgTypePrefix = 'uk.gov.ffc.ahwr'
 
 const config = convict({
   serviceVersion: {
@@ -63,6 +64,66 @@ const config = convict({
       default: null,
       nullable: true,
       env: 'AWS_ENDPOINT_URL'
+    }
+  },
+  serviceBus: {
+    host: {
+      doc: 'Host name for the service bus instance',
+      format: String,
+      default: '',
+      env: 'MESSAGE_QUEUE_HOST'
+    },
+    password: {
+      doc: 'Password to connect to the service bus instance',
+      format: String,
+      default: '',
+      sensitive: true,
+      env: 'MESSAGE_QUEUE_PASSWORD'
+    },
+    username: {
+      doc: 'Username to connect to the service bus instance',
+      format: String,
+      default: '',
+      sensitive: true,
+      env: 'MESSAGE_QUEUE_USER'
+    },
+    paymentRequestTopic: {
+      doc: 'Topic name to send payment requests',
+      format: String,
+      default: 'ffc-pay-request',
+      env: 'PAYMENTREQUEST_TOPIC_ADDRESS'
+    },
+    paymentResponseTopic: {
+      doc: 'Topic name to send payment requests',
+      format: String,
+      default: 'ffc-pay-request-response',
+      env: 'PAYMENTRESPONSE_TOPIC_ADDRESS'
+    },
+    paymentResponseSubscription: {
+      doc: 'Topic name to send payment requests',
+      format: String,
+      default: 'ffc-ahwr-application',
+      env: 'PAYMENTRESPONSE_SUBSCRIPTION_ADDRESS'
+    },
+    submitPaymentRequestMsgType: {
+      doc: 'Submit payment request message type',
+      format: String,
+      default: 'uk.gov.ffc.ahwr.submit.payment.request',
+      env: 'SUBMIT_PAYMENT_REQUEST_MESSAGE_TYPE'
+    },
+    paymentDataRequestResponseQueue: {
+      doc: 'Topic name to send payment requests',
+      format: String,
+      default: 'ffc-pay-data-request-response-rdj',
+      env: 'PAYMENT_DATA_REQUEST_RESPONSE_QUEUE_ADDRESS'
+    }
+  },
+  sqs: {
+    applicationPaymentRequestQueueUrl: {
+      doc: 'URL of the SQS queue to receive application payment requests from',
+      format: String,
+      default: '#',
+      env: 'APPLICATIONPAYMENTREQUEST_QUEUE_ADDRESS_URL'
     }
   },
   log: {
@@ -147,6 +208,46 @@ const config = convict({
       format: String,
       default: 'x-cdp-request-id',
       env: 'TRACING_HEADER'
+    }
+  },
+  requestPaymentStatusScheduler: {
+    enabled: {
+      doc: 'Enable request payment status',
+      format: Boolean,
+      default: false,
+      env: 'REQUEST_PAYMENT_STATUS_ENABLED'
+    },
+    schedule: {
+      doc: 'Cron schedule for request payment status job',
+      format: String,
+      default: '0 11 * * 1-5',
+      env: 'REQUEST_PAYMENT_STATUS_SCHEDULE'
+    },
+    initialAttempts: {
+      doc: 'Initial attempts for request payment processing',
+      format: 'int',
+      default: 3,
+      env: 'REQUEST_PAYMENT_INITIAL_ATTEMPTS'
+    }
+  },
+  messageTypes: {
+    applicationRequestMsgType: {
+      doc: 'Message type for application requests',
+      format: String,
+      default: `${msgTypePrefix}.app.request`
+    },
+    moveClaimToPaidMsgType: {
+      doc: 'Message type for claim to paid',
+      format: String,
+      default: `${msgTypePrefix}.set.paid.status`
+    }
+  },
+  sns: {
+    paymentUpdateTopicArn: {
+      doc: 'ARN of the topic to send payment update events to',
+      format: String,
+      default: '#',
+      env: 'PAYMENT_UPDATE_TOPIC_ARN'
     }
   }
 })

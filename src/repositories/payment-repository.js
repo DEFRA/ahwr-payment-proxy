@@ -1,84 +1,91 @@
-// import { DAILY_RETRY_FROM_DAYS, DAILY_RETRY_LIMIT, FINAL_RETRY_DAYS, Status } from '../constants/index.js'
-// import { subDays } from 'date-fns'
-import { PAYMENTS_COLLECTION } from '../constants/index.js'
+import {
+  DAILY_RETRY_FROM_DAYS,
+  DAILY_RETRY_LIMIT,
+  FINAL_RETRY_DAYS,
+  Status,
+  PAYMENTS_COLLECTION
+} from '../constants/index.js'
+import { subDays } from 'date-fns'
 
 export async function get(db, reference) {
   return db
     .collection(PAYMENTS_COLLECTION)
     .findOne({ applicationReference: reference }, { projection: { _id: 0 } })
-  // return models.payment.findOne(
-  //   {
-  //     where: { applicationReference: reference }
-  //   })
 }
 
-export async function set(reference, data, frn) {
-  return {}
-  // return models.payment.create({ applicationReference: reference, data, frn })
+export async function set(db, reference, data, frn) {
+  return db.collection(PAYMENTS_COLLECTION).insertOne({
+    applicationReference: reference,
+    data,
+    frn,
+    createdAt: new Date(),
+    paymentCheckCount: 0
+  })
 }
 
 export async function updatePaymentResponse(
+  db,
   reference,
   status,
   paymentResponse
 ) {
-  return {}
-  // return models.payment.update(
-  //   { status, paymentResponse, frn: paymentResponse.frn },
-  //   { where: { applicationReference: reference } }
-  // )
+  return db.collection(PAYMENTS_COLLECTION).updateOne(
+    { applicationReference: reference },
+    {
+      $set: {
+        status,
+        paymentResponse,
+        frn: paymentResponse.frn
+      }
+    }
+  )
 }
 
-export async function getPendingPayments() {
-  return []
-  // return models.payment.findAll({
-  //   where: {
-  //     [Op.or]: [
-  //       {
-  //         status: Status.ACK,
-  //         paymentCheckCount: {
-  //           [Op.lt]: DAILY_RETRY_LIMIT
-  //         },
-  //         frn: {
-  //           [Op.ne]: null
-  //         },
-  //         createdAt: {
-  //           [Op.lte]: subDays(new Date(), DAILY_RETRY_FROM_DAYS)
-  //         }
-  //       },
-  //       {
-  //         status: Status.ACK,
-  //         paymentCheckCount: DAILY_RETRY_LIMIT,
-  //         updatedAt: {
-  //           [Op.lte]: subDays(new Date(), FINAL_RETRY_DAYS)
-  //         }
-  //       }
-  //     ]
-  //   }
-  // })
+export async function getPendingPayments(db) {
+  return db
+    .collection(PAYMENTS_COLLECTION)
+    .find({
+      $or: [
+        {
+          status: Status.ACK,
+          paymentCheckCount: { $lt: DAILY_RETRY_LIMIT },
+          frn: { $exists: true, $ne: '' },
+          createdAt: {
+            $lte: subDays(new Date(), DAILY_RETRY_FROM_DAYS)
+          }
+        },
+        {
+          status: Status.ACK,
+          paymentCheckCount: DAILY_RETRY_LIMIT,
+          updatedAt: {
+            $lte: subDays(new Date(), FINAL_RETRY_DAYS)
+          }
+        }
+      ]
+    })
+    .toArray()
 }
 
-export async function incrementPaymentCheckCount(claimReference) {
-  return {}
-  // const [[affectedRows]] = await models.payment.increment(
-  //   { paymentCheckCount: 1 },
-  //   {
-  //     where: { applicationReference: claimReference },
-  //     returning: true
-  //   }
-  // )
-  // return affectedRows[0]
+export async function incrementPaymentCheckCount(db, claimReference) {
+  return db
+    .collection(PAYMENTS_COLLECTION)
+    .findOneAndUpdate(
+      { applicationReference: claimReference },
+      { $inc: { paymentCheckCount: 1 } },
+      { returnDocument: 'after' }
+    )
 }
 
-export async function updatePaymentStatusByClaimRef(claimReference, status) {
-  return {}
-  // return models.payment.update(
-  //   { status },
-  //   {
-  //     where: {
-  //       applicationReference: claimReference
-  //     },
-  //     returning: true
-  //   }
-  // )
+export async function updatePaymentStatusByClaimRef(
+  db,
+  claimReference,
+  status
+) {
+  return db
+    .collection(PAYMENTS_COLLECTION)
+    .findOneAndUpdate(
+      { applicationReference: claimReference },
+      { $set: { status } },
+      { returnDocument: 'after' }
+    )
 }

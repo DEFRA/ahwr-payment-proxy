@@ -1,0 +1,198 @@
+{
+  "data": [
+    {
+      "frn": "1102569649",
+      "correlationId": "972a3523-0de1-4309-9bf0-7c276e7ae753",
+      "schemeId": 4,
+      "paymentRequestNumber": 1,
+      "agreementNumber": "REBC-EZQ4-6HFH",
+      "marketingYear": 2025,
+      "events": [
+        {
+          "etag": "W/\"datetime'2025-07-10T14%3A30%3A42.7693636Z'\"",
+          "partitionKey": "1102569649",
+          "rowKey": "972a3523-0de1-4309-9bf0-7c276e7ae753|REBC-EZQ4-6HFHV001|1752157841013",
+          "timestamp": "10/07/2025 15:30",
+          "category": "frn",
+          "data": {
+            "sourceSystem": "AHWR",
+            "sbi": "106705779",
+            "marketingYear": 2025,
+            "paymentRequestNumber": 1,
+            "agreementNumber": "REBC-EZQ4-6HFH",
+            "value": 52200,
+            "invoiceLines": [
+              {
+                "description": "G00 - Gross value of claim",
+                "standardCode": "AHWR-Beef",
+                "value": 52200,
+                "schemeCode": "18002",
+                "fundCode": "DOM10",
+                "convergence": false,
+                "deliveryBody": "RP00",
+                "marketingYear": 2025,
+                "stateAid": false
+              }
+            ],
+            "deliveryBody": "RP00",
+            "schemeId": 4,
+            "correlationId": "972a3523-0de1-4309-9bf0-7c276e7ae753",
+            "invoiceNumber": "REBC-EZQ4-6HFHV001",
+            "frn": 1102569649,
+            "ledger": "AP",
+            "currency": "GBP",
+            "dueDate": "10/07/2025"
+          },
+          "datacontenttype": "text/json",
+          "id": "6a2650ee-06ff-498b-9145-ae502214606b",
+          "source": "ffc-pay-enrichment",
+          "specversion": "1.0",
+          "time": "2025-07-10T14:30:41.013Z",
+          "type": "uk.gov.defra.ffc.pay.payment.enriched",
+          "status": {
+            "name": "Enriched with mandatory data",
+            "state": "In Progress",
+            "detail": "Request enriched with mandatory data",
+            "default": true
+          }
+        },
+        {
+          "etag": "W/\"datetime'2025-07-10T14%3A30%3A42.215679Z'\"",
+          "partitionKey": "1102569649",
+          "rowKey": "972a3523-0de1-4309-9bf0-7c276e7ae753|REBC-EZQ4-6HFHV001|1752157841770",
+          "timestamp": "10/07/2025 15:30",
+          "category": "frn",
+          "data": {
+            "completedPaymentRequestId": 56,
+            "paymentRequestId": 51,
+            "schemeId": 4,
+            "ledger": "AP",
+            "sourceSystem": "AHWR",
+            "deliveryBody": "RP00",
+            "invoiceNumber": "REBC-EZQ4-6HFHV001",
+            "frn": "1102569649",
+            "sbi": 106705779,
+            "marketingYear": 2025,
+            "agreementNumber": "REBC-EZQ4-6HFH",
+            "paymentRequestNumber": 1,
+            "currency": "GBP",
+            "dueDate": "10/07/2025",
+            "value": 52200,
+            "invalid": false,
+            "referenceId": "b3257a31-21ce-4562-af8c-ce388f223c33",
+            "correlationId": "972a3523-0de1-4309-9bf0-7c276e7ae753",
+            "invoiceLines": [
+              {
+                "completedInvoiceLineId": 56,
+                "completedPaymentRequestId": 56,
+                "schemeCode": "18002",
+                "accountCode": "SOS210",
+                "fundCode": "DOM10",
+                "description": "G00 - Gross value of claim",
+                "value": 52200,
+                "convergence": false,
+                "deliveryBody": "RP00",
+                "marketingYear": 2025,
+                "stateAid": false
+              }
+            ]
+          },
+          "datacontenttype": "text/json",
+          "id": "64d3e541-6554-41df-a065-1b0833567d53",
+          "source": "ffc-pay-processing",
+          "specversion": "1.0",
+          "time": "2025-07-10T14:30:41.770Z",
+          "type": "uk.gov.defra.ffc.pay.payment.processed",
+          "status": {
+            "name": "Final state calculated",
+            "detail": "Calculation of final state completed",
+            "state": "In Progress",
+            "default": true
+          }
+        },
+        {
+          "etag": "W/\"datetime'2025-07-10T14%3A53%3A35.1335751Z'\"",
+          "partitionKey": "1102569649",
+          "rowKey": "972a3523-0de1-4309-9bf0-7c276e7ae753|REBC-EZQ4-6HFHV001|1752159214546",
+          "timestamp": "10/07/2025 15:53",
+          "category": "frn",
+          "data": {
+            "paymentRequestId": 94,
+            "schemeId": 4,
+            "batchId": 30,
+            "sourceSystem": "AHWR",
+            "batch": null,
+            "deliveryBody": "RP00",
+            "invoiceNumber": "REBC-EZQ4-6HFHV001",
+            "frn": "1102569649",
+            "sbi": 106705779,
+            "vendor": null,
+            "trader": null,
+            "ledger": "AP",
+            "marketingYear": 2025,
+            "agreementNumber": "REBC-EZQ4-6HFH",
+            "contractNumber": null,
+            "currency": "GBP",
+            "schedule": null,
+            "dueDate": "10/07/2025",
+            "debtType": null,
+            "recoveryDate": null,
+            "originalSettlementDate": null,
+            "originalInvoiceNumber": null,
+            "invoiceCorrectionReference": null,
+            "value": 52200,
+            "received": null,
+            "referenceId": "b3257a31-21ce-4562-af8c-ce388f223c33",
+            "correlationId": "972a3523-0de1-4309-9bf0-7c276e7ae753",
+            "paymentRequestNumber": 1,
+            "paymentType": null,
+            "pillar": null,
+            "exchangeRate": null,
+            "eventDate": null,
+            "claimDate": null,
+            "invoiceLines": [
+              {
+                "invoiceLineId": 94,
+                "paymentRequestId": 94,
+                "schemeCode": "18002",
+                "accountCode": "SOS210",
+                "fundCode": "DOM10",
+                "agreementNumber": null,
+                "description": "G00 - Gross value of claim",
+                "value": 52200,
+                "convergence": false,
+                "deliveryBody": "RP00",
+                "marketingYear": 2025
+              }
+            ]
+          },
+          "datacontenttype": "text/json",
+          "id": "329f91c7-d630-4606-a5d1-7eda0faabb4d",
+          "source": "ffc-pay-submission",
+          "specversion": "1.0",
+          "subject": "FFCVV_0003_AP_20250710145334 (Vet Visits).csv",
+          "time": "2025-07-10T14:53:34.546Z",
+          "type": "uk.gov.defra.ffc.pay.payment.submitted",
+          "status": {
+            "name": "Submitted to payment ledger",
+            "detail": "Submitted to payment ledger",
+            "state": "In Progress",
+            "default": true
+          }
+        }
+      ],
+      "scheme": "Vet Visits",
+      "status": {
+        "name": "Submitted to payment ledger",
+        "detail": "Submitted to payment ledger",
+        "state": "In Progress",
+        "default": true
+      },
+      "lastUpdated": "10/07/2025 15:53",
+      "originalValue": 52200,
+      "originalValueText": "£522.00",
+      "currentValue": 52200,
+      "currentValueText": "£522.00"
+    }
+  ]
+}

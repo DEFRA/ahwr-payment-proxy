@@ -7,14 +7,15 @@ import { mongoDb } from './common/helpers/mongodb.js'
 import { pulse } from './common/helpers/pulse.js'
 import { requestTracing } from './common/helpers/request-tracing.js'
 import { setupProxy } from './common/helpers/proxy/setup-proxy.js'
-// import {
-//   configureAndStart,
-//   stopSubscriber
-// } from './messaging/message-request-queue-subscriber.js'
-// import {
-//   startMessagingService,
-//   stopMessagingService
-// } from './messaging/fcp-messaging-service.js'
+import {
+  configureAndStart,
+  stopSubscriber
+} from './messaging/payment-request-queue-subscriber.js'
+import {
+  startMessagingService,
+  stopMessagingService
+} from './messaging/fcp-messaging-service.js'
+import requestPaymentStatusScheduler from './jobs/request-payment-status-scheduler.js'
 
 export async function createServer() {
   setupProxy()
@@ -62,15 +63,17 @@ export async function createServer() {
     router
   ])
 
-  // server.events.on('start', async () => {
-  //   await startMessagingService(server.logger)
-  //   await configureAndStart(server.db)
-  // })
+  await server.register(requestPaymentStatusScheduler)
 
-  // server.events.on('stop', async () => {
-  //   await stopSubscriber()
-  //   await stopMessagingService()
-  // })
+  server.events.on('start', async () => {
+    await startMessagingService(server.logger, server.db)
+    await configureAndStart(server.db)
+  })
+
+  server.events.on('stop', async () => {
+    await stopSubscriber()
+    await stopMessagingService()
+  })
 
   return server
 }

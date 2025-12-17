@@ -1,4 +1,4 @@
-import * as startServer from './start-server.js'
+import { startServer } from './start-server.js'
 import { config } from '../../config.js'
 
 const mockServerStart = jest.fn()
@@ -27,7 +27,7 @@ describe('#startServer', () => {
 
   describe('When server starts', () => {
     test('Should start up server as expected', async () => {
-      await startServer.startServer()
+      await startServer()
 
       expect(mockServerStart).toHaveBeenCalled()
       expect(mockLoggerInfo).toHaveBeenCalled()
@@ -38,9 +38,7 @@ describe('#startServer', () => {
     test('Should log failed startup message', async () => {
       mockServerStart.mockRejectedValue(new Error('Server failed to start'))
 
-      await expect(startServer.startServer()).rejects.toThrow(
-        'Server failed to start'
-      )
+      await expect(startServer()).rejects.toThrow('Server failed to start')
     })
   })
 })

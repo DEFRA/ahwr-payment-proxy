@@ -22,10 +22,10 @@ describe('publish outbound notification', () => {
 
   describe('publishApplicationRequestEvent', () => {
     test('sets up client and then publishes payment update event on first call', async () => {
-      //reset global state
-      const {
-        publishPaymentUpdateEvent
-      } = require('./publish-outbound-notification.js')
+      //reset state
+      const { publishPaymentUpdateEvent } = await import(
+        './publish-outbound-notification.js'
+      )
 
       const startDate = new Date()
       const inputMessageBody = {
@@ -58,10 +58,10 @@ describe('publish outbound notification', () => {
     })
 
     test('skips setting up client and then publishes event on subsequent call', async () => {
-      //reset global state
-      const {
-        publishPaymentUpdateEvent
-      } = require('./publish-outbound-notification.js')
+      //reset state
+      const { publishPaymentUpdateEvent } = await import(
+        './publish-outbound-notification.js'
+      )
 
       const startDate = new Date()
       const inputMessageBody = {

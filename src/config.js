@@ -93,6 +93,22 @@ const config = convict({
       default: 'ffc-pay-request',
       env: 'PAYMENTREQUEST_TOPIC_ADDRESS'
     },
+    submitPaymentRequestMsgType: {
+      doc: 'Submit payment request message type',
+      format: String,
+      default: 'uk.gov.ffc.ahwr.submit.payment.request'
+    },
+    paymentDataRequestTopic: {
+      doc: 'Topic name to send payment requests',
+      format: String,
+      default: 'ffc-pay-data-request',
+      env: 'PAYMENT_DATA_REQUEST_TOPIC_ADDRESS'
+    },
+    submitPaymentDataRequestMsgType: {
+      doc: 'Submit payment request message type',
+      format: String,
+      default: 'uk.gov.ffc.ahwr.submit.payment.data.request'
+    },
     paymentResponseTopic: {
       doc: 'Topic name to send payment requests',
       format: String,
@@ -105,16 +121,10 @@ const config = convict({
       default: 'ffc-ahwr-application',
       env: 'PAYMENTRESPONSE_SUBSCRIPTION_ADDRESS'
     },
-    submitPaymentRequestMsgType: {
-      doc: 'Submit payment request message type',
-      format: String,
-      default: 'uk.gov.ffc.ahwr.submit.payment.request',
-      env: 'SUBMIT_PAYMENT_REQUEST_MESSAGE_TYPE'
-    },
     paymentDataRequestResponseQueue: {
       doc: 'Topic name to send payment requests',
       format: String,
-      default: 'ffc-pay-data-request-response-rdj',
+      default: 'ffc-pay-data-request-response',
       env: 'PAYMENT_DATA_REQUEST_RESPONSE_QUEUE_ADDRESS'
     }
   },

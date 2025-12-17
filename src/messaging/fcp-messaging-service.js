@@ -45,12 +45,15 @@ export const sendPaymentRequest = async (paymentRequest) => {
   fcpMessageClient.sendMessage(message, paymentRequestTopic)
 }
 
-export const sendPaymentDataRequest = async (paymentRequest) => {
-  const { submitPaymentRequestMsgType, paymentRequestTopic } =
+export const sendPaymentDataRequest = async (paymentDataRequest) => {
+  const { submitPaymentDataRequestMsgType, paymentDataRequestTopic } =
     config.get('serviceBus')
 
-  const message = createMessage(paymentRequest, submitPaymentRequestMsgType)
-  fcpMessageClient.sendMessage(message, paymentRequestTopic)
+  const message = createMessage(
+    paymentDataRequest,
+    submitPaymentDataRequestMsgType
+  )
+  fcpMessageClient.sendMessage(message, paymentDataRequestTopic)
 }
 
 export const receivePaymentDataResponseMessages = async (sessionId, count) => {

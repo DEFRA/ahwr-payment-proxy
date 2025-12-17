@@ -156,7 +156,7 @@ describe('requestPaymentStatus', () => {
     expect(completeMessageMock).toHaveBeenCalled()
   })
 
-  test('raises appInsights exception when the daily retry limit has been reached', async () => {
+  test('logs status history when the daily retry limit has been reached', async () => {
     getBlobMock.mockResolvedValue({
       data: [
         {
@@ -209,6 +209,18 @@ describe('requestPaymentStatus', () => {
     )
     expect(deleteBlobMock).toHaveBeenCalled()
     expect(completeMessageMock).toHaveBeenCalled()
+    expect(loggerMock.info).toHaveBeenCalledWith(
+      {
+        statuses: [
+          {
+            status: 'Routed to Request Editor for debt data',
+            date: '27/03/2025 12:03'
+          },
+          { status: 'Debt data attached', date: '28/03/2025 12:03' }
+        ]
+      },
+      'Status history'
+    )
   })
 
   test('logs error when updating status to paid for claim fails', async () => {

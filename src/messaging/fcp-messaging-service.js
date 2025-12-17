@@ -37,23 +37,44 @@ export const stopMessagingService = async () => {
   }
 }
 
-export const sendPaymentRequest = async (paymentRequest) => {
-  const { submitPaymentRequestMsgType, paymentRequestTopic } =
-    config.get('serviceBus')
+export const sendPaymentRequest = async (paymentRequest, sessionId, logger) => {
+  const {
+    submitPaymentRequestMsgType,
+    paymentRequestTopic,
+    sendPaymentRequestOutbound
+  } = config.get('serviceBus')
 
-  const message = createMessage(paymentRequest, submitPaymentRequestMsgType)
-  fcpMessageClient.sendMessage(message, paymentRequestTopic)
+  if (sendPaymentRequestOutbound) {
+    const message = createMessage(paymentRequest, submitPaymentRequestMsgType, {
+      sessionId
+    })
+    fcpMessageClient.sendMessage(message, paymentRequestTopic)
+    logger.info('Payment request sent.')
+  } else {
+    logger.info(
+      `Payment integration is disabled, not sending payment request out.\n ${JSON.stringify(paymentRequest)}`
+    )
+  }
 }
 
-export const sendPaymentDataRequest = async (paymentDataRequest) => {
+export const sendPaymentDataRequest = async (
+  paymentDataRequest,
+  sessionId,
+  logger,
+  messageId
+) => {
+  logger.info({ messageId, sessionId }, 'Sending payment data request')
   const { submitPaymentDataRequestMsgType, paymentDataRequestTopic } =
     config.get('serviceBus')
 
   const message = createMessage(
     paymentDataRequest,
-    submitPaymentDataRequestMsgType
+    submitPaymentDataRequestMsgType,
+    { sessionId, messageId }
   )
   fcpMessageClient.sendMessage(message, paymentDataRequestTopic)
+
+  logger.info({ messageId, sessionId }, 'Sent payment data request')
 }
 
 export const receivePaymentDataResponseMessages = async (sessionId, count) => {
@@ -66,11 +87,11 @@ export const receivePaymentDataResponseMessages = async (sessionId, count) => {
   )
 }
 
-const createMessage = (body, type) => {
+const createMessage = (body, type, options) => {
   return {
     body,
     type,
     source: 'ahwr-payment-proxy',
-    options: {}
+    ...options
   }
 }

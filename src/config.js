@@ -259,6 +259,12 @@ const config = convict({
       default: '#',
       env: 'PAYMENT_UPDATE_TOPIC_ARN'
     }
+  },
+  sendPaymentRequestOutbound: {
+    doc: 'Enable sending of oubound payment requests',
+    format: Boolean,
+    default: false,
+    env: 'SEND_PAYMENT_REQUEST'
   }
 })
 

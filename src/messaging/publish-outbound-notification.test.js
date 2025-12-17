@@ -1,5 +1,6 @@
 import { publishMessage, setupClient } from 'ffc-ahwr-common-library'
 import { config } from '../config.js'
+import { publishPaymentUpdateEvent } from './publish-outbound-notification.js'
 
 jest.mock('ffc-ahwr-common-library')
 const mockLogger = {
@@ -22,11 +23,6 @@ describe('publish outbound notification', () => {
 
   describe('publishApplicationRequestEvent', () => {
     test('sets up client and then publishes payment update event on first call', async () => {
-      //reset state
-      const { publishPaymentUpdateEvent } = await import(
-        './publish-outbound-notification.js'
-      )
-
       const startDate = new Date()
       const inputMessageBody = {
         reference: 'ABC123',
@@ -58,11 +54,6 @@ describe('publish outbound notification', () => {
     })
 
     test('skips setting up client and then publishes event on subsequent call', async () => {
-      //reset state
-      const { publishPaymentUpdateEvent } = await import(
-        './publish-outbound-notification.js'
-      )
-
       const startDate = new Date()
       const inputMessageBody = {
         reference: 'ABC123',

@@ -38,11 +38,9 @@ export const stopMessagingService = async () => {
 }
 
 export const sendPaymentRequest = async (paymentRequest, sessionId, logger) => {
-  const {
-    submitPaymentRequestMsgType,
-    paymentRequestTopic,
-    sendPaymentRequestOutbound
-  } = config.get('serviceBus')
+  const { submitPaymentRequestMsgType, paymentRequestTopic } =
+    config.get('serviceBus')
+  const sendPaymentRequestOutbound = config.get('sendPaymentRequestOutbound')
 
   if (sendPaymentRequestOutbound) {
     const message = createMessage(paymentRequest, submitPaymentRequestMsgType, {

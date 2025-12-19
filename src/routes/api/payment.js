@@ -40,13 +40,15 @@ export const paymentApiRoutes = [
 
           return h
             .response({ status: 'Payment status task triggered' })
-            .code(200)
+            .code(StatusCodes.OK)
         } catch (err) {
           taskLogger.error(
             { message: err.message, stack: err.stack },
             'Task failed'
           )
-          return h.response({ status: 'Error triggering task' }).code(500)
+          return h
+            .response({ status: 'Error triggering task' })
+            .code(StatusCodes.INTERNAL_SERVER_ERROR)
         }
       }
     }

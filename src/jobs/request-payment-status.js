@@ -162,7 +162,7 @@ export const processFrnRequest = async (db, frn, logger, claimReferences) => {
       1
     )
     receiver = response.receiver
-    if (!response.messages.length) {
+    if (!response.messages?.length) {
       throw new Error('No response messages received from payment data request')
     }
 

@@ -1,6 +1,7 @@
 import joi from 'joi'
 import { get } from '../../repositories/payment-repository.js'
 import { StatusCodes } from 'http-status-codes'
+import { requestPaymentStatus } from '../../jobs/request-payment-status.js'
 
 export const paymentApiRoutes = [
   {
@@ -20,6 +21,33 @@ export const paymentApiRoutes = [
         }
 
         return h.response('Not Found').code(StatusCodes.NOT_FOUND).takeover()
+      }
+    }
+  },
+  //TODO delete once tested
+  {
+    method: 'GET',
+    path: '/admin/trigger-payment-status',
+    options: {
+      handler: async (request, h) => {
+        const taskLogger = request.logger.child({
+          task: 'requestPaymentStatus'
+        })
+        taskLogger.info('Manually triggered payment status requests')
+
+        try {
+          await requestPaymentStatus(taskLogger, request.db)
+
+          return h
+            .response({ status: 'Payment status task triggered' })
+            .code(200)
+        } catch (err) {
+          taskLogger.error(
+            { message: err.message, stack: err.stack },
+            'Task failed'
+          )
+          return h.response({ status: 'Error triggering task' }).code(500)
+        }
       }
     }
   }

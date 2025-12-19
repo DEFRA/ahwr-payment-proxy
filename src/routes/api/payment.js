@@ -1,5 +1,6 @@
 import joi from 'joi'
 import { get } from '../../repositories/payment-repository.js'
+import { StatusCodes } from 'http-status-codes'
 
 export const paymentApiRoutes = [
   {
@@ -15,10 +16,10 @@ export const paymentApiRoutes = [
         const payment = await get(request.db, request.params.reference)
 
         if (payment) {
-          return h.response(payment).code(200)
+          return h.response(payment).code(StatusCodes.OK)
         }
 
-        return h.response('Not Found').code(404).takeover()
+        return h.response('Not Found').code(StatusCodes.NOT_FOUND).takeover()
       }
     }
   }

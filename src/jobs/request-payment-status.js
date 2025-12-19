@@ -135,7 +135,7 @@ const processDataRequestResponse = async ({
     claimReferences.has(blobData.agreementNumber)
   )
   if (!requestedPaymentData.length) {
-    throw Error('Blob does not contain requested payment data')
+    throw new Error('Blob does not contain requested payment data')
   }
 
   for (const entry of requestedPaymentData) {
@@ -163,13 +163,13 @@ export const processFrnRequest = async (db, frn, logger, claimReferences) => {
     )
     receiver = response.receiver
     if (!response.messages.length) {
-      throw Error('No response messages received from payment data request')
+      throw new Error('No response messages received from payment data request')
     }
 
     responseMessage = response.messages[0]
     blobUri = responseMessage.body?.uri
     if (!blobUri) {
-      throw Error('No blob URI received in payment data response')
+      throw new Error('No blob URI received in payment data response')
     }
 
     blobClient = createBlobClient(logger, blobUri)

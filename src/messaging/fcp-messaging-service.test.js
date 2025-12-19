@@ -36,7 +36,7 @@ describe('fcp-messaging-service', () => {
   })
 
   describe('sendPaymentRequest', () => {
-    config.set('serviceBus.sendPaymentRequestOutbound', true)
+    config.set('sendPaymentRequestOutbound', true)
     it('creates and sends message', async () => {
       const mockSendMessage = jest.fn()
       const mockClient = {

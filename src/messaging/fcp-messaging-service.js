@@ -20,13 +20,31 @@ export const startMessagingService = async (logger, db) => {
     proxyUrl: config.get('httpProxy')
   })
 
+  logger.info({
+    message: JSON.stringify({
+      paymentResponseTopic,
+      paymentResponseSubscription
+    })
+  })
+
   fcpMessageClient.subscribeTopic({
     topicName: paymentResponseTopic,
     subscriptionName: paymentResponseSubscription,
     processMessage: (message, receiver) =>
       processPaymentResponse(logger, db, message, receiver),
     processError: (args) => {
-      logger.error(args.error, 'Error subscribing to topic')
+      const err = args.error
+
+      logger.error(
+        {
+          error: {
+            message: err.message,
+            stack_trace: err.stack,
+            kind: err.code
+          }
+        },
+        'Error subscribing to topic'
+      )
     }
   })
 }
@@ -61,7 +79,9 @@ export const sendPaymentDataRequest = async (
   logger,
   messageId
 ) => {
-  logger.info({ messageId, sessionId }, 'Sending payment data request')
+  logger.info(
+    `Sending payment data request. MessageId: ${messageId}, SessionId: ${sessionId}`
+  )
   const { submitPaymentDataRequestMsgType, paymentDataRequestTopic } =
     config.get('serviceBus')
 
@@ -72,7 +92,9 @@ export const sendPaymentDataRequest = async (
   )
   fcpMessageClient.sendMessage(message, paymentDataRequestTopic)
 
-  logger.info({ messageId, sessionId }, 'Sent payment data request')
+  logger.info(
+    `Sent payment data request. MessageId: ${messageId}, SessionId: ${sessionId}`
+  )
 }
 
 export const receivePaymentDataResponseMessages = async (sessionId, count) => {

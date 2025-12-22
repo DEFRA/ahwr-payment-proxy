@@ -7,8 +7,10 @@ import {
   receivePaymentDataResponseMessages
 } from './fcp-messaging-service.js'
 import { config } from '../config.js'
+import { processPaymentResponse } from './process-payment-response.js'
 
 jest.mock('ffc-ahwr-common-library')
+jest.mock('./process-payment-response.js')
 
 describe('fcp-messaging-service', () => {
   describe('start and stop service', () => {
@@ -16,6 +18,12 @@ describe('fcp-messaging-service', () => {
       close: jest.fn(),
       subscribeTopic: jest.fn()
     }
+    const mockLogger = {
+      info: jest.fn(),
+      error: jest.fn()
+    }
+    const mockDb = jest.fn()
+
     beforeEach(() => {
       jest.resetAllMocks()
       createServiceBusClient.mockReturnValueOnce(mockClient)
@@ -28,15 +36,59 @@ describe('fcp-messaging-service', () => {
     })
 
     it('should stop the client if available', async () => {
-      await startMessagingService()
+      await startMessagingService(mockLogger, mockDb)
       await stopMessagingService()
 
       expect(mockClient.close).toHaveBeenCalledTimes(1)
+    })
+
+    it('should log errors when subscribe topic throws', async () => {
+      await startMessagingService(mockLogger, mockDb)
+
+      const processError =
+        mockClient.subscribeTopic.mock.calls[0][0].processError
+
+      const mockError = new Error('Mock Service Bus failure')
+      mockError.code = 'ServiceCommunicationError'
+      mockError.stack = 'StackError'
+
+      processError({ error: mockError })
+
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        {
+          error: {
+            message: 'Mock Service Bus failure',
+            stack_trace: 'StackError',
+            kind: 'ServiceCommunicationError'
+          }
+        },
+        'Error subscribing to topic'
+      )
+    })
+
+    it('should process payment response when subscribe topic receives message', async () => {
+      await startMessagingService(mockLogger, mockDb)
+
+      const processMessage =
+        mockClient.subscribeTopic.mock.calls[0][0].processMessage
+      const mockMessage = {}
+      const mockReceiver = {}
+
+      processMessage(mockMessage, mockReceiver)
+
+      expect(processPaymentResponse).toHaveBeenCalledWith(
+        mockLogger,
+        mockDb,
+        mockMessage,
+        mockReceiver
+      )
     })
   })
 
   describe('sendPaymentRequest', () => {
     config.set('sendPaymentRequestOutbound', true)
+    const mockDb = jest.fn()
+
     it('creates and sends message', async () => {
       const mockSendMessage = jest.fn()
       const mockClient = {
@@ -54,7 +106,7 @@ describe('fcp-messaging-service', () => {
       }
       createServiceBusClient.mockReturnValueOnce(mockClient)
 
-      await startMessagingService()
+      await startMessagingService(mockLogger, mockDb)
       await sendPaymentRequest(
         request,
         '498064a3-f967-4a98-9d8f-57152e7cbe64',
@@ -74,6 +126,8 @@ describe('fcp-messaging-service', () => {
   })
 
   describe('sendPaymentDataRequest', () => {
+    const mockDb = jest.fn()
+
     it('creates and sends message', async () => {
       const mockSendMessage = jest.fn()
       const mockClient = {
@@ -87,7 +141,7 @@ describe('fcp-messaging-service', () => {
       const request = { category: 'frn', value: '1234567890' }
       createServiceBusClient.mockReturnValueOnce(mockClient)
 
-      await startMessagingService()
+      await startMessagingService(mockLogger, mockDb)
       await sendPaymentDataRequest(
         request,
         '498064a3-f967-4a98-9d8f-57152e7cbe64',
@@ -109,6 +163,11 @@ describe('fcp-messaging-service', () => {
   })
 
   describe('receivePaymentDataResponseMessages', () => {
+    const mockLogger = {
+      info: jest.fn()
+    }
+    const mockDb = jest.fn()
+
     it('creates and sends message', async () => {
       const mockClient = {
         receiveSessionMessages: jest.fn(),
@@ -116,7 +175,7 @@ describe('fcp-messaging-service', () => {
       }
       createServiceBusClient.mockReturnValueOnce(mockClient)
 
-      await startMessagingService()
+      await startMessagingService(mockLogger, mockDb)
       await receivePaymentDataResponseMessages('123456789', 1)
 
       expect(mockClient.receiveSessionMessages).toHaveBeenCalledWith(

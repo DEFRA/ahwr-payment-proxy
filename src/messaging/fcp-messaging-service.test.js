@@ -16,6 +16,11 @@ describe('fcp-messaging-service', () => {
       close: jest.fn(),
       subscribeTopic: jest.fn()
     }
+    const mockLogger = {
+      info: jest.fn()
+    }
+    const mockDb = jest.fn()
+
     beforeEach(() => {
       jest.resetAllMocks()
       createServiceBusClient.mockReturnValueOnce(mockClient)
@@ -28,7 +33,7 @@ describe('fcp-messaging-service', () => {
     })
 
     it('should stop the client if available', async () => {
-      await startMessagingService()
+      await startMessagingService(mockLogger, mockDb)
       await stopMessagingService()
 
       expect(mockClient.close).toHaveBeenCalledTimes(1)
@@ -37,6 +42,8 @@ describe('fcp-messaging-service', () => {
 
   describe('sendPaymentRequest', () => {
     config.set('sendPaymentRequestOutbound', true)
+    const mockDb = jest.fn()
+
     it('creates and sends message', async () => {
       const mockSendMessage = jest.fn()
       const mockClient = {
@@ -54,7 +61,7 @@ describe('fcp-messaging-service', () => {
       }
       createServiceBusClient.mockReturnValueOnce(mockClient)
 
-      await startMessagingService()
+      await startMessagingService(mockLogger, mockDb)
       await sendPaymentRequest(
         request,
         '498064a3-f967-4a98-9d8f-57152e7cbe64',
@@ -74,6 +81,8 @@ describe('fcp-messaging-service', () => {
   })
 
   describe('sendPaymentDataRequest', () => {
+    const mockDb = jest.fn()
+
     it('creates and sends message', async () => {
       const mockSendMessage = jest.fn()
       const mockClient = {
@@ -87,7 +96,7 @@ describe('fcp-messaging-service', () => {
       const request = { category: 'frn', value: '1234567890' }
       createServiceBusClient.mockReturnValueOnce(mockClient)
 
-      await startMessagingService()
+      await startMessagingService(mockLogger, mockDb)
       await sendPaymentDataRequest(
         request,
         '498064a3-f967-4a98-9d8f-57152e7cbe64',
@@ -109,6 +118,11 @@ describe('fcp-messaging-service', () => {
   })
 
   describe('receivePaymentDataResponseMessages', () => {
+    const mockLogger = {
+      info: jest.fn()
+    }
+    const mockDb = jest.fn()
+
     it('creates and sends message', async () => {
       const mockClient = {
         receiveSessionMessages: jest.fn(),
@@ -116,7 +130,7 @@ describe('fcp-messaging-service', () => {
       }
       createServiceBusClient.mockReturnValueOnce(mockClient)
 
-      await startMessagingService()
+      await startMessagingService(mockLogger, mockDb)
       await receivePaymentDataResponseMessages('123456789', 1)
 
       expect(mockClient.receiveSessionMessages).toHaveBeenCalledWith(

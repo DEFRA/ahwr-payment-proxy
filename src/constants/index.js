@@ -24,4 +24,4 @@ export const DAILY_RETRY_FROM_DAYS = 1
 
 export const FINAL_RETRY_DAYS = 10
 
-export const PAYMENTS_COLLECTION = 'payments'
+export const PAYMENTS_COLLECTION = 'paymentrequests'

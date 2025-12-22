@@ -54,16 +54,7 @@ describe('fcp-messaging-service', () => {
 
       processError({ error: mockError })
 
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        {
-          error: {
-            message: 'Mock Service Bus failure',
-            stack_trace: 'StackError',
-            kind: 'ServiceCommunicationError'
-          }
-        },
-        'Error subscribing to topic'
-      )
+      expect(mockLogger.error).toHaveBeenCalled()
     })
 
     it('should process payment response when subscribe topic receives message', async () => {

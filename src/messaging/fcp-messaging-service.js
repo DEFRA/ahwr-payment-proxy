@@ -34,7 +34,7 @@ export const startMessagingService = async (logger, db) => {
       processPaymentResponse(logger, db, message, receiver),
     processError: (args) => {
       logger.error({
-        message: `Error subscribing to topic: ${JSON.stringify(args, null, 2)}`
+        message: `Error subscribing to topic: ${JSON.stringify(args.error, Object.getOwnPropertyNames(args.error))}`
       })
     }
   })

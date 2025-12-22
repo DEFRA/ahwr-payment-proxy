@@ -7,8 +7,10 @@ import {
   receivePaymentDataResponseMessages
 } from './fcp-messaging-service.js'
 import { config } from '../config.js'
+import { processPaymentResponse } from './process-payment-response.js'
 
 jest.mock('ffc-ahwr-common-library')
+jest.mock('./process-payment-response.js')
 
 describe('fcp-messaging-service', () => {
   describe('start and stop service', () => {
@@ -17,7 +19,8 @@ describe('fcp-messaging-service', () => {
       subscribeTopic: jest.fn()
     }
     const mockLogger = {
-      info: jest.fn()
+      info: jest.fn(),
+      error: jest.fn()
     }
     const mockDb = jest.fn()
 
@@ -37,6 +40,48 @@ describe('fcp-messaging-service', () => {
       await stopMessagingService()
 
       expect(mockClient.close).toHaveBeenCalledTimes(1)
+    })
+
+    it('should log errors when subscribe topic throws', async () => {
+      await startMessagingService(mockLogger, mockDb)
+
+      const processError =
+        mockClient.subscribeTopic.mock.calls[0][0].processError
+
+      const mockError = new Error('Mock Service Bus failure')
+      mockError.code = 'ServiceCommunicationError'
+      mockError.stack = 'StackError'
+
+      processError({ error: mockError })
+
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        {
+          error: {
+            message: 'Mock Service Bus failure',
+            stack_trace: 'StackError',
+            kind: 'ServiceCommunicationError'
+          }
+        },
+        'Error subscribing to topic'
+      )
+    })
+
+    it('should process payment response when subscribe topic receives message', async () => {
+      await startMessagingService(mockLogger, mockDb)
+
+      const processMessage =
+        mockClient.subscribeTopic.mock.calls[0][0].processMessage
+      const mockMessage = {}
+      const mockReceiver = {}
+
+      processMessage(mockMessage, mockReceiver)
+
+      expect(processPaymentResponse).toHaveBeenCalledWith(
+        mockLogger,
+        mockDb,
+        mockMessage,
+        mockReceiver
+      )
     })
   })
 

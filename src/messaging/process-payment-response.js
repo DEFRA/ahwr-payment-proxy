@@ -1,5 +1,5 @@
 import { updatePaymentResponse } from '../repositories/payment-repository.js'
-import util from 'util'
+import util from 'node:util'
 import { Status } from '../constants/index.js'
 
 export const processPaymentResponse = async (logger, db, message, receiver) => {

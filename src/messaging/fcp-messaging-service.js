@@ -79,7 +79,9 @@ export const sendPaymentDataRequest = async (
   logger,
   messageId
 ) => {
-  logger.info({ messageId, sessionId }, 'Sending payment data request')
+  logger.info(
+    `Sending payment data request. MessageId: ${messageId}, SessionId: ${sessionId}`
+  )
   const { submitPaymentDataRequestMsgType, paymentDataRequestTopic } =
     config.get('serviceBus')
 
@@ -90,7 +92,9 @@ export const sendPaymentDataRequest = async (
   )
   fcpMessageClient.sendMessage(message, paymentDataRequestTopic)
 
-  logger.info({ messageId, sessionId }, 'Sent payment data request')
+  logger.info(
+    `Sent payment data request. MessageId: ${messageId}, SessionId: ${sessionId}`
+  )
 }
 
 export const receivePaymentDataResponseMessages = async (sessionId, count) => {

@@ -43,7 +43,7 @@
     "convict": "6.2.4",
     "convict-format-with-validator": "6.2.0",
     "date-fns": "4.1.0",
-    "ffc-ahwr-common-library": "3.4.0",
+    "ffc-ahwr-common-library": "3.4.1",
     "global-agent": "3.0.0",
     "hapi-pino": "13.0.0",
     "hapi-pulse": "3.0.1",

@@ -161,7 +161,7 @@ export const processFrnRequest = async (db, frn, logger, claimReferences) => {
       requestMessageId,
       1
     )
-    logger.info(`Response: ${JSON.stringify(response.messages, null, 2)}`)
+    logger.info(`Response: ${response.messages?.length}`)
     receiver = response.receiver
     if (!response.messages?.length) {
       throw new Error('No response messages received from payment data request')

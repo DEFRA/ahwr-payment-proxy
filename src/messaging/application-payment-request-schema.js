@@ -1,4 +1,5 @@
 import joi from 'joi'
+import { trackError } from '../common/helpers/logging/logger'
 
 const applicationPaymentRequestSchema = joi.object({
   reference: joi.string().required(),
@@ -20,10 +21,11 @@ export const validateApplicationPaymentRequest = (
   )
 
   if (validate.error) {
-    // TODO replace
-    // appInsights.defaultClient.trackException({ exception: validate.error })
-    logger.error(
-      `Application payment request validation error: ${validate.error}`
+    trackError(
+      logger,
+      validate.error,
+      'failed-validation',
+      'Application payment request validation error'
     )
     return false
   }

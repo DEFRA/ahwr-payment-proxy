@@ -12,6 +12,7 @@ import {
 } from '../messaging/fcp-messaging-service.js'
 import { publishPaymentUpdateEvent } from '../messaging/publish-outbound-notification.js'
 import { createBlobClient } from '../storage.js'
+import { trackError } from '../common/helpers/logging/logger.js'
 
 const { moveClaimToPaidMsgType } = config.get('messageTypes')
 
@@ -56,22 +57,19 @@ const trackPaymentStatusError = ({
   logger,
   paymentCheckCount
 }) => {
-  logger.info(
-    { claimReference, sbi, type },
-    `Payment has not been paid after ${paymentCheckCount} status requests`
+  trackError(
+    logger,
+    new Error('Payment has not been paid'),
+    'failed-process',
+    'Payment has not been paid',
+    {
+      claimReference,
+      statuses,
+      sbi,
+      type,
+      paymentCheckCount
+    }
   )
-
-  // TODO replace
-  logger.info({ statuses }, 'Status history')
-  // appInsights.defaultClient.trackException({
-  //   exception: new Error('Payment has not been updated to paid status'),
-  //   properties: {
-  //     claimReference,
-  //     statuses,
-  //     sbi,
-  //     type
-  //   }
-  // })
 }
 
 const processPaymentDataEntry = async (db, paymentDataEntry, logger) => {

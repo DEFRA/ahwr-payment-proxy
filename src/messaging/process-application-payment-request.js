@@ -1,6 +1,8 @@
 import { v4 as uuidv4 } from 'uuid'
 import { savePaymentRequest } from './save-payment-request.js'
 import { sendPaymentRequest } from './fcp-messaging-service.js'
+import { trackError, trackEvent } from '../common/helpers/logging/logger.js'
+import { metricsCounter } from '../common/helpers/metrics.js'
 
 export const processApplicationPaymentRequest = async (logger, message, db) => {
   try {
@@ -8,23 +10,30 @@ export const processApplicationPaymentRequest = async (logger, message, db) => {
     logger.info(
       `Received application payment request ${JSON.stringify(message)}`
     )
+    await metricsCounter(`application_payment_request_message_received`)
 
     const paymentRequest = await savePaymentRequest(db, logger, message)
 
     await sendPaymentRequest(paymentRequest, uuidv4(), logger)
 
     logger.info('Message processing successful')
+
+    trackEvent(logger, 'process-payment', 'payment-request', {
+      value: message,
+      paymentRequest
+    })
   } catch (err) {
-    // TODO replace
-    // appInsights.defaultClient.trackException({
-    //   exception: err ?? new Error('unknown'),
-    //   properties: {
-    //     agreementNo: message.body?.reference ?? '',
-    //     payload: message.body ?? '',
-    //     messageId: message.id ?? ''
-    //   }
-    // })
-    logger.error(`Unable to process application payment request: ${err}`)
+    trackError(
+      logger,
+      err,
+      'failed-process',
+      'Failed to process application payment request',
+      {
+        agreementNo: message.body?.reference ?? '',
+        payload: message.body ?? '',
+        messageId: message.id ?? ''
+      }
+    )
     throw err
   }
 }

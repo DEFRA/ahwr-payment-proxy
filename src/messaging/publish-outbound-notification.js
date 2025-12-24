@@ -1,6 +1,7 @@
 import { publishMessage, setupClient } from 'ffc-ahwr-common-library'
 import { config } from '../config.js'
 import { getLogger } from '../common/helpers/logging/logger.js'
+import { metricsCounter } from '../common/helpers/metrics.js'
 
 let clientConfigured
 
@@ -22,6 +23,7 @@ export async function publishPaymentUpdateEvent(
   )
 
   logger.info('Payment update event published')
+  await metricsCounter('notification_published-payment-update')
 }
 
 function configureClient() {

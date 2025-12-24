@@ -1,6 +1,7 @@
 import { config } from '../config.js'
 import { requestPaymentStatus } from './request-payment-status.js'
 import cron from 'node-cron'
+import { trackError } from '../common/helpers/logging/logger.js'
 
 const requestPaymentStatusScheduler = {
   plugin: {
@@ -18,7 +19,9 @@ const requestPaymentStatusScheduler = {
         return
       }
 
-      logger.info({ schedule }, 'Registering payment status scheduler')
+      logger.info(
+        `Registering payment status scheduler with schedule: ${schedule}`
+      )
 
       cron.schedule(schedule, async () => {
         const taskLogger = logger.child({ task: 'requestPaymentStatus' })
@@ -28,13 +31,12 @@ const requestPaymentStatusScheduler = {
           await requestPaymentStatus(taskLogger, server.db)
           taskLogger.info('Successfully completed payment status requests')
         } catch (err) {
-          const errorDetails = {
-            message: err.message,
-            stack: err.stack
-          }
-          taskLogger.error(errorDetails, 'Failed to request payment statuses')
-          // TODO replace
-          // appInsights.defaultClient.trackException({ exception: err })
+          trackError(
+            taskLogger,
+            err,
+            'failed-request',
+            'Failed to request payment statuses'
+          )
         }
       })
     }

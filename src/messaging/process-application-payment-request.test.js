@@ -1,9 +1,11 @@
 import { processApplicationPaymentRequest } from './process-application-payment-request.js'
 import { savePaymentRequest } from './save-payment-request.js'
 import { sendPaymentRequest } from './fcp-messaging-service.js'
+import { trackError, trackEvent } from '../common/helpers/logging/logger.js'
 
 jest.mock('./save-payment-request.js')
 jest.mock('./fcp-messaging-service.js')
+jest.mock('../common/helpers/logging/logger.js')
 
 const mockedLogger = {
   info: jest.fn(),
@@ -34,16 +36,13 @@ describe('Process application payment request', () => {
   })
 
   test('Successfully update the payment with success status', async () => {
-    savePaymentRequest.mockResolvedValueOnce()
+    const paymentRequest = { id: 1 }
+    savePaymentRequest.mockResolvedValueOnce(paymentRequest)
     sendPaymentRequest.mockResolvedValueOnce()
 
     await processApplicationPaymentRequest(
       mockedLogger,
-      {
-        body: {
-          applicationPaymentRequest
-        }
-      },
+      applicationPaymentRequest,
       receiver
     )
 
@@ -51,15 +50,35 @@ describe('Process application payment request', () => {
     expect(sendPaymentRequest).toHaveBeenCalledTimes(1)
     expect(mockedLogger.setBindings).toHaveBeenCalledTimes(1)
     expect(mockedLogger.info).toHaveBeenCalledTimes(2)
+    expect(trackEvent).toHaveBeenCalledWith(
+      mockedLogger,
+      'process-payment',
+      'payment-request',
+      {
+        value: applicationPaymentRequest,
+        paymentRequest
+      }
+    )
   })
 
   test('logger.error raised due to error thrown in updateByReference', async () => {
-    savePaymentRequest.mockRejectedValueOnce(new Error('Error saving payment'))
+    const error = new Error('Error saving payment')
+    savePaymentRequest.mockRejectedValueOnce(error)
 
     await expect(
       processApplicationPaymentRequest(mockedLogger, {}, receiver)
     ).rejects.toThrow('Error saving payment')
 
-    expect(mockedLogger.error).toHaveBeenCalledTimes(1)
+    expect(trackError).toHaveBeenCalledWith(
+      mockedLogger,
+      error,
+      'failed-process',
+      'Failed to process application payment request',
+      {
+        agreementNo: '',
+        payload: '',
+        messageId: ''
+      }
+    )
   })
 })

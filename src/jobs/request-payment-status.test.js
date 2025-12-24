@@ -9,11 +9,13 @@ import {
   receivePaymentDataResponseMessages,
   sendPaymentDataRequest
 } from '../messaging/fcp-messaging-service.js'
+import { trackError } from '../common/helpers/logging/logger.js'
 
 jest.mock('../repositories/payment-repository')
 jest.mock('../messaging/publish-outbound-notification.js')
 jest.mock('../storage.js')
 jest.mock('../messaging/fcp-messaging-service.js')
+jest.mock('../common/helpers/logging/logger.js')
 
 describe('requestPaymentStatus', () => {
   const loggerMock = {
@@ -209,17 +211,24 @@ describe('requestPaymentStatus', () => {
     )
     expect(deleteBlobMock).toHaveBeenCalled()
     expect(completeMessageMock).toHaveBeenCalled()
-    expect(loggerMock.info).toHaveBeenCalledWith(
+    expect(trackError).toHaveBeenCalledWith(
+      loggerMock,
+      new Error('Payment has not been paid'),
+      'failed-process',
+      'Payment has not been paid',
       {
+        claimReference: 'RESH-F99F-E09F',
         statuses: [
           {
             status: 'Routed to Request Editor for debt data',
             date: '27/03/2025 12:03'
           },
           { status: 'Debt data attached', date: '28/03/2025 12:03' }
-        ]
-      },
-      'Status history'
+        ],
+        sbi: '234234',
+        type: 'INITIAL',
+        paymentCheckCount: 3
+      }
     )
   })
 

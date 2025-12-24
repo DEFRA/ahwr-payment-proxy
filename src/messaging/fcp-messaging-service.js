@@ -20,13 +20,6 @@ export const startMessagingService = async (logger, db) => {
     proxyUrl: config.get('httpProxy')
   })
 
-  logger.info({
-    message: JSON.stringify({
-      paymentResponseTopic,
-      paymentResponseSubscription
-    })
-  })
-
   fcpMessageClient.subscribeTopic({
     topicName: paymentResponseTopic,
     subscriptionName: paymentResponseSubscription,

@@ -1,9 +1,13 @@
 import { updatePaymentResponse } from '../repositories/payment-repository.js'
 import util from 'node:util'
 import { Status } from '../constants/index.js'
+import { trackError, trackEvent } from '../common/helpers/logging/logger.js'
+import { metricsCounter } from '../common/helpers/metrics.js'
 
 export const processPaymentResponse = async (logger, db, message, receiver) => {
   try {
+    await metricsCounter(`payment_response_message_received`)
+
     const messageBody = message.body
     const paymentRequest = messageBody?.paymentRequest
     const agreementNumber = paymentRequest?.agreementNumber
@@ -35,20 +39,20 @@ export const processPaymentResponse = async (logger, db, message, receiver) => {
       )
       await receiver.deadLetterMessage(message)
     }
-    // TODO replace
-    // appInsights.defaultClient.trackEvent({
-    //   name: 'payment-response',
-    //   properties: {
-    //     status,
-    //     agreementNumber,
-    //     value: paymentRequest?.value
-    //   }
-    // })
+
+    trackEvent(logger, 'process-payment', 'payment-response', {
+      status,
+      agreementNumber,
+      value: paymentRequest?.value
+    })
   } catch (err) {
-    // TODO replace
-    // appInsights.defaultClient.trackException({ exception: err })
+    trackError(
+      logger,
+      err,
+      'failed-process',
+      'Failed to process payment response'
+    )
     await receiver.deadLetterMessage(message)
-    logger.error(`Unable to process payment request: ${err}`)
   }
 }
 
@@ -56,9 +60,11 @@ function failedPaymentRequest(logger, messageBody) {
   logger.error(
     `Failed payment request: ${util.inspect(messageBody, false, null, false)}`
   )
-  // TODO replace
-  // appInsights.defaultClient.trackException({
-  //   exception: new Error(messageBody?.error)
-  // })
+  trackError(
+    logger,
+    new Error(messageBody?.error),
+    'failed-request',
+    'Failed payment request'
+  )
   return 'failed'
 }

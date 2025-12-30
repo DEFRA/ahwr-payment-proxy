@@ -19,8 +19,8 @@ export const processApplicationPaymentRequest = async (logger, message, db) => {
     logger.info('Message processing successful')
 
     trackEvent(logger, 'process-payment', 'payment-request', {
-      value: message,
-      paymentRequest
+      reason: JSON.stringify(message),
+      kind: `paymentRequest: ${JSON.stringify(paymentRequest)}`
     })
   } catch (err) {
     trackError(
@@ -29,9 +29,8 @@ export const processApplicationPaymentRequest = async (logger, message, db) => {
       'failed-process',
       'Failed to process application payment request',
       {
-        agreementNo: message.body?.reference ?? '',
-        payload: message.body ?? '',
-        messageId: message.id ?? ''
+        reference: `agreementNo: ${message.body?.reference ?? ''} messageId: ${message.id ?? ''}`,
+        reason: message.body ? JSON.stringify(message.body) : ''
       }
     )
     throw err

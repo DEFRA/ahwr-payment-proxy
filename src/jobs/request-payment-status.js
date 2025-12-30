@@ -63,11 +63,9 @@ const trackPaymentStatusError = ({
     'failed-process',
     'Payment has not been paid',
     {
-      claimReference,
-      statuses,
-      sbi,
-      type,
-      paymentCheckCount
+      reference: `claimReference: ${claimReference}, sbi: ${sbi}`,
+      reason: statuses,
+      outcome: `Unresolved after ${type} check sequence - paymentCheckCount: ${paymentCheckCount}`
     }
   )
 }

@@ -1,7 +1,7 @@
 import util from 'util'
 import { processPaymentResponse } from './process-payment-response'
 import { updatePaymentResponse } from '../repositories/payment-repository'
-import { trackError } from '../common/helpers/logging/logger'
+import { trackError, trackEvent } from '../common/helpers/logging/logger'
 
 jest.mock('../repositories/payment-repository')
 jest.mock('../common/helpers/logging/logger')
@@ -66,6 +66,16 @@ describe('Process payment response', () => {
       }
     )
     expect(mockReceiver.completeMessage).toHaveBeenCalledTimes(1)
+    expect(trackEvent).toHaveBeenCalledWith(
+      mockedLogger,
+      'process-payment',
+      'payment-response',
+      {
+        kind: 'value: 436',
+        reason: 'ack',
+        reference: 'AA-1234-567'
+      }
+    )
   })
 
   test('Update the payment with failed status and raise exception', async () => {

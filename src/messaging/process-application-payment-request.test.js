@@ -55,8 +55,8 @@ describe('Process application payment request', () => {
       'process-payment',
       'payment-request',
       {
-        value: applicationPaymentRequest,
-        paymentRequest
+        reason: JSON.stringify(applicationPaymentRequest),
+        kind: 'paymentRequest: {"id":1}'
       }
     )
   })
@@ -66,7 +66,16 @@ describe('Process application payment request', () => {
     savePaymentRequest.mockRejectedValueOnce(error)
 
     await expect(
-      processApplicationPaymentRequest(mockedLogger, {}, receiver)
+      processApplicationPaymentRequest(
+        mockedLogger,
+        {
+          body: {
+            reference: 'ABC123'
+          },
+          id: 'msg-001'
+        },
+        receiver
+      )
     ).rejects.toThrow('Error saving payment')
 
     expect(trackError).toHaveBeenCalledWith(
@@ -75,9 +84,8 @@ describe('Process application payment request', () => {
       'failed-process',
       'Failed to process application payment request',
       {
-        agreementNo: '',
-        payload: '',
-        messageId: ''
+        reason: '{"reference":"ABC123"}',
+        reference: 'agreementNo: ABC123 messageId: msg-001'
       }
     )
   })

@@ -41,9 +41,9 @@ export const processPaymentResponse = async (logger, db, message, receiver) => {
     }
 
     trackEvent(logger, 'process-payment', 'payment-response', {
-      status,
-      agreementNumber,
-      value: paymentRequest?.value
+      reason: status,
+      reference: agreementNumber,
+      kind: `value: ${paymentRequest?.value}`
     })
   } catch (err) {
     trackError(

@@ -1,7 +1,7 @@
 import util from 'util'
-import { processPaymentResponse } from './process-payment-response'
-import { updatePaymentResponse } from '../repositories/payment-repository'
-import { trackError, trackEvent } from '../common/helpers/logging/logger'
+import { processPaymentResponse } from './process-payment-response.js'
+import { updatePaymentResponse } from '../repositories/payment-repository.js'
+import { trackError, trackEvent } from '../common/helpers/logging/logger.js'
 
 jest.mock('../repositories/payment-repository')
 jest.mock('../common/helpers/logging/logger')

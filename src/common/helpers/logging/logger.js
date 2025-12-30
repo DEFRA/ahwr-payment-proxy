@@ -3,8 +3,37 @@ import { loggerOptions } from './logger-options.js'
 
 const logger = pino(loggerOptions)
 
-function getLogger() {
+export const getLogger = () => {
   return logger
 }
 
-export { getLogger }
+export const trackError = (
+  loggerInstance,
+  error,
+  category,
+  message,
+  properties
+) => {
+  loggerInstance.error(
+    {
+      error,
+      event: {
+        type: 'exception',
+        severity: 'error',
+        category,
+        ...properties
+      }
+    },
+    message
+  )
+}
+
+export const trackEvent = (loggerInstance, type, category, properties) => {
+  loggerInstance.info({
+    event: {
+      type,
+      category,
+      ...properties
+    }
+  })
+}

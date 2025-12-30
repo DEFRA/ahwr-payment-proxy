@@ -24,7 +24,6 @@ export const paymentApiRoutes = [
       }
     }
   },
-  //TODO delete once tested
   {
     method: 'GET',
     path: '/admin/trigger-payment-status',

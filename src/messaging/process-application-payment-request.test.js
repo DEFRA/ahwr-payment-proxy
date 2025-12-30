@@ -61,7 +61,7 @@ describe('Process application payment request', () => {
     )
   })
 
-  test('logger.error raised due to error thrown in updateByReference', async () => {
+  test('error event raised due to error thrown in updateByReference', async () => {
     const error = new Error('Error saving payment')
     savePaymentRequest.mockRejectedValueOnce(error)
 
@@ -86,6 +86,26 @@ describe('Process application payment request', () => {
       {
         reason: '{"reference":"ABC123"}',
         reference: 'agreementNo: ABC123 messageId: msg-001'
+      }
+    )
+  })
+
+  test('error event raised due to error thrown in updateByReference - optional info missing', async () => {
+    const error = new Error('Error saving payment')
+    savePaymentRequest.mockRejectedValueOnce(error)
+
+    await expect(
+      processApplicationPaymentRequest(mockedLogger, {}, receiver)
+    ).rejects.toThrow('Error saving payment')
+
+    expect(trackError).toHaveBeenCalledWith(
+      mockedLogger,
+      error,
+      'failed-process',
+      'Failed to process application payment request',
+      {
+        reason: '',
+        reference: 'agreementNo:  messageId: '
       }
     )
   })

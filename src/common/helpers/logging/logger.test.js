@@ -1,4 +1,4 @@
-import { getLogger, trackError } from './logger.js'
+import { getLogger, trackError, trackEvent } from './logger.js'
 
 describe('logger', () => {
   test('getLogger returns a pino logger instance', () => {
@@ -29,6 +29,26 @@ describe('logger', () => {
       },
       message
     )
+
+    spy.mockRestore()
+  })
+
+  test('trackEvent logs an info entry with the expected structure', () => {
+    const logger = getLogger()
+    const spy = jest.spyOn(logger, 'info').mockImplementation(() => {})
+
+    const category = 'test-category'
+    const type = 'example-event'
+
+    trackEvent(logger, type, category, { ref: '12345' })
+
+    expect(spy).toHaveBeenCalledWith({
+      event: {
+        type,
+        category,
+        ref: '12345'
+      }
+    })
 
     spy.mockRestore()
   })

@@ -4,7 +4,7 @@ import {
   getPendingPayments
 } from '../repositories/payment-repository'
 import { createBlobClient } from '../storage.js'
-import { requestPaymentStatus } from '../jobs/request-payment-status'
+import { requestPaymentStatus } from './request-payment-status.js'
 import {
   receivePaymentDataResponseMessages,
   sendPaymentDataRequest

@@ -27,7 +27,7 @@ services:
     networks:
       - cdp-tenant
     ports:
-      - '27017:27017'
+      - '27022:27017'
     volumes:
       - mongodb-data:/data
       - ./compose/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro

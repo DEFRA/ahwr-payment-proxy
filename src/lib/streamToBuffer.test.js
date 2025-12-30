@@ -1,4 +1,4 @@
-import { streamToBuffer } from './streamToBuffer'
+import { streamToBuffer } from './streamToBuffer.js'
 import { Readable } from 'stream'
 
 describe('streamToBuffer', () => {

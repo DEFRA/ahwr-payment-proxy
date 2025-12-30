@@ -1,7 +1,7 @@
-import { get } from '../../repositories/payment-repository'
-import { paymentApiRoutes } from './payment'
+import { get } from '../../repositories/payment-repository.js'
+import { paymentApiRoutes } from './payment.js'
 import Hapi from '@hapi/hapi'
-import { requestPaymentStatus } from '../../jobs/request-payment-status'
+import { requestPaymentStatus } from '../../jobs/request-payment-status.js'
 
 const reference = 'IAHW-G3CL-V59P'
 

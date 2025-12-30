@@ -1,5 +1,5 @@
 import joi from 'joi'
-import { trackError } from '../common/helpers/logging/logger'
+import { trackError } from '../common/helpers/logging/logger.js'
 
 const applicationPaymentRequestSchema = joi.object({
   reference: joi.string().required(),

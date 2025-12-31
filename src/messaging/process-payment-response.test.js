@@ -2,9 +2,11 @@ import util from 'util'
 import { processPaymentResponse } from './process-payment-response.js'
 import { updatePaymentResponse } from '../repositories/payment-repository.js'
 import { trackError, trackEvent } from '../common/helpers/logging/logger.js'
+import { metricsCounter } from '../common/helpers/metrics.js'
 
 jest.mock('../repositories/payment-repository')
 jest.mock('../common/helpers/logging/logger')
+jest.mock('../common/helpers/metrics.js')
 
 const mockErrorLogger = jest.fn()
 const mockInfoLogger = jest.fn()
@@ -76,6 +78,9 @@ describe('Process payment response', () => {
         reference: 'AA-1234-567'
       }
     )
+    expect(metricsCounter).toHaveBeenCalledWith(
+      'payment_response_message_received'
+    )
   })
 
   test('Update the payment with failed status and raise exception', async () => {
@@ -110,6 +115,9 @@ describe('Process payment response', () => {
         false
       )}`
     )
+    expect(metricsCounter).toHaveBeenCalledWith(
+      'payment_response_message_received'
+    )
   })
 
   test('response message deadLettered and error logged when no agreement number within message', async () => {
@@ -126,15 +134,14 @@ describe('Process payment response', () => {
     )
 
     expect(mockErrorLogger).toHaveBeenCalledWith(
-      `Received process payments response with no payment request and agreement number: ${util.inspect(
-        {
-          paymentRequest: {},
-          accepted: false
-        },
-        false,
-        null,
-        false
-      )}`
+      'Failed payment request: { paymentRequest: {}, accepted: false }'
+    )
+    expect(trackError).toHaveBeenCalledWith(
+      mockedLogger,
+      expect.any(Error),
+      'failed-process',
+      'No payment request or agreement number in payments response',
+      { reason: '{ paymentRequest: {}, accepted: false }' }
     )
     expect(mockReceiver.deadLetterMessage).toHaveBeenCalledTimes(1)
     expect(updatePaymentResponse).toHaveBeenCalledTimes(0)
@@ -143,12 +150,22 @@ describe('Process payment response', () => {
   test('Exception tracked and error log output when input is empty message', async () => {
     await processPaymentResponse(mockedLogger, mockDb, {}, mockReceiver)
 
-    expect(mockErrorLogger).toHaveBeenCalledTimes(2)
+    expect(mockErrorLogger).toHaveBeenCalledTimes(1)
+    expect(trackError).toHaveBeenCalledWith(
+      mockedLogger,
+      expect.any(Error),
+      'failed-process',
+      'No payment request or agreement number in payments response',
+      { reason: 'No message body' }
+    )
     expect(mockReceiver.deadLetterMessage).toHaveBeenCalledTimes(1)
     expect(updatePaymentResponse).toHaveBeenCalledTimes(0)
+    expect(metricsCounter).toHaveBeenCalledWith(
+      'payment_response_message_received'
+    )
   })
 
-  test('Message deadlettered and TrackException called when error thrown in updatePaymentResponse', async () => {
+  test('Message deadLettered and TrackError called when error thrown in updatePaymentResponse', async () => {
     const paymentRequest = { value: 0, agreementNumber }
     const accepted = 'ack'
     const error = new Error('Something wrong')

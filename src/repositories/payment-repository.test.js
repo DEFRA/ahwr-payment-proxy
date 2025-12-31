@@ -33,7 +33,7 @@ describe('Payment Repository test', () => {
 
     expect(mockCollection.insertOne).toHaveBeenCalledTimes(1)
     expect(mockCollection.insertOne).toHaveBeenCalledWith({
-      applicationReference: reference,
+      reference,
       data: { agreementNumber: reference },
       frn: '111343946890',
       createdAt: new Date('2025-04-15T00:00:00Z'),
@@ -57,7 +57,7 @@ describe('Payment Repository test', () => {
 
     expect(mockCollection.updateOne).toHaveBeenCalledTimes(1)
     expect(mockCollection.updateOne).toHaveBeenCalledWith(
-      { applicationReference: reference },
+      { reference },
       {
         $set: {
           status: 'completed',
@@ -73,7 +73,7 @@ describe('Payment Repository test', () => {
 
     expect(mockCollection.findOne).toHaveBeenCalledTimes(1)
     expect(mockCollection.findOne).toHaveBeenCalledWith(
-      { applicationReference: reference },
+      { reference },
       { projection: { _id: 0 } }
     )
   })
@@ -107,7 +107,7 @@ describe('Payment Repository test', () => {
   test('incrementPaymentCheckCount calls increment with correct params', async () => {
     const payment = {
       id: '32742adb-f37d-4bc8-8927-7f7d7cfc685e',
-      applicationReference: 'RESH-F99F-E09F',
+      reference: 'RESH-F99F-E09F',
       data: {
         sbi: '234234',
         value: 436,
@@ -135,7 +135,7 @@ describe('Payment Repository test', () => {
     const result = await incrementPaymentCheckCount(mockDb, 'RESH-F99F-E09F')
 
     expect(mockCollection.findOneAndUpdate).toHaveBeenCalledWith(
-      { applicationReference: 'RESH-F99F-E09F' },
+      { reference: 'RESH-F99F-E09F' },
       { $inc: { paymentCheckCount: 1 } },
       { returnDocument: 'after' }
     )
@@ -145,7 +145,7 @@ describe('Payment Repository test', () => {
   test('updatePaymentStatusByClaimRef calls update with correct params', async () => {
     const payment = {
       id: '32742adb-f37d-4bc8-8927-7f7d7cfc685e',
-      applicationReference: 'RESH-F99F-E09F',
+      reference: 'RESH-F99F-E09F',
       data: {
         sbi: '234234',
         value: 436,
@@ -177,7 +177,7 @@ describe('Payment Repository test', () => {
     )
 
     expect(mockCollection.findOneAndUpdate).toHaveBeenCalledWith(
-      { applicationReference: 'RESH-F99F-E09F' },
+      { reference: 'RESH-F99F-E09F' },
       { $set: { status: 'failed' } },
       { returnDocument: 'after' }
     )

@@ -34,10 +34,19 @@ export const processPaymentResponse = async (logger, db, message, receiver) => {
 
       await receiver.completeMessage(message)
     } else {
-      logger.error(
-        `Received process payments response with no payment request and agreement number: ${util.inspect(message.body, false, null, false)}`
+      trackError(
+        logger,
+        new Error('No payment request or agreement number'),
+        'failed-process',
+        'No payment request or agreement number in payments response',
+        {
+          reason: message.body
+            ? util.inspect(message.body, false, null, false)
+            : 'No message body'
+        }
       )
       await receiver.deadLetterMessage(message)
+      return
     }
 
     trackEvent(logger, 'process-payment', 'payment-response', {

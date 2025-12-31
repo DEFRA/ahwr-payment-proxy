@@ -10,12 +10,12 @@ import { subDays } from 'date-fns'
 export async function get(db, reference) {
   return db
     .collection(PAYMENTS_COLLECTION)
-    .findOne({ applicationReference: reference }, { projection: { _id: 0 } })
+    .findOne({ reference }, { projection: { _id: 0 } })
 }
 
 export async function set(db, reference, data, frn) {
   return db.collection(PAYMENTS_COLLECTION).insertOne({
-    applicationReference: reference,
+    reference,
     data,
     frn,
     createdAt: new Date(),
@@ -30,7 +30,7 @@ export async function updatePaymentResponse(
   paymentResponse
 ) {
   return db.collection(PAYMENTS_COLLECTION).updateOne(
-    { applicationReference: reference },
+    { reference },
     {
       $set: {
         status,
@@ -70,7 +70,7 @@ export async function incrementPaymentCheckCount(db, claimReference) {
   return db
     .collection(PAYMENTS_COLLECTION)
     .findOneAndUpdate(
-      { applicationReference: claimReference },
+      { reference: claimReference },
       { $inc: { paymentCheckCount: 1 } },
       { returnDocument: 'after' }
     )
@@ -84,7 +84,7 @@ export async function updatePaymentStatusByClaimRef(
   return db
     .collection(PAYMENTS_COLLECTION)
     .findOneAndUpdate(
-      { applicationReference: claimReference },
+      { reference: claimReference },
       { $set: { status } },
       { returnDocument: 'after' }
     )

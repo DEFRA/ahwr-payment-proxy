@@ -6,17 +6,22 @@ import { processApplicationPaymentRequest } from './process-application-payment-
 let applicationPaymentRequestSubscriber
 
 export async function configureAndStart(db) {
+  const onMessage = async (message, attributes) => {
+    const logger = getLogger().child({})
+    logger.info(attributes, 'Received incoming message')
+    await processApplicationPaymentRequest(logger, message, db)
+  }
+
   applicationPaymentRequestSubscriber = new SqsSubscriber({
     queueUrl: config.get('sqs.applicationPaymentRequestQueueUrl'),
-    logger: getLogger(),
+    logger: getLogger().child({}),
     region: config.get('aws.region'),
     awsEndpointUrl: config.get('aws.endpointUrl'),
-    async onMessage(message, attributes) {
-      getLogger().info(attributes, 'Received incoming message')
-      await processApplicationPaymentRequest(getLogger(), message, db)
-    }
+    onMessage
   })
   await applicationPaymentRequestSubscriber.start()
+
+  return onMessage
 }
 
 export async function stopSubscriber() {

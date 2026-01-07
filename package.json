@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "type": "module",
   "engines": {
-    "node": ">=22.16.0"
+    "node": ">=22.21.1"
   },
   "scripts": {
     "dev": "NODE_ENV=development npm run server:watch",
@@ -43,7 +43,7 @@
     "convict": "6.2.4",
     "convict-format-with-validator": "6.2.0",
     "date-fns": "4.1.0",
-    "ffc-ahwr-common-library": "3.4.1",
+    "ffc-ahwr-common-library": "3.4.2",
     "global-agent": "3.0.0",
     "hapi-pino": "13.0.0",
     "hapi-pulse": "3.0.1",

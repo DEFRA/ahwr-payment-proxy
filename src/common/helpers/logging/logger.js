@@ -19,7 +19,6 @@ export const trackError = (
       error,
       event: {
         type: 'exception',
-        severity: 'error',
         category,
         ...properties
       }

@@ -1,18 +1,31 @@
-import { endemicsPaymentTypes } from '../constants/index.js'
 import {
-  prices,
+  endemicsPaymentTypes,
+  PIGS_AND_PAYMENTS_RELEASE_DATE
+} from '../constants/index.js'
+import {
+  pricesOriginal,
+  pricesUplifted,
   claimType as CLAIM_TYPE,
   basicTestResultStatus,
   TYPE_OF_LIVESTOCK
 } from 'ffc-ahwr-common-library'
+
+export const isPostPaymentRateUplift = (dateOfVisit) => {
+  return new Date(dateOfVisit) >= PIGS_AND_PAYMENTS_RELEASE_DATE
+}
 
 export const getPaymentData = (
   typeOfLivestock,
   testResults,
   isEndemics,
   claimType,
+  dateOfVisit,
   yesOrNoPiHunt
 ) => {
+  const prices = isPostPaymentRateUplift(dateOfVisit)
+    ? pricesUplifted
+    : pricesOriginal
+
   if (isEndemics) {
     const isFollowUp = claimType === CLAIM_TYPE.endemics
     const endemicsPaymentType = isFollowUp

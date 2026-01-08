@@ -73,4 +73,4 @@ wait
 echo "SNS/SQS/S3 ready"
 
 # Send payment request
-awslocal sns publish --topic-arn arn:aws:sns:eu-west-2:000000000000:ahwr_payment_request --message '{ "reference": "IAHW-G3CL-V59P", "sbi": "123456789", "isEndemics": false, "reviewTestResults": "positive", "whichReview": "beef", "frn": "987654321", "claimType": "REVIEW" }' --message-attributes '{"eventType":{"DataType":"String","StringValue":"uk.gov.ffc.ahwr.submit.payment.request"}}'
+awslocal sns publish --topic-arn arn:aws:sns:eu-west-2:000000000000:ahwr_payment_request --message '{ "reference": "IAHW-G3CL-V59P", "sbi": "123456789", "isEndemics": false, "reviewTestResults": "positive", "whichReview": "beef", "frn": "987654321", "claimType": "REVIEW", "dateOfVisit": "2025-04-24T00:00:00.000Z" }' --message-attributes '{"eventType":{"DataType":"String","StringValue":"uk.gov.ffc.ahwr.submit.payment.request"}}'

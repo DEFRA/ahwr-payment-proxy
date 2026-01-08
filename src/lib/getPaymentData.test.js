@@ -6,12 +6,14 @@ describe('getPaymentData', () => {
     const testResults = 'positive'
     const isEndemics = true
     const yesOrNoPiHunt = 'noPiHunt'
+    const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
     const paymentData = getPaymentData(
       typeOfLivestock,
       testResults,
       isEndemics,
       'REVIEW',
+      dateOfVisit,
       yesOrNoPiHunt
     )
 
@@ -26,12 +28,14 @@ describe('getPaymentData', () => {
     const testResults = 'positive'
     const isEndemics = true
     const yesOrNoPiHunt = 'noPiHunt'
+    const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
     const paymentData = getPaymentData(
       typeOfLivestock,
       testResults,
       isEndemics,
       'FOLLOW_UP',
+      dateOfVisit,
       yesOrNoPiHunt
     )
 
@@ -46,12 +50,14 @@ describe('getPaymentData', () => {
     const testResults = 'negative'
     const isEndemics = true
     const yesOrNoPiHunt = 'noPiHunt'
+    const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
     const paymentData = getPaymentData(
       typeOfLivestock,
       testResults,
       isEndemics,
       'FOLLOW_UP',
+      dateOfVisit,
       yesOrNoPiHunt
     )
 
@@ -66,12 +72,14 @@ describe('getPaymentData', () => {
     const testResults = 'negative'
     const isEndemics = true
     const yesOrNoPiHunt = 'noPiHunt'
+    const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
     const paymentData = getPaymentData(
       typeOfLivestock,
       testResults,
       isEndemics,
       'REVIEW',
+      dateOfVisit,
       yesOrNoPiHunt
     )
 
@@ -86,12 +94,14 @@ describe('getPaymentData', () => {
     const testResults = 'positive'
     const isEndemics = true
     const yesOrNoPiHunt = 'noPiHunt'
+    const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
     const paymentData = getPaymentData(
       typeOfLivestock,
       testResults,
       isEndemics,
       'FOLLOW_UP',
+      dateOfVisit,
       yesOrNoPiHunt
     )
 
@@ -106,12 +116,14 @@ describe('getPaymentData', () => {
     const testResults = 'negative'
     const isEndemics = true
     const yesOrNoPiHunt = 'noPiHunt'
+    const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
     const paymentData = getPaymentData(
       typeOfLivestock,
       testResults,
       isEndemics,
       'FOLLOW_UP',
+      dateOfVisit,
       yesOrNoPiHunt
     )
 
@@ -126,12 +138,14 @@ describe('getPaymentData', () => {
     const testResults = 'positive'
     const isEndemics = true
     const yesOrNoPiHunt = 'yesPiHunt'
+    const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
     const paymentData = getPaymentData(
       typeOfLivestock,
       testResults,
       isEndemics,
       'REVIEW',
+      dateOfVisit,
       yesOrNoPiHunt
     )
 
@@ -146,12 +160,14 @@ describe('getPaymentData', () => {
     const testResults = 'positive'
     const isEndemics = true
     const yesOrNoPiHunt = 'yesPiHunt'
+    const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
     const paymentData = getPaymentData(
       typeOfLivestock,
       testResults,
       isEndemics,
       'FOLLOW_UP',
+      dateOfVisit,
       yesOrNoPiHunt
     )
 
@@ -166,12 +182,14 @@ describe('getPaymentData', () => {
     const testResults = 'negative'
     const isEndemics = true
     const yesOrNoPiHunt = 'yesPiHunt'
+    const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
     const paymentData = getPaymentData(
       typeOfLivestock,
       testResults,
       isEndemics,
       'FOLLOW_UP',
+      dateOfVisit,
       yesOrNoPiHunt
     )
 
@@ -186,12 +204,14 @@ describe('getPaymentData', () => {
     const testResults = 'negative'
     const isEndemics = true
     const yesOrNoPiHunt = 'yesPiHunt'
+    const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
     const paymentData = getPaymentData(
       typeOfLivestock,
       testResults,
       isEndemics,
       'REVIEW',
+      dateOfVisit,
       yesOrNoPiHunt
     )
 
@@ -206,12 +226,14 @@ describe('getPaymentData', () => {
     const testResults = 'positive'
     const isEndemics = true
     const yesOrNoPiHunt = 'yesPiHunt'
+    const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
     const paymentData = getPaymentData(
       typeOfLivestock,
       testResults,
       isEndemics,
       'FOLLOW_UP',
+      dateOfVisit,
       yesOrNoPiHunt
     )
 
@@ -226,12 +248,14 @@ describe('getPaymentData', () => {
     const testResults = 'negative'
     const isEndemics = true
     const yesOrNoPiHunt = 'yesPiHunt'
+    const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
     const paymentData = getPaymentData(
       typeOfLivestock,
       testResults,
       isEndemics,
       'FOLLOW_UP',
+      dateOfVisit,
       yesOrNoPiHunt
     )
 
@@ -245,12 +269,14 @@ describe('getPaymentData', () => {
     const typeOfLivestock = 'pigs'
     const testResults = null
     const isEndemics = true
+    const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
     const paymentData = getPaymentData(
       typeOfLivestock,
       testResults,
       isEndemics,
-      'REVIEW'
+      'REVIEW',
+      dateOfVisit
     )
 
     expect(paymentData).toEqual({
@@ -262,12 +288,14 @@ describe('getPaymentData', () => {
     const typeOfLivestock = 'pigs'
     const testResults = null
     const isEndemics = true
+    const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
     const paymentData = getPaymentData(
       typeOfLivestock,
       testResults,
       isEndemics,
-      'FOLLOW_UP'
+      'FOLLOW_UP',
+      dateOfVisit
     )
 
     expect(paymentData).toEqual({
@@ -280,12 +308,14 @@ describe('getPaymentData', () => {
     const typeOfLivestock = 'sheep'
     const testResults = null
     const isEndemics = true
+    const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
     const paymentData = getPaymentData(
       typeOfLivestock,
       testResults,
       isEndemics,
-      'REVIEW'
+      'REVIEW',
+      dateOfVisit
     )
 
     expect(paymentData).toEqual({
@@ -298,12 +328,14 @@ describe('getPaymentData', () => {
     const typeOfLivestock = 'sheep'
     const testResults = null
     const isEndemics = true
+    const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
     const paymentData = getPaymentData(
       typeOfLivestock,
       testResults,
       isEndemics,
-      'FOLLOW_UP'
+      'FOLLOW_UP',
+      dateOfVisit
     )
 
     expect(paymentData).toEqual({
@@ -316,8 +348,15 @@ describe('getPaymentData', () => {
     const typeOfLivestock = 'beef'
     const testResults = null
     const isEndemics = false
+    const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(typeOfLivestock, testResults, isEndemics)
+    const paymentData = getPaymentData(
+      typeOfLivestock,
+      testResults,
+      isEndemics,
+      undefined,
+      dateOfVisit
+    )
 
     expect(paymentData).toEqual({
       standardCode: 'AHWR-Beef',
@@ -329,8 +368,15 @@ describe('getPaymentData', () => {
     const typeOfLivestock = 'dairy'
     const testResults = null
     const isEndemics = false
+    const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(typeOfLivestock, testResults, isEndemics)
+    const paymentData = getPaymentData(
+      typeOfLivestock,
+      testResults,
+      isEndemics,
+      undefined,
+      dateOfVisit
+    )
 
     expect(paymentData).toEqual({
       standardCode: 'AHWR-Dairy',
@@ -342,8 +388,15 @@ describe('getPaymentData', () => {
     const typeOfLivestock = 'pigs'
     const testResults = null
     const isEndemics = false
+    const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(typeOfLivestock, testResults, isEndemics)
+    const paymentData = getPaymentData(
+      typeOfLivestock,
+      testResults,
+      isEndemics,
+      undefined,
+      dateOfVisit
+    )
 
     expect(paymentData).toEqual({
       standardCode: 'AHWR-Pigs',
@@ -355,12 +408,41 @@ describe('getPaymentData', () => {
     const typeOfLivestock = 'sheep'
     const testResults = null
     const isEndemics = false
+    const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(typeOfLivestock, testResults, isEndemics)
+    const paymentData = getPaymentData(
+      typeOfLivestock,
+      testResults,
+      isEndemics,
+      undefined,
+      dateOfVisit
+    )
 
     expect(paymentData).toEqual({
       standardCode: 'AHWR-Sheep',
       value: 436
+    })
+  })
+
+  test('returns correct payment data for beef review with payment rate uplift', () => {
+    const typeOfLivestock = 'beef'
+    const testResults = 'positive'
+    const isEndemics = true
+    const yesOrNoPiHunt = 'noPiHunt'
+    const dateOfVisit = '2026-01-22T00:00:00.000Z'
+
+    const paymentData = getPaymentData(
+      typeOfLivestock,
+      testResults,
+      isEndemics,
+      'REVIEW',
+      dateOfVisit,
+      yesOrNoPiHunt
+    )
+
+    expect(paymentData).toEqual({
+      standardCode: 'AHWR-Beef',
+      value: 647
     })
   })
 })

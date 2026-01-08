@@ -24,7 +24,8 @@ const applicationPaymentRequestMissingFrn = {
   reference,
   sbi: '123456789',
   whichReview: 'beef',
-  isEndemics: false
+  isEndemics: false,
+  dateOfVisit: '2025-04-24T00:00:00.000Z'
 }
 const applicationPaymentRequest = {
   ...applicationPaymentRequestMissingFrn,

@@ -25,3 +25,5 @@ export const DAILY_RETRY_FROM_DAYS = 1
 export const FINAL_RETRY_DAYS = 10
 
 export const PAYMENTS_COLLECTION = 'paymentrequests'
+
+export const PIGS_AND_PAYMENTS_RELEASE_DATE = new Date('2026-01-22T00:00:00')

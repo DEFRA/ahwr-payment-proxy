@@ -9,6 +9,7 @@ const applicationPaymentRequestSchema = joi.object({
   whichReview: joi.string().required(),
   frn: joi.string().optional(),
   claimType: joi.string().default(''),
+  dateOfVisit: joi.string().default(''),
   optionalPiHuntValue: joi.string().allow(null).optional()
 })
 

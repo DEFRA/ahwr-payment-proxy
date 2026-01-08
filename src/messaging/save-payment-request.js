@@ -9,6 +9,7 @@ const buildPaymentRequest = async (applicationPaymentRequest) => {
     isEndemics,
     reviewTestResults,
     claimType,
+    dateOfVisit,
     optionalPiHuntValue,
     reference: agreementNumber,
     sbi,
@@ -23,6 +24,7 @@ const buildPaymentRequest = async (applicationPaymentRequest) => {
     reviewTestResults,
     isEndemics,
     claimType,
+    dateOfVisit,
     optionalPiHuntValue
   )
 

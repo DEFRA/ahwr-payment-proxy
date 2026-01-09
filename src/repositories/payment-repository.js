@@ -19,7 +19,8 @@ export async function set(db, reference, data, frn) {
     data,
     frn,
     createdAt: new Date(),
-    paymentCheckCount: 0
+    paymentCheckCount: 0,
+    status: Status.REQUESTED
   })
 }
 

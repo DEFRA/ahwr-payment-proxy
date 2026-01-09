@@ -37,7 +37,8 @@ describe('Payment Repository test', () => {
       data: { agreementNumber: reference },
       frn: '111343946890',
       createdAt: new Date('2025-04-15T00:00:00Z'),
-      paymentCheckCount: 0
+      paymentCheckCount: 0,
+      status: 'requested'
     })
   })
 

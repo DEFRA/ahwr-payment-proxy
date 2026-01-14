@@ -207,7 +207,7 @@ const config = convict({
       env: 'COGNITO_AUDIENCE'
     },
     poolId: {
-      doc: 'Audience for the cognito instance',
+      doc: 'Pool ID for the cognito instance',
       format: String,
       default: '',
       env: 'COGNITO_POOL_ID'

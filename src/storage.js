@@ -11,7 +11,7 @@ const LOGINS = {
   'ahwr-payment-proxy-aad-access': 'ahwr-payment-proxy'
 }
 
-const getCognitoToken = async () => {
+export const getCognitoToken = async () => {
   const cognitoClient = new CognitoIdentityClient({
     region: config.get('aws.region')
   })

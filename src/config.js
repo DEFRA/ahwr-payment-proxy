@@ -199,6 +199,34 @@ const config = convict({
       }
     }
   },
+  cognito: {
+    audience: {
+      doc: 'Audience for the cognito instance',
+      format: String,
+      default: '',
+      env: 'COGNITO_AUDIENCE'
+    },
+    poolId: {
+      doc: 'Audience for the cognito instance',
+      format: String,
+      default: '',
+      env: 'COGNITO_POOL_ID'
+    }
+  },
+  azure: {
+    clientId: {
+      doc: 'Client ID for the azure instance',
+      format: String,
+      default: '',
+      env: 'AZURE_CLIENT_ID'
+    },
+    tenantId: {
+      doc: 'Tenant ID for the azure instance',
+      format: String,
+      default: '',
+      env: 'AZURE_TENANT_ID'
+    }
+  },
   httpProxy: {
     doc: 'HTTP Proxy URL',
     format: String,

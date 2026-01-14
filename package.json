@@ -29,6 +29,7 @@
   "author": "Defra DDTS",
   "license": "OGL-UK-3.0",
   "dependencies": {
+    "@aws-sdk/client-cognito-identity": "3.967.0",
     "@aws-sdk/client-s3": "3.948.0",
     "@azure/identity": "4.13.0",
     "@azure/storage-blob": "12.29.1",

@@ -1,7 +1,7 @@
 import { createBlobClient } from './storage'
 import { streamToBuffer } from './lib/streamToBuffer'
 import { BlobClient } from '@azure/storage-blob'
-import { DefaultAzureCredential } from '@azure/identity'
+import { ClientAssertionCredential } from '@azure/identity'
 
 const mockErrorLogger = jest.fn()
 const mockInfoLogger = jest.fn()
@@ -72,7 +72,7 @@ describe('storage', () => {
 
       expect(BlobClient).toHaveBeenCalledWith(
         blobUri,
-        expect.any(DefaultAzureCredential)
+        expect.any(ClientAssertionCredential)
       )
       expect(downloadMock).toHaveBeenCalled()
       expect(streamToBuffer).toHaveBeenCalledWith({})

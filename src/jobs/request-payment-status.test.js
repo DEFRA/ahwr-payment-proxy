@@ -45,7 +45,7 @@ describe('requestPaymentStatus', () => {
     getPendingPayments.mockResolvedValue([
       {
         frn: '1234567890',
-        applicationReference: 'RESH-F99F-E09F'
+        reference: 'RESH-F99F-E09F'
       }
     ])
     updatePaymentStatusByClaimRef.mockResolvedValue({
@@ -93,7 +93,7 @@ describe('requestPaymentStatus', () => {
     await requestPaymentStatus(loggerMock, dbMock)
 
     expect(loggerMock.error).toHaveBeenCalledWith(
-      { err: new Error('No blob URI received in payment data response') },
+      { error: new Error('No blob URI received in payment data response') },
       'Error requesting payment status'
     )
     expect(deleteBlobMock).not.toHaveBeenCalled()
@@ -113,7 +113,7 @@ describe('requestPaymentStatus', () => {
 
     expect(loggerMock.error).toHaveBeenCalledWith(
       {
-        err: new Error(
+        error: new Error(
           'No response messages received from payment data request'
         )
       },
@@ -134,7 +134,7 @@ describe('requestPaymentStatus', () => {
     await requestPaymentStatus(loggerMock, dbMock)
 
     expect(loggerMock.error).toHaveBeenCalledWith(
-      { err: new Error('Blob does not contain requested payment data') },
+      { error: new Error('Blob does not contain requested payment data') },
       'Error requesting payment status'
     )
     expect(completeMessageMock).toHaveBeenCalled()
@@ -239,7 +239,7 @@ describe('requestPaymentStatus', () => {
     expect(deleteBlobMock).toHaveBeenCalled()
     expect(completeMessageMock).toHaveBeenCalled()
     expect(loggerMock.error).toHaveBeenCalledWith(
-      'Payment not found to update paid status'
+      'Payment not found to update paid status. claimReference: RESH-F99F-E09F'
     )
   })
 
@@ -251,10 +251,9 @@ describe('requestPaymentStatus', () => {
     expect(completeMessageMock).toHaveBeenCalled()
     expect(loggerMock.error).toHaveBeenCalledWith(
       {
-        err: new Error('Unexpected error'),
-        responseMessage: { body: { uri: 'blob://test-uri' } }
+        error: new Error('Unexpected error')
       },
-      'Error completing response message'
+      `Error completing response message: ${JSON.stringify({ body: { uri: 'blob://test-uri' } })}`
     )
   })
 
@@ -265,7 +264,7 @@ describe('requestPaymentStatus', () => {
 
     expect(closeConnectionMock).toHaveBeenCalled()
     expect(loggerMock.error).toHaveBeenCalledWith(
-      { err: new Error('Unexpected error') },
+      { error: new Error('Unexpected error') },
       'Error closing receiver connection'
     )
   })
@@ -277,8 +276,8 @@ describe('requestPaymentStatus', () => {
 
     expect(deleteBlobMock).toHaveBeenCalled()
     expect(loggerMock.error).toHaveBeenCalledWith(
-      { err: new Error('Unexpected error'), blobUri: 'blob://test-uri' },
-      'Error deleting blob'
+      { error: new Error('Unexpected error') },
+      'Error deleting blob: blob://test-uri'
     )
   })
 })

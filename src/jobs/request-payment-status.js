@@ -45,7 +45,9 @@ const processPaidClaim = async (db, claimReference, logger) => {
       moveClaimToPaidMsgType
     )
   } else {
-    logger.error('Payment not found to update paid status')
+    logger.error(
+      `Payment not found to update paid status. claimReference: ${claimReference}`
+    )
   }
 }
 
@@ -72,7 +74,9 @@ const trackPaymentStatusError = ({
 
 const processPaymentDataEntry = async (db, paymentDataEntry, logger) => {
   const { agreementNumber: claimReference, status, events } = paymentDataEntry
-  logger.info({ claimReference, status }, 'Processing data entry')
+  logger.info(
+    `Processing data entry. claimReference: ${claimReference}, status: ${status}`
+  )
 
   if (status.name === PaymentHubStatus.SETTLED) {
     await processPaidClaim(db, claimReference, logger)
@@ -82,8 +86,7 @@ const processPaymentDataEntry = async (db, paymentDataEntry, logger) => {
   const updatedPayment = await incrementPaymentCheckCount(db, claimReference)
   if (!updatedPayment) {
     logger.error(
-      { claimReference },
-      'No rows returned from incrementing paymentCheckCount'
+      `No rows returned from incrementing paymentCheckCount. claimReference: ${claimReference}`
     )
     return
   }
@@ -157,7 +160,8 @@ export const processFrnRequest = async (db, frn, logger, claimReferences) => {
       requestMessageId,
       1
     )
-    logger.info(`Response: ${response.messages?.length}`)
+    logger.info(`Received ${response.messages?.length} messages`)
+
     receiver = response.receiver
     if (!response.messages?.length) {
       throw new Error('No response messages received from payment data request')
@@ -177,32 +181,34 @@ export const processFrnRequest = async (db, frn, logger, claimReferences) => {
       claimReferences,
       blobClient
     })
-  } catch (err) {
-    logger.error({ err }, 'Error requesting payment status')
+  } catch (error) {
+    logger.error({ error }, 'Error requesting payment status')
   } finally {
     if (receiver) {
       if (responseMessage) {
         await receiver
           .completeMessage(responseMessage)
-          .catch((err) =>
+          .catch((error) =>
             logger.error(
-              { err, responseMessage },
-              'Error completing response message'
+              { error },
+              `Error completing response message: ${JSON.stringify(responseMessage)}`
             )
           )
       }
 
       await receiver
         .close()
-        .catch((err) =>
-          logger.error({ err }, 'Error closing receiver connection')
+        .catch((error) =>
+          logger.error({ error }, 'Error closing receiver connection')
         )
     }
 
     if (blobClient) {
       await blobClient
         .deleteBlob()
-        .catch((err) => logger.error({ err, blobUri }, 'Error deleting blob'))
+        .catch((error) =>
+          logger.error({ error }, `Error deleting blob: ${blobUri}`)
+        )
     }
   }
 }
@@ -217,7 +223,7 @@ export const requestPaymentStatus = async (logger, db) => {
 
   for (const pendingPayment of pendingPayments) {
     uniqueFrns.add(pendingPayment.frn)
-    claimReferences.add(pendingPayment.applicationReference)
+    claimReferences.add(pendingPayment.reference)
   }
 
   for (const frn of uniqueFrns) {

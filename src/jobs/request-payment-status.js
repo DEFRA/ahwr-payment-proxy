@@ -22,7 +22,7 @@ const { initialAttempts: DAILY_RETRY_LIMIT } = config.get(
 
 const createPaymentDataRequest = (frn) => ({
   category: 'frn',
-  value: frn
+  value: `${frn}`
 })
 
 const processPaidClaim = async (db, claimReference, logger) => {

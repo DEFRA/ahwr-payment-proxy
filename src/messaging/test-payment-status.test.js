@@ -71,7 +71,9 @@ describe('testPaymentStatus', () => {
     )
 
     expect(blobClient.getBlob).toHaveBeenCalled()
-    expect(logger.info).toHaveBeenCalledWith('Payment status name: Paid')
+    expect(logger.info).toHaveBeenCalledWith(
+      'Retrieved payment status name: Paid'
+    )
 
     expect(receiver.completeMessage).toHaveBeenCalled()
     expect(receiver.close).toHaveBeenCalled()

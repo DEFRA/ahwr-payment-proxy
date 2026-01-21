@@ -75,7 +75,7 @@ const trackPaymentStatusError = ({
 const processPaymentDataEntry = async (db, paymentDataEntry, logger) => {
   const { agreementNumber: claimReference, status, events } = paymentDataEntry
   logger.info(
-    `Processing data entry. claimReference: ${claimReference}, status: ${status}`
+    `Processing data entry. claimReference: ${claimReference}, status: ${status.name}`
   )
 
   if (status.name === PaymentHubStatus.SETTLED) {

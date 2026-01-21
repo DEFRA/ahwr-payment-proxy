@@ -6,6 +6,7 @@ import { v4 as uuid } from 'uuid'
 import { createBlobClient } from '../storage.js'
 
 export const testPaymentStatus = async (logger) => {
+  logger.info('Retrieving payment status')
   let receiver, responseMessage, blobUri, blobClient
   try {
     const frn = '1102420247'
@@ -48,7 +49,7 @@ export const testPaymentStatus = async (logger) => {
       (blobData) => blobData.agreementNumber === reference
     )
 
-    logger.info(`Payment status name: ${entry.status.name}`)
+    logger.info(`Retrieved payment status name: ${entry.status.name}`)
   } catch (error) {
     logger.error(
       { message: error.message, stack_trace: error.stack },

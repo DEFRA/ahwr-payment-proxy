@@ -68,10 +68,10 @@ export async function createServer() {
 
   server.events.on('start', async () => {
     await startMessagingService(server.logger, server.db)
-    await configureAndStart(server.db)
-    if (config.get(requestPaymentStatusScheduler.enabled)) {
+    if (config.get('requestPaymentStatusScheduler.enabled')) {
       await testPaymentStatus(server.logger)
     }
+    await configureAndStart(server.db)
   })
 
   server.events.on('stop', async () => {

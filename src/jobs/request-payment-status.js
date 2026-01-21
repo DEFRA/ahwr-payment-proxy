@@ -143,6 +143,10 @@ const processDataRequestResponse = async ({
 }
 
 export const processFrnRequest = async (db, frn, logger, claimReferences) => {
+  logger.info(
+    `Processing frn request. frn: ${frn}, claimReferences: ${JSON.stringify([...claimReferences])}`
+  )
+
   const requestMessageId = uuid()
   const sessionId = uuid()
   const requestMessage = createPaymentDataRequest(frn)
@@ -214,19 +218,23 @@ export const processFrnRequest = async (db, frn, logger, claimReferences) => {
 }
 
 export const requestPaymentStatus = async (logger, db) => {
-  const uniqueFrns = new Set()
-  const claimReferences = new Set()
+  const claimReferencesByFrn = new Map()
 
   const pendingPayments = await getPendingPayments(db)
 
   logger.info(`Found ${pendingPayments.length} pending payments`)
 
   for (const pendingPayment of pendingPayments) {
-    uniqueFrns.add(pendingPayment.frn)
-    claimReferences.add(pendingPayment.reference)
+    const { frn, reference } = pendingPayment
+
+    if (!claimReferencesByFrn.has(frn)) {
+      claimReferencesByFrn.set(frn, new Set())
+    }
+
+    claimReferencesByFrn.get(frn).add(reference)
   }
 
-  for (const frn of uniqueFrns) {
-    await processFrnRequest(db, frn, logger.child({ frn }), claimReferences)
+  for (const [frn, claimReferences] of claimReferencesByFrn.entries()) {
+    await processFrnRequest(db, frn, logger, claimReferences)
   }
 }

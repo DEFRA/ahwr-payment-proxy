@@ -30,8 +30,8 @@ export const testPaymentStatus = async (logger) => {
       requestMessageId,
       1
     )
+    logger.info(`Received ${response.messages?.length} messages`)
 
-    logger.info(`Response: ${response.messages?.length}`)
     receiver = response.receiver
     if (!response.messages?.length) {
       throw new Error('No response messages received from payment data request')
@@ -45,16 +45,15 @@ export const testPaymentStatus = async (logger) => {
 
     blobClient = createBlobClient(logger, blobUri)
     const blob = await blobClient.getBlob()
+    logger.info('Retrieved blob')
+
     const entry = blob.data.find(
       (blobData) => blobData.agreementNumber === reference
     )
 
     logger.info(`Retrieved payment status name: ${entry.status.name}`)
   } catch (error) {
-    logger.error(
-      { message: error.message, stack_trace: error.stack },
-      'Failed to fetch payment status'
-    )
+    logger.error({ error }, 'Failed to fetch payment status')
   } finally {
     if (receiver) {
       if (responseMessage) {

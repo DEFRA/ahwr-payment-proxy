@@ -90,7 +90,9 @@ describe('testPaymentStatus', () => {
 
     expect(logger.error).toHaveBeenCalledWith(
       expect.objectContaining({
-        message: 'No response messages received from payment data request'
+        error: new Error(
+          'No response messages received from payment data request'
+        )
       }),
       'Failed to fetch payment status'
     )

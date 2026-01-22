@@ -19,6 +19,7 @@ export async function set(db, reference, data, frn) {
     data,
     frn,
     createdAt: new Date(),
+    updatedAt: new Date(),
     paymentCheckCount: 0,
     status: Status.REQUESTED
   })
@@ -36,7 +37,8 @@ export async function updatePaymentResponse(
       $set: {
         status,
         paymentResponse,
-        frn: paymentResponse.frn
+        frn: paymentResponse.frn,
+        updatedAt: new Date()
       }
     }
   )
@@ -68,13 +70,14 @@ export async function getPendingPayments(db) {
 }
 
 export async function incrementPaymentCheckCount(db, claimReference) {
-  return db
-    .collection(PAYMENTS_COLLECTION)
-    .findOneAndUpdate(
-      { reference: claimReference },
-      { $inc: { paymentCheckCount: 1 } },
-      { returnDocument: 'after' }
-    )
+  return db.collection(PAYMENTS_COLLECTION).findOneAndUpdate(
+    { reference: claimReference },
+    {
+      $inc: { paymentCheckCount: 1 },
+      $set: { updatedAt: new Date() }
+    },
+    { returnDocument: 'after' }
+  )
 }
 
 export async function updatePaymentStatusByClaimRef(
@@ -86,7 +89,7 @@ export async function updatePaymentStatusByClaimRef(
     .collection(PAYMENTS_COLLECTION)
     .findOneAndUpdate(
       { reference: claimReference },
-      { $set: { status } },
+      { $set: { status, updatedAt: new Date() } },
       { returnDocument: 'after' }
     )
 }

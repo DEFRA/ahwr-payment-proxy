@@ -38,7 +38,8 @@ describe('Payment Repository test', () => {
       frn: '111343946890',
       createdAt: new Date('2025-04-15T00:00:00Z'),
       paymentCheckCount: 0,
-      status: 'requested'
+      status: 'requested',
+      updatedAt: new Date('2025-04-15T00:00:00.000Z')
     })
   })
 
@@ -63,7 +64,8 @@ describe('Payment Repository test', () => {
         $set: {
           status: 'completed',
           paymentResponse,
-          frn: 1102354669
+          frn: 1102354669,
+          updatedAt: new Date('2025-04-15T00:00:00.000Z')
         }
       }
     )
@@ -137,7 +139,10 @@ describe('Payment Repository test', () => {
 
     expect(mockCollection.findOneAndUpdate).toHaveBeenCalledWith(
       { reference: 'RESH-F99F-E09F' },
-      { $inc: { paymentCheckCount: 1 } },
+      {
+        $inc: { paymentCheckCount: 1 },
+        $set: { updatedAt: new Date('2025-04-15T00:00:00.000Z') }
+      },
       { returnDocument: 'after' }
     )
     expect(result).toEqual(payment)
@@ -179,7 +184,12 @@ describe('Payment Repository test', () => {
 
     expect(mockCollection.findOneAndUpdate).toHaveBeenCalledWith(
       { reference: 'RESH-F99F-E09F' },
-      { $set: { status: 'failed' } },
+      {
+        $set: {
+          status: 'failed',
+          updatedAt: new Date('2025-04-15T00:00:00.000Z')
+        }
+      },
       { returnDocument: 'after' }
     )
     expect(result).toEqual(payment)

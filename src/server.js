@@ -16,7 +16,6 @@ import {
   stopMessagingService
 } from './messaging/fcp-messaging-service.js'
 import requestPaymentStatusScheduler from './jobs/request-payment-status-scheduler.js'
-import { testPaymentStatus } from './messaging/test-payment-status.js'
 
 export async function createServer() {
   setupProxy()
@@ -68,9 +67,6 @@ export async function createServer() {
 
   server.events.on('start', async () => {
     await startMessagingService(server.logger, server.db)
-    if (config.get('requestPaymentStatusScheduler.enabled')) {
-      await testPaymentStatus(server.logger)
-    }
     await configureAndStart(server.db)
   })
 

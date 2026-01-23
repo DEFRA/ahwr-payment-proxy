@@ -144,7 +144,7 @@ const processDataRequestResponse = async ({
 
 export const processFrnRequest = async (db, frn, logger, claimReferences) => {
   logger.info(
-    `Processing frn request. frn: ${frn}, claimReferences: ${JSON.stringify([...claimReferences])}`
+    `Processing frn request. frn: ${frn}, claimReferences: ${[...claimReferences].join(',')}`
   )
 
   const requestMessageId = uuid()

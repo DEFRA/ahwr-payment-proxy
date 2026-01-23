@@ -11,8 +11,12 @@ export const requestPaymentStatusHandler = async (request, h) => {
       params: { reference }
     } = request
 
-    const { frn } = await get(db, reference)
-    await processFrnRequest(db, frn, logger, new Set([reference]))
+    const payment = await get(db, reference)
+    if (!payment) {
+      throw Boom.notFound('Payment not found')
+    }
+
+    await processFrnRequest(db, payment.frn, logger, new Set([reference]))
 
     return h.response().code(StatusCodes.OK)
   } catch (err) {

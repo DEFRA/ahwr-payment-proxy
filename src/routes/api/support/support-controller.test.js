@@ -67,4 +67,13 @@ describe('updatePaymentHandler', () => {
       'Failed to request payment status'
     )
   })
+
+  test('should return 404 error when payment does not exist for reference', async () => {
+    get.mockResolvedValueOnce(undefined)
+
+    expect(requestPaymentStatusHandler(request, mockH)).rejects.toThrow(
+      'Payment not found'
+    )
+    expect(get).toHaveBeenCalledWith(mockDb, 'REBC-J9AR-KILQ')
+  })
 })

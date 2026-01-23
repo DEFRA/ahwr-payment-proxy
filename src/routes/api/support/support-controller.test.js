@@ -2,9 +2,11 @@ import { requestPaymentStatusHandler } from './support-controller.js'
 import { get } from '../../../repositories/payment-repository.js'
 import Boom from '@hapi/boom'
 import { processFrnRequest } from '../../../jobs/request-payment-status.js'
+import { trackEvent } from '../../../common/helpers/logging/logger.js'
 
 jest.mock('../../../repositories/payment-repository.js')
 jest.mock('../../../jobs/request-payment-status.js')
+jest.mock('../../../common/helpers/logging/logger.js')
 
 describe('updatePaymentHandler', () => {
   const mockH = {
@@ -40,6 +42,12 @@ describe('updatePaymentHandler', () => {
       new Set(['REBC-J9AR-KILQ'])
     )
     expect(get).toHaveBeenCalledWith(mockDb, 'REBC-J9AR-KILQ')
+    expect(trackEvent).toHaveBeenCalledWith(
+      mockLogger,
+      'manual-request',
+      'payment-status',
+      { reference: 'REBC-J9AR-KILQ' }
+    )
   })
 
   test('should return 500 error when retrieving payment fails', async () => {

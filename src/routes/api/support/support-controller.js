@@ -2,6 +2,7 @@ import { StatusCodes } from 'http-status-codes'
 import Boom from '@hapi/boom'
 import { get } from '../../../repositories/payment-repository.js'
 import { processFrnRequest } from '../../../jobs/request-payment-status.js'
+import { trackEvent } from '../../../common/helpers/logging/logger.js'
 
 export const requestPaymentStatusHandler = async (request, h) => {
   try {
@@ -15,6 +16,10 @@ export const requestPaymentStatusHandler = async (request, h) => {
     if (!payment) {
       throw Boom.notFound('Payment not found')
     }
+
+    trackEvent(logger, 'manual-request', 'payment-status', {
+      reference
+    })
 
     await processFrnRequest(db, payment.frn, logger, new Set([reference]))
 

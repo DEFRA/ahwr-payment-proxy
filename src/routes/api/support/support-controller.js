@@ -19,13 +19,13 @@ export const requestPaymentStatusHandler = async (request, h) => {
     await processFrnRequest(db, payment.frn, logger, new Set([reference]))
 
     return h.response().code(StatusCodes.OK)
-  } catch (err) {
-    request.logger.error({ err }, 'Failed to request payment status')
+  } catch (error) {
+    request.logger.error({ error }, 'Failed to request payment status')
 
-    if (Boom.isBoom(err)) {
-      throw err
+    if (Boom.isBoom(error)) {
+      throw error
     }
 
-    throw Boom.internal(err)
+    throw Boom.internal(error)
   }
 }

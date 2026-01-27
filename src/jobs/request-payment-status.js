@@ -137,9 +137,14 @@ const processDataRequestResponse = async ({
     throw new Error('Blob does not contain requested payment data')
   }
 
+  const statusByClaimReference = new Map()
+
   for (const entry of requestedPaymentData) {
     await processPaymentDataEntry(db, entry, logger)
+    statusByClaimReference.set(entry.agreementNumber, entry.status.name)
   }
+
+  return statusByClaimReference
 }
 
 export const processFrnRequest = async (db, frn, logger, claimReferences) => {
@@ -150,7 +155,7 @@ export const processFrnRequest = async (db, frn, logger, claimReferences) => {
   const requestMessageId = uuid()
   const sessionId = uuid()
   const requestMessage = createPaymentDataRequest(frn)
-  let receiver, responseMessage, blobUri, blobClient
+  let receiver, responseMessage, blobUri, blobClient, statusByClaimReference
 
   try {
     await sendPaymentDataRequest(
@@ -179,7 +184,7 @@ export const processFrnRequest = async (db, frn, logger, claimReferences) => {
 
     blobClient = createBlobClient(logger, blobUri)
 
-    await processDataRequestResponse({
+    statusByClaimReference = await processDataRequestResponse({
       db,
       logger,
       claimReferences,
@@ -215,6 +220,8 @@ export const processFrnRequest = async (db, frn, logger, claimReferences) => {
         )
     }
   }
+
+  return statusByClaimReference
 }
 
 export const requestPaymentStatus = async (logger, db) => {

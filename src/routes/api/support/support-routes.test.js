@@ -19,17 +19,13 @@ describe('support-routes', () => {
 
   describe('GET /api/support/payments/request-status', () => {
     it('should validate request and call correct handler', async () => {
-      const payload = {
-        claimReference: 'RESH-F99F-E09F'
-      }
       requestPaymentStatusHandler.mockImplementation(async (_, h) => {
         return h.response().code(200)
       })
 
       const res = await server.inject({
-        method: 'POST',
-        url: '/api/support/payments/request-status',
-        payload
+        method: 'GET',
+        url: '/api/support/payments/RESH-F99F-E09F/request-status'
       })
 
       expect(res.statusCode).toBe(200)

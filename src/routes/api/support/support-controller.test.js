@@ -31,6 +31,9 @@ describe('updatePaymentHandler', () => {
     get.mockResolvedValueOnce({
       frn: '12345'
     })
+    processFrnRequest.mockResolvedValueOnce(
+      new Map([['REBC-J9AR-KILQ', 'Settled']])
+    )
 
     await requestPaymentStatusHandler(request, mockH)
 
@@ -48,6 +51,9 @@ describe('updatePaymentHandler', () => {
       'payment-status',
       { reference: 'REBC-J9AR-KILQ' }
     )
+    expect(mockH.response).toHaveBeenCalledWith({
+      status: 'Settled'
+    })
   })
 
   test('should return 500 error when retrieving payment fails', async () => {

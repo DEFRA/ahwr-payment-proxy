@@ -21,9 +21,17 @@ export const requestPaymentStatusHandler = async (request, h) => {
       reference: claimReference
     })
 
-    await processFrnRequest(db, payment.frn, logger, new Set([claimReference]))
+    const statusByClaimReference = await processFrnRequest(
+      db,
+      payment.frn,
+      logger,
+      new Set([claimReference])
+    )
+    const response = {
+      status: statusByClaimReference?.get(claimReference)
+    }
 
-    return h.response().code(StatusCodes.OK)
+    return h.response(response).code(StatusCodes.OK)
   } catch (error) {
     request.logger.error({ error }, 'Failed to request payment status')
 

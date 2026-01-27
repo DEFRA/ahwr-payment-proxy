@@ -43,7 +43,7 @@ describe('support-routes', () => {
     jest.clearAllMocks()
   })
 
-  describe('GET /api/support/payments/{reference}/request-status', () => {
+  describe('GET /api/support/payments/request-status?claimReference={claimReference}', () => {
     it('should validate request and call correct handler', async () => {
       const payload = {
         status: 'PAID'
@@ -54,7 +54,7 @@ describe('support-routes', () => {
 
       const res = await server.inject({
         method: 'GET',
-        url: '/api/support/payments/RESH-F99F-E09F/request-status',
+        url: '/api/support/payments/request-status?claimReference=RESH-F99F-E09F',
         payload
       })
 

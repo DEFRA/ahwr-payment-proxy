@@ -4,12 +4,12 @@ import { requestPaymentStatusHandler } from './support-controller.js'
 export const supportRoutes = [
   {
     method: 'GET',
-    path: '/api/support/payments/{reference}/request-status',
+    path: '/api/support/payments/request-status',
     options: {
       description: 'Request payment status',
       validate: {
-        params: joi.object({
-          reference: joi.string().required()
+        query: joi.object({
+          claimReference: joi.string().required()
         })
       },
       handler: requestPaymentStatusHandler

@@ -20,14 +20,14 @@ describe('updatePaymentHandler', () => {
   const request = {
     db: mockDb,
     logger: mockLogger,
-    params: { reference: 'REBC-J9AR-KILQ' }
+    query: { claimReference: 'REBC-J9AR-KILQ' }
   }
 
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
-  test('should request payment status for reference', async () => {
+  test('should request payment status for claimReference', async () => {
     get.mockResolvedValueOnce({
       frn: '12345'
     })

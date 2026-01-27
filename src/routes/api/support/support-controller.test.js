@@ -20,7 +20,7 @@ describe('updatePaymentHandler', () => {
   const request = {
     db: mockDb,
     logger: mockLogger,
-    query: { claimReference: 'REBC-J9AR-KILQ' }
+    payload: { claimReference: 'REBC-J9AR-KILQ' }
   }
 
   beforeEach(() => {

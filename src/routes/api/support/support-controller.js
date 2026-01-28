@@ -9,7 +9,7 @@ export const requestPaymentStatusHandler = async (request, h) => {
     const {
       db,
       logger,
-      payload: { claimReference }
+      params: { claimReference }
     } = request
 
     const payment = await get(db, claimReference)

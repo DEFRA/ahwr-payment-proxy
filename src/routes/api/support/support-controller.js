@@ -9,21 +9,29 @@ export const requestPaymentStatusHandler = async (request, h) => {
     const {
       db,
       logger,
-      params: { reference }
+      payload: { claimReference }
     } = request
 
-    const payment = await get(db, reference)
+    const payment = await get(db, claimReference)
     if (!payment) {
       throw Boom.notFound('Payment not found')
     }
 
     trackEvent(logger, 'manual-request', 'payment-status', {
-      reference
+      reference: claimReference
     })
 
-    await processFrnRequest(db, payment.frn, logger, new Set([reference]))
+    const statusByClaimReference = await processFrnRequest(
+      db,
+      payment.frn,
+      logger,
+      new Set([claimReference])
+    )
+    const response = {
+      status: statusByClaimReference?.get(claimReference)
+    }
 
-    return h.response().code(StatusCodes.OK)
+    return h.response(response).code(StatusCodes.OK)
   } catch (error) {
     request.logger.error({ error }, 'Failed to request payment status')
 

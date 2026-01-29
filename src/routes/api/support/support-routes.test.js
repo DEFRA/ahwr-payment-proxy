@@ -17,14 +17,14 @@ describe('support-routes', () => {
     jest.clearAllMocks()
   })
 
-  describe('GET /api/support/payments/request-status', () => {
+  describe('POST /api/support/payments/request-status', () => {
     it('should validate request and call correct handler', async () => {
       requestPaymentStatusHandler.mockImplementation(async (_, h) => {
         return h.response().code(200)
       })
 
       const res = await server.inject({
-        method: 'GET',
+        method: 'POST',
         url: '/api/support/payments/RESH-F99F-E09F/request-status'
       })
 

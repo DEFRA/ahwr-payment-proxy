@@ -3,7 +3,7 @@ import { requestPaymentStatusHandler } from './support-controller.js'
 
 export const supportRoutes = [
   {
-    method: 'GET',
+    method: 'POST',
     path: '/api/support/payments/{claimReference}/request-status',
     options: {
       description: 'Request payment status',

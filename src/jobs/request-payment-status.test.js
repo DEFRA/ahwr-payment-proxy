@@ -227,13 +227,8 @@ describe('requestPaymentStatus', () => {
         'Payment has not been paid',
         {
           reference: 'claimReference: RESH-F99F-E09F, sbi: 234234',
-          reason: [
-            {
-              status: 'Routed to Request Editor for debt data',
-              date: '27/03/2025 12:03'
-            },
-            { status: 'Debt data attached', date: '28/03/2025 12:03' }
-          ],
+          reason:
+            '[{"status":"Routed to Request Editor for debt data","date":"27/03/2025 12:03"},{"status":"Debt data attached","date":"28/03/2025 12:03"}]',
           outcome:
             'Unresolved after INITIAL check sequence - paymentCheckCount: 3'
         }

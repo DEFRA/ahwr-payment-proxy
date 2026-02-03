@@ -60,7 +60,8 @@
     "undici": "7.10.0"
   },
   "overrides": {
-    "brace-expansion": "2.0.2"
+    "brace-expansion": "2.0.2",
+    "fast-xml-parser": "5.3.4"
   },
   "devDependencies": {
     "@babel/core": "7.27.4",

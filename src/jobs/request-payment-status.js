@@ -66,7 +66,7 @@ const trackPaymentStatusError = ({
     'Payment has not been paid',
     {
       reference: `claimReference: ${claimReference}, sbi: ${sbi}`,
-      reason: statuses,
+      reason: JSON.stringify(statuses),
       outcome: `Unresolved after ${type} check sequence - paymentCheckCount: ${paymentCheckCount}`
     }
   )

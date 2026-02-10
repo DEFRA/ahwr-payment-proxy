@@ -7,6 +7,10 @@ import {
 } from '../constants/index.js'
 import { subDays } from 'date-fns'
 
+export const createPaymentProxyIndexes = async (db) => {
+  await db.collection(PAYMENTS_COLLECTION).createIndex({ reference: 1 })
+}
+
 export async function get(db, reference) {
   return db
     .collection(PAYMENTS_COLLECTION)

@@ -1,6 +1,6 @@
 # ahwr-payment-proxy
 
-Core delivery platform Node.js Backend Template.
+Created from the Core delivery platform Node.js Backend Template.
 
 - [Requirements](#requirements)
   - [Node.js](#nodejs)
@@ -25,6 +25,21 @@ Core delivery platform Node.js Backend Template.
   - [SonarCloud](#sonarcloud)
 - [Licence](#licence)
   - [About the licence](#about-the-licence)
+
+# Service Purpose
+The payment proxy service is responsible for proxying payment requests to the FCP Payment component,
+which is used to send payment requests to the GOV.UK Pay service. It is invoked by input messages on it's input SQS queue,
+and outputs requests to the FCP Payment hub via an output Servicebus topic.
+
+# Service features
+- Listens to an SQS queue for messages containing payment request details
+- Saves an audit to the database of the request
+- Forwards request on to the FCP Payment hub via an output Servicebus topic
+- Receives ack messages from the FCP Payment hub via a Servicebus subscription and updates the audit in the database with the response details
+- Requests data from the FCP Payment hub via a Servicebus topic to determine the PAID status of a claim
+- Listens for a response to the data request on a servicebus queue
+- Fetches the data from storage blob link provided in the response and updates the audit in the database with the payment status details
+- Broadcasts the confirmation of PAID status back to application-backend
 
 ## Requirements
 
@@ -58,20 +73,18 @@ To run the application in `development` mode run:
 npm run dev
 ```
 
+OR to run dockerised locally, which mimics the production environment more closely, use the start script provided:
+
+```bash
+./scripts/start
+```
+
 ### Testing
 
 To test the application run:
 
 ```bash
 npm run test
-```
-
-### Production
-
-To mimic the application running in `production` mode locally run:
-
-```bash
-npm start
 ```
 
 ### Npm scripts
@@ -106,11 +119,12 @@ git config --global core.autocrlf false
 
 ## API endpoints
 
-| Endpoint             | Description                    |
-| :------------------- | :----------------------------- |
-| `GET: /health`       | Health                         |
-| `GET: /example    `  | Example API (remove as needed) |
-| `GET: /example/<id>` | Example API (remove as needed) |
+| Endpoint                             | Description                                                                                                                                                                                                                                  |
+|:-------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `GET: /health`                       | Health                                                                                                                                                                                                                                       |
+| `GET: /admin/trigger-payment-status` | Trigger the process to resolve PAID status of claims at ack status                                                                                                                                                                           |
+| `GET: /api/payments/{reference}`     | Retrieve details of the payment request record for a given reference                                                                                                                                                                         |
+| `POST: /api/support/payments/{claimReference}/request-status` | Request that attempt to resolve PAID status is made for specific claimReference |
 
 ## Development helpers
 
@@ -213,11 +227,9 @@ docker run -e PORT=3001 -p 3001:3001 ahwr-payment-proxy
 
 A local environment with:
 
-- Localstack for AWS services (S3, SQS)
-- Redis
+- Localstack for AWS services (SNS, SQS)
 - MongoDB
 - This service.
-- A commented out frontend example.
 
 ```bash
 docker compose up --build -d
@@ -230,7 +242,8 @@ the [.github/example.dependabot.yml](.github/example.dependabot.yml) to `.github
 
 ### SonarCloud
 
-Instructions for setting up SonarCloud can be found in [sonar-project.properties](./sonar-project.properties)
+Sonarcloud is active for this repository. All pull requests will be analysed and the results can be seen in the SonarCloud dashboard for this repository.
+The DEFRA standard quality gates are applied, so if the new code does not meet the standards the quality gate will fail and this will be visible in the pull request checks.
 
 ## Licence
 

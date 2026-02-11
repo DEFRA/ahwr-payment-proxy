@@ -27,11 +27,13 @@ Created from the Core delivery platform Node.js Backend Template.
   - [About the licence](#about-the-licence)
 
 # Service Purpose
+
 The payment proxy service is responsible for proxying payment requests to the FCP Payment component,
 which is used to send payment requests to the GOV.UK Pay service. It is invoked by input messages on it's input SQS queue,
 and outputs requests to the FCP Payment hub via an output Servicebus topic.
 
 # Service features
+
 - Listens to an SQS queue for messages containing payment request details
 - Saves an audit to the database of the request
 - Forwards request on to the FCP Payment hub via an output Servicebus topic
@@ -119,11 +121,11 @@ git config --global core.autocrlf false
 
 ## API endpoints
 
-| Endpoint                             | Description                                                                                                                                                                                                                                  |
-|:-------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `GET: /health`                       | Health                                                                                                                                                                                                                                       |
-| `GET: /admin/trigger-payment-status` | Trigger the process to resolve PAID status of claims at ack status                                                                                                                                                                           |
-| `GET: /api/payments/{reference}`     | Retrieve details of the payment request record for a given reference                                                                                                                                                                         |
+| Endpoint                                                      | Description                                                                     |
+| :------------------------------------------------------------ | :------------------------------------------------------------------------------ |
+| `GET: /health`                                                | Health                                                                          |
+| `GET: /admin/trigger-payment-status`                          | Trigger the process to resolve PAID status of claims at ack status              |
+| `GET: /api/payments/{reference}`                              | Retrieve details of the payment request record for a given reference            |
 | `POST: /api/support/payments/{claimReference}/request-status` | Request that attempt to resolve PAID status is made for specific claimReference |
 
 ## Development helpers

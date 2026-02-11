@@ -51,13 +51,13 @@
     "http-status-codes": "2.3.0",
     "https-proxy-agent": "7.0.6",
     "joi": "17.13.3",
-    "mongo-locks": "3.0.2",
-    "mongodb": "6.17.0",
+    "mongo-locks": "3.1.2",
+    "mongodb": "6.21.0",
     "node-cron": "4.2.1",
     "node-fetch": "3.3.2",
     "pino": "9.7.0",
     "pino-pretty": "13.0.0",
-    "undici": "7.10.0"
+    "undici": "7.20.0"
   },
   "overrides": {
     "brace-expansion": "2.0.2",

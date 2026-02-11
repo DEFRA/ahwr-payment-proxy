@@ -4,7 +4,8 @@ import {
   incrementPaymentCheckCount,
   set,
   updatePaymentResponse,
-  updatePaymentStatusByClaimRef
+  updatePaymentStatusByClaimRef,
+  createPaymentProxyIndexes
 } from './payment-repository'
 
 beforeEach(() => {
@@ -193,5 +194,21 @@ describe('Payment Repository test', () => {
       { returnDocument: 'after' }
     )
     expect(result).toEqual(payment)
+  })
+
+  describe('createPaymentProxyIndexes', () => {
+    const mockCollection = {
+      createIndex: jest.fn()
+    }
+    const mockDb = {
+      collection: jest.fn(() => mockCollection)
+    }
+
+    it('should create indexes', async () => {
+      await createPaymentProxyIndexes(mockDb)
+
+      expect(mockDb.collection).toHaveBeenCalledWith('paymentrequests')
+      expect(mockCollection.createIndex).toHaveBeenCalledWith({ reference: 1 })
+    })
   })
 })

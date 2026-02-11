@@ -1,4 +1,5 @@
 import { createServer } from '../../server.js'
+import { createPaymentProxyIndexes } from '../../repositories/payment-repository.js'
 
 const mockCreateIndex = jest.fn()
 const mockCollection = jest.fn(() => {
@@ -13,6 +14,7 @@ const mockDb = jest.fn((databaseName) => {
     namespace: databaseName
   }
 })
+jest.mock('../../repositories/payment-repository.js')
 
 jest.mock('mongodb', () => ({
   ...jest.requireActual('mongodb'),
@@ -35,6 +37,7 @@ describe('#mongoDb', () => {
 
     test('Server should have expected MongoDb decorators', () => {
       expect(server.db).toEqual(mockDb('ahwr-payment-proxy'))
+      expect(createPaymentProxyIndexes).toHaveBeenCalled()
     })
 
     test('MongoDb should have expected database name', () => {

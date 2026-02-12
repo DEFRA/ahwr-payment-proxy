@@ -36,6 +36,15 @@ const config = convict({
     format: String,
     default: 'ahwr-payment-proxy'
   },
+  apiKeys: {
+    backofficeUi: {
+      doc: 'API key to allow backoffice API access',
+      format: String,
+      default: 'not-set',
+      sensitive: true,
+      env: 'BACKOFFICE_UI_API_KEY'
+    }
+  },
   cdpEnvironment: {
     doc: 'The CDP environment the app is running in. With the addition of "local" for local development',
     format: [

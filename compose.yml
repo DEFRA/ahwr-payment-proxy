@@ -60,6 +60,7 @@ services:
       AWS_ENDPOINT_URL: http://localstack:4566
       MONGO_URI: mongodb://mongodb:27017/
       USE_PRETTY_PRINT: true
+      BACKOFFICE_UI_API_KEY: ${BACKOFFICE_UI_API_KEY:-446dcdbe-e02c-4d16-a266-001bbbd5f089}
     networks:
       - ahwr-local
     volumes:

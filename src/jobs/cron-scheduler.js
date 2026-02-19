@@ -28,7 +28,7 @@ const time = () => {
 }
 
 const createAgenda = () => {
-  const agenda = new Agenda(
+  agenda = new Agenda(
     {
       backend: new MongoBackend({
         address: buildMongoUri(),
@@ -56,14 +56,12 @@ const createAgenda = () => {
     getLogger().error(error, `Job <${job.attrs.name}> failed at ${time()}`)
     await emitMetricEvent(`${job.attrs.name}_failed`)
   })
-
-  return agenda
 }
 
 export const startAgendaScheduling = async (dbClient) => {
   getLogger().info('Starting Agenda scheduling')
 
-  agenda = createAgenda()
+  createAgenda()
 
   const lockLifetimeMs = 120000
   const backoffDelayMs = 30000

@@ -5,7 +5,6 @@ import { router } from './plugins/router.js'
 import { authPlugin } from './plugins/auth.js'
 import { requestLogger } from './common/helpers/logging/request-logger.js'
 import { mongoDb } from './common/helpers/mongodb.js'
-import { pulse } from './common/helpers/pulse.js'
 import { requestTracing } from './common/helpers/request-tracing.js'
 import { setupProxy } from './common/helpers/proxy/setup-proxy.js'
 import {
@@ -16,7 +15,10 @@ import {
   startMessagingService,
   stopMessagingService
 } from './messaging/fcp-messaging-service.js'
-import requestPaymentStatusScheduler from './jobs/request-payment-status-scheduler.js'
+import {
+  startAgendaScheduling,
+  stopAgendaScheduling
+} from './jobs/cron-scheduler.js'
 
 export async function createServer() {
   setupProxy()
@@ -56,7 +58,6 @@ export async function createServer() {
     requestLogger,
     requestTracing,
     secureContext,
-    pulse,
     {
       plugin: mongoDb,
       options: config.get('mongo')
@@ -65,9 +66,8 @@ export async function createServer() {
     router
   ])
 
-  await server.register(requestPaymentStatusScheduler)
-
   server.events.on('start', async () => {
+    await startAgendaScheduling(server.db)
     await startMessagingService(server.logger, server.db)
     await configureAndStart(server.db)
   })
@@ -75,6 +75,7 @@ export async function createServer() {
   server.events.on('stop', async () => {
     await stopSubscriber()
     await stopMessagingService()
+    await stopAgendaScheduling()
   })
 
   return server

@@ -3,6 +3,7 @@ import {
   stopAgendaScheduling
 } from './cron-scheduler.js'
 import { config } from '../config.js'
+import { metricsCounter } from '../common/helpers/metrics.js'
 
 const mockOn = jest.fn()
 const mockDefine = jest.fn()
@@ -111,6 +112,59 @@ describe('cron-scheduler', () => {
         'Agenda started and 0 job(s) scheduled'
       )
     })
+
+    it('should correctly build the Mongo URI when /admin is present', async () => {
+        config.get.mockImplementation((key) => {
+          const values = {
+            'mongo.mongoUrl': 'mongodb://user:pass@localhost:27017/admin',
+            'mongo.databaseName': 'testdb',
+            'scheduledJobs.requestPaymentStatus.enabled': true
+          }
+          return values[key]
+        })
+      
+        await startAgendaScheduling(mockDbClient)
+        
+        const { MongoBackend } = require('@agendajs/mongo-backend')
+        expect(MongoBackend).toHaveBeenCalledWith(expect.objectContaining({
+          address: 'mongodb://user:pass@localhost:27017/testdb'
+        }))
+      })
+
+      it('should log on job start', async () => {
+        await startAgendaScheduling(mockDbClient)
+        
+        // Find the 'start' listener and trigger it
+        const startListener = mockOn.mock.calls.find(call => call[0] === 'start')[1]
+        const mockJob = { attrs: { name: 'request payment status' } }
+        
+        startListener(mockJob)
+        expect(mockLogger.info).toHaveBeenCalledWith(expect.stringContaining('Job <request payment status> starting'))
+      })
+    
+      it('should log and emit metrics on job failure', async () => {
+        await startAgendaScheduling(mockDbClient)
+        
+        const failListener = mockOn.mock.calls.find(call => call[0] === 'fail')[1]
+        const mockJob = { attrs: { name: 'request payment status' } }
+        const mockError = new Error('Boom')
+        
+        await failListener(mockError, mockJob)
+        
+        expect(mockLogger.error).toHaveBeenCalledWith(mockError, expect.stringContaining('Job <request payment status> failed'))
+        expect(metricsCounter).toHaveBeenCalledWith('scheduledjobs_request-payment-status_failed')
+      })
+
+       
+      it('should log and emit metrics on job success', async () => {
+        await startAgendaScheduling(mockDbClient)
+        
+        const successListener = mockOn.mock.calls.find(call => call[0] === 'success')[1]
+        const mockJob = { attrs: { name: 'request payment status' } }
+        
+        successListener(mockJob)
+        expect(mockLogger.info).toHaveBeenCalledWith(expect.stringContaining('Job <request payment status> succeeded'))
+      })
   })
 
   describe('stopAgendaScheduling', () => {

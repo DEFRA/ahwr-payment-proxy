@@ -4,6 +4,7 @@ import {
 } from './cron-scheduler.js'
 import { config } from '../config.js'
 import { metricsCounter } from '../common/helpers/metrics.js'
+import { requestPaymentStatus } from './request-payment-status.js'
 
 const mockOn = jest.fn()
 const mockDefine = jest.fn()
@@ -53,6 +54,7 @@ jest.mock('./request-payment-status.js', () => ({
 
 describe('cron-scheduler', () => {
   const mockDbClient = jest.fn()
+  const mockJob = { attrs: { name: 'request payment status' } }
 
   describe('startAgendaScheduling', () => {
     beforeEach(() => {
@@ -150,11 +152,9 @@ describe('cron-scheduler', () => {
 
     it('should log and emit metrics on job failure', async () => {
       await startAgendaScheduling(mockDbClient)
-
       const failListener = mockOn.mock.calls.find(
         (call) => call[0] === 'fail'
       )[1]
-      const mockJob = { attrs: { name: 'request payment status' } }
       const mockError = new Error('Boom')
 
       await failListener(mockError, mockJob)
@@ -174,11 +174,25 @@ describe('cron-scheduler', () => {
       const successListener = mockOn.mock.calls.find(
         (call) => call[0] === 'success'
       )[1]
-      const mockJob = { attrs: { name: 'request payment status' } }
 
       successListener(mockJob)
       expect(mockLogger.info).toHaveBeenCalledWith(
         expect.stringContaining('Job <request payment status> succeeded')
+      )
+    })
+
+    it('should call requestPaymentStatus when job runs', async () => {
+      await startAgendaScheduling(mockDbClient)
+      const jobDefinition = mockDefine.mock.calls[0][1]
+
+      await jobDefinition(mockJob)
+
+      expect(metricsCounter).toHaveBeenCalledWith(
+        'scheduledjobs_request-payment-status'
+      )
+      expect(requestPaymentStatus).toHaveBeenCalledWith(
+        mockLogger,
+        mockDbClient
       )
     })
   })

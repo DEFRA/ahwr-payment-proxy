@@ -81,7 +81,6 @@ export const startAgendaScheduling = async (dbClient) => {
       schedule: config.get('scheduledJobs.requestPaymentStatus.schedule')
     }
   }
-  getLogger().info(`${JSON.stringify(jobs)}`)
 
   if (jobs.REQUEST_PAYMENT_STATUS.enabled) {
     agenda.define(

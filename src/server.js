@@ -16,7 +16,10 @@ import {
   startMessagingService,
   stopMessagingService
 } from './messaging/fcp-messaging-service.js'
-import requestPaymentStatusScheduler from './jobs/request-payment-status-scheduler.js'
+import {
+  startAgendaScheduling,
+  stopAgendaScheduling
+} from './jobs/cron-scheduler.js'
 
 export async function createServer() {
   setupProxy()
@@ -65,9 +68,8 @@ export async function createServer() {
     router
   ])
 
-  await server.register(requestPaymentStatusScheduler)
-
   server.events.on('start', async () => {
+    await startAgendaScheduling(server.db)
     await startMessagingService(server.logger, server.db)
     await configureAndStart(server.db)
   })
@@ -75,6 +77,7 @@ export async function createServer() {
   server.events.on('stop', async () => {
     await stopSubscriber()
     await stopMessagingService()
+    await stopAgendaScheduling()
   })
 
   return server

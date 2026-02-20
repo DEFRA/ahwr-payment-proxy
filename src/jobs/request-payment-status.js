@@ -17,7 +17,7 @@ import { trackError } from '../common/helpers/logging/logger.js'
 const { moveClaimToPaidMsgType } = config.get('messageTypes')
 
 const { initialAttempts: DAILY_RETRY_LIMIT } = config.get(
-  'requestPaymentStatusScheduler'
+  'scheduledJobs.requestPaymentStatus'
 )
 
 const createPaymentDataRequest = (frn) => ({

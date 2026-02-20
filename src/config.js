@@ -257,26 +257,6 @@ const config = convict({
       env: 'TRACING_HEADER'
     }
   },
-  requestPaymentStatusScheduler: {
-    enabled: {
-      doc: 'Enable request payment status',
-      format: Boolean,
-      default: false,
-      env: 'REQUEST_PAYMENT_STATUS_ENABLED'
-    },
-    schedule: {
-      doc: 'Cron schedule for request payment status job',
-      format: String,
-      default: '0 11 * * 1-5',
-      env: 'REQUEST_PAYMENT_STATUS_SCHEDULE'
-    },
-    initialAttempts: {
-      doc: 'Initial attempts for request payment processing',
-      format: 'int',
-      default: 3,
-      env: 'REQUEST_PAYMENT_INITIAL_ATTEMPTS'
-    }
-  },
   messageTypes: {
     applicationRequestMsgType: {
       doc: 'Message type for application requests',
@@ -302,6 +282,28 @@ const config = convict({
     format: Boolean,
     default: false,
     env: 'SEND_PAYMENT_REQUEST'
+  },
+  scheduledJobs: {
+    requestPaymentStatus: {
+      enabled: {
+        doc: 'Request payment status scheduled job is enabled',
+        format: Boolean,
+        default: process.env.REQUEST_PAYMENT_STATUS_ENABLED === 'true'
+      },
+      schedule: {
+        doc: 'Request payment status schedule',
+        format: String,
+        env: 'REQUEST_PAYMENT_STATUS_SCHEDULE',
+        nullable: true,
+        default: null
+      },
+      initialAttempts: {
+        doc: 'Initial attempts for request payment processing',
+        format: 'int',
+        default: 3,
+        env: 'REQUEST_PAYMENT_INITIAL_ATTEMPTS'
+      }
+    }
   }
 })
 

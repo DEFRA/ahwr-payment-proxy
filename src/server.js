@@ -5,6 +5,7 @@ import { router } from './plugins/router.js'
 import { authPlugin } from './plugins/auth.js'
 import { requestLogger } from './common/helpers/logging/request-logger.js'
 import { mongoDb } from './common/helpers/mongodb.js'
+import { pulse } from './common/helpers/pulse.js'
 import { requestTracing } from './common/helpers/request-tracing.js'
 import { setupProxy } from './common/helpers/proxy/setup-proxy.js'
 import {
@@ -58,6 +59,7 @@ export async function createServer() {
     requestLogger,
     requestTracing,
     secureContext,
+    pulse,
     {
       plugin: mongoDb,
       options: config.get('mongo')

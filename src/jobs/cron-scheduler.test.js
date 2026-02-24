@@ -88,7 +88,9 @@ describe('cron-scheduler', () => {
       )
       expect(mockEvery).toHaveBeenCalledWith(
         '*/5 * * * *',
-        'request payment status'
+        'request payment status',
+        {},
+        { skipImmediate: true }
       )
       expect(mockLogger.info).toHaveBeenCalledWith(
         expect.stringContaining('Agenda started and 1 job(s) scheduled')

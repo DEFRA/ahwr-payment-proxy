@@ -100,7 +100,9 @@ export const startAgendaScheduling = async (dbClient) => {
   if (jobs.REQUEST_PAYMENT_STATUS.enabled) {
     await agenda.every(
       jobs.REQUEST_PAYMENT_STATUS.schedule,
-      jobs.REQUEST_PAYMENT_STATUS.name
+      jobs.REQUEST_PAYMENT_STATUS.name,
+      {},
+      { skipImmediate: true }
     )
     enabledJobCount += 1
   }

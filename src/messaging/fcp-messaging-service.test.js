@@ -18,9 +18,11 @@ describe('fcp-messaging-service', () => {
       close: jest.fn(),
       subscribeTopic: jest.fn()
     }
+    const mockChildLogger = jest.fn()
     const mockLogger = {
       info: jest.fn(),
-      error: jest.fn()
+      error: jest.fn(),
+      child: () => mockChildLogger
     }
     const mockDb = jest.fn()
 
@@ -68,7 +70,7 @@ describe('fcp-messaging-service', () => {
       processMessage(mockMessage, mockReceiver)
 
       expect(processPaymentResponse).toHaveBeenCalledWith(
-        mockLogger,
+        mockChildLogger,
         mockDb,
         mockMessage,
         mockReceiver

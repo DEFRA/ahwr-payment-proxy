@@ -3,8 +3,8 @@ import Boom from '@hapi/boom'
 import { get } from '../../../repositories/payment-repository.js'
 import { processFrnRequest } from '../../../jobs/request-payment-status.js'
 import { trackEvent } from '../../../common/helpers/logging/logger.js'
-import { SQSClient, ReceiveMessageCommand } from '@aws-sdk/client-sqs'
 import { config } from '../../../config.js'
+import { sqsClient } from 'ffc-ahwr-common-library'
 
 export const requestPaymentStatusHandler = async (request, h) => {
   try {
@@ -49,31 +49,14 @@ export const supportQueueMessagesHandler = async (request, h) => {
   try {
     const { queueUrl, limit } = request.query
 
-    const client = new SQSClient({
-      region: config.get('aws.region'),
-      endpoint: config.get('aws.endpointUrl')
-    })
+    const region = config.get('aws.region')
+    const endpointUrl = config.get('aws.endpointUrl')
 
-    const command = new ReceiveMessageCommand({
-      QueueUrl: queueUrl,
-      MaxNumberOfMessages: limit,
-      VisibilityTimeout: 2,
-      WaitTimeSeconds: 0,
-      AttributeNames: ['All'],
-      MessageAttributeNames: ['All']
-    })
-    const res = await client.send(command)
+    sqsClient.setupClient(region, endpointUrl, request.logger)
 
-    request.logger.info(`Retrieved ${res.Messages?.length || 0} messages`)
+    const messages = await sqsClient.peekMessages(queueUrl, limit)
 
-    const result = (res.Messages || []).map((msg) => ({
-      id: msg.MessageId,
-      body: msg.Body,
-      attributes: msg.Attributes,
-      messageAttributes: msg.MessageAttributes
-    }))
-
-    return h.response(result).code(StatusCodes.OK)
+    return h.response(messages).code(StatusCodes.OK)
   } catch (err) {
     request.logger.error({ err }, 'Failed to get queue messages')
 

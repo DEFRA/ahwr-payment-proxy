@@ -2,7 +2,10 @@ import { Server } from '@hapi/hapi'
 import { StatusCodes } from 'http-status-codes'
 import { authPlugin } from '../../../plugins/auth.js'
 import { supportRoutes } from './support-routes.js'
-import { requestPaymentStatusHandler } from './support-controller.js'
+import {
+  requestPaymentStatusHandler,
+  supportQueueMessagesHandler
+} from './support-controller.js'
 
 jest.mock('./support-controller.js')
 
@@ -55,6 +58,23 @@ describe('support-routes', () => {
       })
 
       expect(res.statusCode).toBe(StatusCodes.UNAUTHORIZED)
+    })
+  })
+
+  describe('GET /api/support/queue-messages', () => {
+    it('should validate request and call correct handler', async () => {
+      supportQueueMessagesHandler.mockImplementation(async (_, h) => {
+        return h.response().code(StatusCodes.OK)
+      })
+
+      const res = await server.inject({
+        method: 'GET',
+        url: '/api/support/queue-messages?queueUrl=localhost:4566/payment-status',
+        headers: { 'x-api-key': 'not-set' }
+      })
+
+      expect(res.statusCode).toBe(StatusCodes.OK)
+      expect(supportQueueMessagesHandler).toHaveBeenCalledTimes(1)
     })
   })
 })

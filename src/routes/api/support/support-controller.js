@@ -57,13 +57,13 @@ export const supportQueueMessagesHandler = async (request, h) => {
     const messages = await sqsClient.peekMessages(queueUrl, limit)
 
     return h.response(messages).code(StatusCodes.OK)
-  } catch (err) {
-    request.logger.error({ err }, 'Failed to get queue messages')
+  } catch (error) {
+    request.logger.error({ error }, 'Failed to get queue messages')
 
-    if (Boom.isBoom(err)) {
-      throw err
+    if (Boom.isBoom(error)) {
+      throw error
     }
 
-    throw Boom.internal(err)
+    throw Boom.internal(error)
   }
 }

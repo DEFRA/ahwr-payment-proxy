@@ -26,7 +26,7 @@ export const supportRoutes = [
       validate: {
         query: Joi.object({
           queueUrl: Joi.string().required(),
-          limit: Joi.string().optional()
+          limit: Joi.string().required()
         })
       },
       handler: supportQueueMessagesHandler

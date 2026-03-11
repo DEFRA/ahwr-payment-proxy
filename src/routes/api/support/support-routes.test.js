@@ -69,7 +69,7 @@ describe('support-routes', () => {
 
       const res = await server.inject({
         method: 'GET',
-        url: '/api/support/queue-messages?queueUrl=localhost:4566/payment-status',
+        url: '/api/support/queue-messages?queueUrl=localhost:4566/payment-status&limit=10',
         headers: { 'x-api-key': 'not-set' }
       })
 

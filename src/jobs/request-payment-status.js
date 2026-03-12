@@ -1,4 +1,5 @@
 import { config } from '../config.js'
+import { inspect } from 'util'
 import {
   getPendingPayments,
   incrementPaymentCheckCount,
@@ -200,7 +201,7 @@ export const processFrnRequest = async (db, frn, logger, claimReferences) => {
           .catch((error) =>
             logger.error(
               { error },
-              `Error completing response message: ${JSON.stringify(responseMessage)}`
+              `Error completing response message: ${inspect(responseMessage)}`
             )
           )
       }

@@ -1,5 +1,5 @@
 import { config } from '../config.js'
-import { inspect } from 'util'
+import { inspect } from 'node:util'
 import {
   getPendingPayments,
   incrementPaymentCheckCount,

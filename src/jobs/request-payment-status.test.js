@@ -257,7 +257,7 @@ describe('requestPaymentStatus', () => {
         {
           error: new Error('Unexpected error')
         },
-        `Error completing response message: ${JSON.stringify({ body: { uri: 'blob://test-uri' } })}`
+        `Error completing response message: { body: { uri: 'blob://test-uri' } }`
       )
     })
 

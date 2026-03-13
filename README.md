@@ -67,6 +67,8 @@ Install application dependencies:
 npm install
 ```
 
+Copy `.env.example` to `.env` and populate the secrets
+
 ### Development
 
 To run the application in `development` mode run:

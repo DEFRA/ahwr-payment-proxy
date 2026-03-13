@@ -13,6 +13,7 @@ import {
   sendPaymentDataRequest
 } from '../messaging/fcp-messaging-service.js'
 import { trackError } from '../common/helpers/logging/logger.js'
+import { config } from '../config.js'
 
 jest.mock('../repositories/payment-repository')
 jest.mock('../messaging/publish-outbound-notification.js')
@@ -32,9 +33,18 @@ describe('requestPaymentStatus', () => {
   const deleteBlobMock = jest.fn()
   const getBlobMock = jest.fn()
   const dbMock = jest.fn()
+  const paymentsBlobUriPrefix = 'https://test.blob.core.windows.net'
+  const relativeBlobPath = '/data-requests/test-file.json'
 
   beforeEach(() => {
     jest.clearAllMocks()
+    const originalGet = config.get.bind(config)
+    jest.spyOn(config, 'get').mockImplementation((key) => {
+      if (key === 'azure.paymentsBlobUriPrefix') {
+        return paymentsBlobUriPrefix
+      }
+      return originalGet(key)
+    })
     completeMessageMock.mockResolvedValue()
     closeConnectionMock.mockResolvedValue()
     deleteBlobMock.mockResolvedValue()
@@ -61,7 +71,7 @@ describe('requestPaymentStatus', () => {
         completeMessage: completeMessageMock,
         close: closeConnectionMock
       },
-      messages: [{ body: { uri: 'blob://test-uri' } }]
+      messages: [{ body: { uri: relativeBlobPath } }]
     })
     createBlobClient.mockReturnValue({
       getBlob: getBlobMock,
@@ -86,7 +96,7 @@ describe('requestPaymentStatus', () => {
       expect(getBlobMock).toHaveBeenCalled()
       expect(createBlobClient).toHaveBeenCalledWith(
         loggerMock,
-        'blob://test-uri'
+        `${paymentsBlobUriPrefix}${relativeBlobPath}`
       )
     })
 
@@ -257,7 +267,7 @@ describe('requestPaymentStatus', () => {
         {
           error: new Error('Unexpected error')
         },
-        `Error completing response message: { body: { uri: 'blob://test-uri' } }`
+        `Error completing response message: { body: { uri: '${relativeBlobPath}' } }`
       )
     })
 
@@ -302,7 +312,7 @@ describe('requestPaymentStatus', () => {
       expect(deleteBlobMock).toHaveBeenCalled()
       expect(loggerMock.error).toHaveBeenCalledWith(
         { error: new Error('Unexpected error') },
-        'Error deleting blob: blob://test-uri'
+        `Error deleting blob: ${paymentsBlobUriPrefix}${relativeBlobPath}`
       )
     })
   })
@@ -331,7 +341,7 @@ describe('requestPaymentStatus', () => {
       expect(getBlobMock).toHaveBeenCalled()
       expect(createBlobClient).toHaveBeenCalledWith(
         loggerMock,
-        'blob://test-uri'
+        `${paymentsBlobUriPrefix}${relativeBlobPath}`
       )
       expect(result).toEqual(new Map([['RESH-F99F-E09F', 'Settled']]))
     })

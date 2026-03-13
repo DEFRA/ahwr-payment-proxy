@@ -12,4 +12,5 @@ Use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) with 
 By default, a commit into the trunk will cause a `minor` version increment. If you need either the `major` or `patch` version, append `#major` or `#patch` to the commit message eg `feat: [AHWR-123] removed deprecated endpoint #major`
 
 ## Environment Variables
-When adding environment variables used by the application, make sure to add them to `.env.example`
+
+When adding environment variables make sure to add them to `.env.example`

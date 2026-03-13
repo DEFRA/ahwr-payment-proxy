@@ -10,3 +10,6 @@
 Use [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) with the ticket reference in the description for commit messages eg `feat: [AHWR-123] implemented poultry`
 
 By default, a commit into the trunk will cause a `minor` version increment. If you need either the `major` or `patch` version, append `#major` or `#patch` to the commit message eg `feat: [AHWR-123] removed deprecated endpoint #major`
+
+## Environment Variables
+When adding environment variables used by the application, make sure to add them to `.env.example`

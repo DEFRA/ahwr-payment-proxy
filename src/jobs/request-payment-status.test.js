@@ -261,6 +261,27 @@ describe('requestPaymentStatus', () => {
       )
     })
 
+    test('logs error if circular dependency happens on complete message', async () => {
+      const body = { uri: 'blob://test-uri' }
+      body.something = body
+      receivePaymentDataResponseMessages.mockResolvedValue({
+        receiver: {
+          completeMessage: completeMessageMock,
+          close: closeConnectionMock
+        },
+        messages: [{ body }]
+      })
+      completeMessageMock.mockRejectedValue(new Error('Unexpected error'))
+
+      await requestPaymentStatus(loggerMock, dbMock)
+
+      expect(loggerMock.error).toHaveBeenCalledWith(
+        { error: new Error('Unexpected error') },
+        "Error completing response message: { body: <ref *1> { uri: 'blob://test-uri', something: [Circular *1] } }"
+      )
+      expect(completeMessageMock).toHaveBeenCalled()
+    })
+
     test('logs error when receiver fails to close connection', async () => {
       closeConnectionMock.mockRejectedValue(new Error('Unexpected error'))
 

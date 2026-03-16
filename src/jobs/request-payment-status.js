@@ -179,11 +179,11 @@ export const processFrnRequest = async (db, frn, logger, claimReferences) => {
 
     responseMessage = response.messages[0]
     const paymentsBlobUriPrefix = config.get('azure.paymentsBlobUriPrefix')
-    const blobRelativePath = responseMessage.body?.uri
-    if (!blobRelativePath) {
+    const blobFilename = responseMessage.body?.uri
+    if (!blobFilename) {
       throw new Error('No blob URI received in payment data response')
     }
-    blobUri = `${paymentsBlobUriPrefix}${blobRelativePath}`
+    blobUri = `${paymentsBlobUriPrefix}${blobFilename}`
 
     blobClient = createBlobClient(logger, blobUri)
 

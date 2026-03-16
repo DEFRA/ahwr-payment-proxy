@@ -33,8 +33,8 @@ describe('requestPaymentStatus', () => {
   const deleteBlobMock = jest.fn()
   const getBlobMock = jest.fn()
   const dbMock = jest.fn()
-  const paymentsBlobUriPrefix = 'https://test.blob.core.windows.net'
-  const relativeBlobPath = '/data-requests/test-file.json'
+  const paymentsBlobUriPrefix = 'https://test.blob.core/data-requests/'
+  const blobFilename = 'test-file.json'
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -71,7 +71,7 @@ describe('requestPaymentStatus', () => {
         completeMessage: completeMessageMock,
         close: closeConnectionMock
       },
-      messages: [{ body: { uri: relativeBlobPath } }]
+      messages: [{ body: { uri: blobFilename } }]
     })
     createBlobClient.mockReturnValue({
       getBlob: getBlobMock,
@@ -96,7 +96,7 @@ describe('requestPaymentStatus', () => {
       expect(getBlobMock).toHaveBeenCalled()
       expect(createBlobClient).toHaveBeenCalledWith(
         loggerMock,
-        `${paymentsBlobUriPrefix}${relativeBlobPath}`
+        `${paymentsBlobUriPrefix}${blobFilename}`
       )
     })
 
@@ -267,7 +267,7 @@ describe('requestPaymentStatus', () => {
         {
           error: new Error('Unexpected error')
         },
-        `Error completing response message: { body: { uri: '${relativeBlobPath}' } }`
+        `Error completing response message: { body: { uri: '${blobFilename}' } }`
       )
     })
 
@@ -312,7 +312,7 @@ describe('requestPaymentStatus', () => {
       expect(deleteBlobMock).toHaveBeenCalled()
       expect(loggerMock.error).toHaveBeenCalledWith(
         { error: new Error('Unexpected error') },
-        `Error deleting blob: ${paymentsBlobUriPrefix}${relativeBlobPath}`
+        `Error deleting blob: ${paymentsBlobUriPrefix}${blobFilename}`
       )
     })
   })
@@ -341,7 +341,7 @@ describe('requestPaymentStatus', () => {
       expect(getBlobMock).toHaveBeenCalled()
       expect(createBlobClient).toHaveBeenCalledWith(
         loggerMock,
-        `${paymentsBlobUriPrefix}${relativeBlobPath}`
+        `${paymentsBlobUriPrefix}${blobFilename}`
       )
       expect(result).toEqual(new Map([['RESH-F99F-E09F', 'Settled']]))
     })

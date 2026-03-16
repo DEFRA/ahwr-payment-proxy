@@ -21,9 +21,9 @@ const { initialAttempts: DAILY_RETRY_LIMIT } = config.get(
   'scheduledJobs.requestPaymentStatus'
 )
 
-function hasProtocol(str) {
+const hasProtocol = (uri) => {
   try {
-    return new URL(str).protocol !== ''
+    return new URL(uri).protocol !== ''
   } catch {
     return false
   }

@@ -62,7 +62,7 @@ const processPaidClaim = async (db, claimReference, logger) => {
 
 const trackPaymentStatusError = ({
   claimReference,
-  statuses,
+  status,
   sbi,
   type,
   logger,
@@ -75,14 +75,14 @@ const trackPaymentStatusError = ({
     'Payment has not been paid',
     {
       reference: `claimReference: ${claimReference}, sbi: ${sbi}`,
-      reason: JSON.stringify(statuses),
+      status,
       outcome: `Unresolved after ${type} check sequence - paymentCheckCount: ${paymentCheckCount}`
     }
   )
 }
 
 const processPaymentDataEntry = async (db, paymentDataEntry, logger) => {
-  const { agreementNumber: claimReference, status, events } = paymentDataEntry
+  const { agreementNumber: claimReference, status } = paymentDataEntry
   logger.info(
     `Processing data entry. claimReference: ${claimReference}, status: ${status.name}`
   )
@@ -103,15 +103,11 @@ const processPaymentDataEntry = async (db, paymentDataEntry, logger) => {
   const { paymentCheckCount: paymentCheckCountStr, data: { sbi } = {} } =
     updatedPayment
   const paymentCheckCount = Number(paymentCheckCountStr)
-  const statuses = events.map((event) => ({
-    status: event.status.name,
-    date: event.timestamp
-  }))
 
   if (paymentCheckCount === DAILY_RETRY_LIMIT) {
     trackPaymentStatusError({
       claimReference,
-      statuses,
+      status: status.name,
       sbi,
       type: 'INITIAL',
       logger,
@@ -122,7 +118,7 @@ const processPaymentDataEntry = async (db, paymentDataEntry, logger) => {
   if (paymentCheckCount === DAILY_RETRY_LIMIT + 1) {
     trackPaymentStatusError({
       claimReference,
-      statuses,
+      status: status.name,
       sbi,
       type: 'FINAL',
       logger,

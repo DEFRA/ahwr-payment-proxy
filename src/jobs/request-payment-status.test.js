@@ -35,6 +35,7 @@ describe('requestPaymentStatus', () => {
   const dbMock = jest.fn()
   const paymentsBlobUriPrefix = 'https://test.blob.core/data-requests/'
   const blobFilename = 'test-file.json'
+  const expectedBlobUri = `${paymentsBlobUriPrefix}${blobFilename}`
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -94,10 +95,7 @@ describe('requestPaymentStatus', () => {
       expect(loggerMock.error).not.toHaveBeenCalled()
       expect(deleteBlobMock).toHaveBeenCalled()
       expect(getBlobMock).toHaveBeenCalled()
-      expect(createBlobClient).toHaveBeenCalledWith(
-        loggerMock,
-        `${paymentsBlobUriPrefix}${blobFilename}`
-      )
+      expect(createBlobClient).toHaveBeenCalledWith(loggerMock, expectedBlobUri)
     })
 
     test('logs error if blob URI is missing', async () => {
@@ -312,7 +310,7 @@ describe('requestPaymentStatus', () => {
       expect(deleteBlobMock).toHaveBeenCalled()
       expect(loggerMock.error).toHaveBeenCalledWith(
         { error: new Error('Unexpected error') },
-        `Error deleting blob: ${paymentsBlobUriPrefix}${blobFilename}`
+        `Error deleting blob: ${expectedBlobUri}`
       )
     })
   })
@@ -383,10 +381,7 @@ describe('requestPaymentStatus', () => {
       expect(loggerMock.error).not.toHaveBeenCalled()
       expect(deleteBlobMock).toHaveBeenCalled()
       expect(getBlobMock).toHaveBeenCalled()
-      expect(createBlobClient).toHaveBeenCalledWith(
-        loggerMock,
-        `${paymentsBlobUriPrefix}${blobFilename}`
-      )
+      expect(createBlobClient).toHaveBeenCalledWith(loggerMock, expectedBlobUri)
       expect(result).toEqual(new Map([['RESH-F99F-E09F', 'Settled']]))
     })
   })

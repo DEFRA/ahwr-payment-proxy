@@ -13,6 +13,7 @@ import {
   sendPaymentDataRequest
 } from '../messaging/fcp-messaging-service.js'
 import { trackError } from '../common/helpers/logging/logger.js'
+import { config } from '../config.js'
 
 jest.mock('../repositories/payment-repository')
 jest.mock('../messaging/publish-outbound-notification.js')
@@ -32,9 +33,19 @@ describe('requestPaymentStatus', () => {
   const deleteBlobMock = jest.fn()
   const getBlobMock = jest.fn()
   const dbMock = jest.fn()
+  const paymentsBlobUriPrefix = 'https://test.blob.core/data-requests/'
+  const blobFilename = 'test-file.json'
+  const expectedBlobUri = `${paymentsBlobUriPrefix}${blobFilename}`
 
   beforeEach(() => {
     jest.clearAllMocks()
+    const originalGet = config.get.bind(config)
+    jest.spyOn(config, 'get').mockImplementation((key) => {
+      if (key === 'azure.paymentsBlobUriPrefix') {
+        return paymentsBlobUriPrefix
+      }
+      return originalGet(key)
+    })
     completeMessageMock.mockResolvedValue()
     closeConnectionMock.mockResolvedValue()
     deleteBlobMock.mockResolvedValue()
@@ -61,7 +72,7 @@ describe('requestPaymentStatus', () => {
         completeMessage: completeMessageMock,
         close: closeConnectionMock
       },
-      messages: [{ body: { uri: 'blob://test-uri' } }]
+      messages: [{ body: { uri: blobFilename } }]
     })
     createBlobClient.mockReturnValue({
       getBlob: getBlobMock,
@@ -84,10 +95,7 @@ describe('requestPaymentStatus', () => {
       expect(loggerMock.error).not.toHaveBeenCalled()
       expect(deleteBlobMock).toHaveBeenCalled()
       expect(getBlobMock).toHaveBeenCalled()
-      expect(createBlobClient).toHaveBeenCalledWith(
-        loggerMock,
-        'blob://test-uri'
-      )
+      expect(createBlobClient).toHaveBeenCalledWith(loggerMock, expectedBlobUri)
     })
 
     test('logs error if blob URI is missing', async () => {
@@ -172,17 +180,7 @@ describe('requestPaymentStatus', () => {
         data: [
           {
             agreementNumber: 'RESH-F99F-E09F',
-            status: { name: 'not_paid' },
-            events: [
-              {
-                status: { name: 'Routed to Request Editor for debt data' },
-                timestamp: '27/03/2025 12:03'
-              },
-              {
-                status: { name: 'Debt data attached' },
-                timestamp: '28/03/2025 12:03'
-              }
-            ]
+            status: { name: 'not_paid' }
           }
         ]
       })
@@ -227,8 +225,7 @@ describe('requestPaymentStatus', () => {
         'Payment has not been paid',
         {
           reference: 'claimReference: RESH-F99F-E09F, sbi: 234234',
-          reason:
-            '[{"status":"Routed to Request Editor for debt data","date":"27/03/2025 12:03"},{"status":"Debt data attached","date":"28/03/2025 12:03"}]',
+          status: 'not_paid',
           outcome:
             'Unresolved after INITIAL check sequence - paymentCheckCount: 3'
         }
@@ -257,7 +254,7 @@ describe('requestPaymentStatus', () => {
         {
           error: new Error('Unexpected error')
         },
-        `Error completing response message: { body: { uri: 'blob://test-uri' } }`
+        `Error completing response message: { body: { uri: '${blobFilename}' } }`
       )
     })
 
@@ -302,8 +299,52 @@ describe('requestPaymentStatus', () => {
       expect(deleteBlobMock).toHaveBeenCalled()
       expect(loggerMock.error).toHaveBeenCalledWith(
         { error: new Error('Unexpected error') },
-        'Error deleting blob: blob://test-uri'
+        `Error deleting blob: ${expectedBlobUri}`
       )
+    })
+  })
+
+  describe('requestPaymentStatus - legacy behaviour', () => {
+    beforeEach(() => {
+      receivePaymentDataResponseMessages.mockResolvedValue({
+        receiver: {
+          completeMessage: completeMessageMock,
+          close: closeConnectionMock
+        },
+        messages: [{ body: { uri: 'blob://test-uri' } }]
+      })
+      createBlobClient.mockReturnValue({
+        getBlob: getBlobMock,
+        deleteBlob: deleteBlobMock
+      })
+    })
+
+    test('should send request and process paid claim response', async () => {
+      await requestPaymentStatus(loggerMock, dbMock)
+
+      expect(createBlobClient).toHaveBeenCalledWith(
+        loggerMock,
+        'blob://test-uri'
+      )
+    })
+
+    test('logs error if blob URI is missing', async () => {
+      receivePaymentDataResponseMessages.mockResolvedValue({
+        receiver: {
+          completeMessage: completeMessageMock,
+          close: closeConnectionMock
+        },
+        messages: [{ body: {} }]
+      })
+
+      await requestPaymentStatus(loggerMock, dbMock)
+
+      expect(loggerMock.error).toHaveBeenCalledWith(
+        { error: new Error('No blob URI received in payment data response') },
+        'Error requesting payment status'
+      )
+      expect(deleteBlobMock).not.toHaveBeenCalled()
+      expect(completeMessageMock).toHaveBeenCalled()
     })
   })
 
@@ -329,10 +370,7 @@ describe('requestPaymentStatus', () => {
       expect(loggerMock.error).not.toHaveBeenCalled()
       expect(deleteBlobMock).toHaveBeenCalled()
       expect(getBlobMock).toHaveBeenCalled()
-      expect(createBlobClient).toHaveBeenCalledWith(
-        loggerMock,
-        'blob://test-uri'
-      )
+      expect(createBlobClient).toHaveBeenCalledWith(loggerMock, expectedBlobUri)
       expect(result).toEqual(new Map([['RESH-F99F-E09F', 'Settled']]))
     })
   })

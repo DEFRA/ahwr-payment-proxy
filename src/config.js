@@ -234,6 +234,12 @@ const config = convict({
       format: String,
       default: '',
       env: 'AZURE_TENANT_ID'
+    },
+    paymentsBlobUriPrefix: {
+      doc: 'Base URI for Payments Blob Storage',
+      format: String,
+      default: '',
+      env: 'PAYMENTS_BLOB_URI_PREFIX'
     }
   },
   httpProxy: {

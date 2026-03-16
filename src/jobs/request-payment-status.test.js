@@ -317,6 +317,50 @@ describe('requestPaymentStatus', () => {
     })
   })
 
+  describe('requestPaymentStatus - legacy behaviour', () => {
+    beforeEach(() => {
+      receivePaymentDataResponseMessages.mockResolvedValue({
+        receiver: {
+          completeMessage: completeMessageMock,
+          close: closeConnectionMock
+        },
+        messages: [{ body: { uri: 'blob://test-uri' } }]
+      })
+      createBlobClient.mockReturnValue({
+        getBlob: getBlobMock,
+        deleteBlob: deleteBlobMock
+      })
+    })
+
+    test('should send request and process paid claim response', async () => {
+      await requestPaymentStatus(loggerMock, dbMock)
+
+      expect(createBlobClient).toHaveBeenCalledWith(
+        loggerMock,
+        'blob://test-uri'
+      )
+    })
+
+    test('logs error if blob URI is missing', async () => {
+      receivePaymentDataResponseMessages.mockResolvedValue({
+        receiver: {
+          completeMessage: completeMessageMock,
+          close: closeConnectionMock
+        },
+        messages: [{ body: {} }]
+      })
+
+      await requestPaymentStatus(loggerMock, dbMock)
+
+      expect(loggerMock.error).toHaveBeenCalledWith(
+        { error: new Error('No blob URI received in payment data response') },
+        'Error requesting payment status'
+      )
+      expect(deleteBlobMock).not.toHaveBeenCalled()
+      expect(completeMessageMock).toHaveBeenCalled()
+    })
+  })
+
   describe('processFrnRequest', () => {
     test('should send request and return status', async () => {
       const result = await processFrnRequest(

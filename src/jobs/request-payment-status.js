@@ -21,6 +21,14 @@ const { initialAttempts: DAILY_RETRY_LIMIT } = config.get(
   'scheduledJobs.requestPaymentStatus'
 )
 
+function hasProtocol(str) {
+  try {
+    return new URL(str).protocol !== ''
+  } catch {
+    return false
+  }
+}
+
 const createPaymentDataRequest = (frn) => ({
   category: 'frn',
   value: `${frn}`
@@ -178,12 +186,15 @@ export const processFrnRequest = async (db, frn, logger, claimReferences) => {
     }
 
     responseMessage = response.messages[0]
-    const paymentsBlobUriPrefix = config.get('azure.paymentsBlobUriPrefix')
-    const blobFilename = responseMessage.body?.uri
-    if (!blobFilename) {
+    blobUri = responseMessage.body?.uri
+    if (!blobUri) {
       throw new Error('No blob URI received in payment data response')
     }
-    blobUri = `${paymentsBlobUriPrefix}${blobFilename}`
+
+    if (!hasProtocol(blobUri)) {
+      const paymentsBlobUriPrefix = config.get('azure.paymentsBlobUriPrefix')
+      blobUri = `${paymentsBlobUriPrefix}${blobUri}`
+    }
 
     blobClient = createBlobClient(logger, blobUri)
 

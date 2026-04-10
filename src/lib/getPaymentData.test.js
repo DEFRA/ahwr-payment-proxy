@@ -1,6 +1,15 @@
-import { getPaymentData } from './getPaymentData.js'
+import {
+  getPaymentDataLivestock,
+  getPaymentDataPoultry
+} from './getPaymentData.js'
 
-describe('getPaymentData', () => {
+describe('getPaymentDataPoultry', () => {
+  const paymentData = getPaymentDataPoultry()
+
+  expect(paymentData).toEqual({ standardCode: 'AHWR-Poultry', value: 430 })
+})
+
+describe('getPaymentDataLivestock', () => {
   test('returns correct payment data for beef review with test result', () => {
     const typeOfLivestock = 'beef'
     const testResults = 'positive'
@@ -8,7 +17,7 @@ describe('getPaymentData', () => {
     const yesOrNoPiHunt = 'noPiHunt'
     const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(
+    const paymentData = getPaymentDataLivestock(
       typeOfLivestock,
       testResults,
       isEndemics,
@@ -30,7 +39,7 @@ describe('getPaymentData', () => {
     const yesOrNoPiHunt = 'noPiHunt'
     const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(
+    const paymentData = getPaymentDataLivestock(
       typeOfLivestock,
       testResults,
       isEndemics,
@@ -52,7 +61,7 @@ describe('getPaymentData', () => {
     const yesOrNoPiHunt = 'noPiHunt'
     const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(
+    const paymentData = getPaymentDataLivestock(
       typeOfLivestock,
       testResults,
       isEndemics,
@@ -74,7 +83,7 @@ describe('getPaymentData', () => {
     const yesOrNoPiHunt = 'noPiHunt'
     const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(
+    const paymentData = getPaymentDataLivestock(
       typeOfLivestock,
       testResults,
       isEndemics,
@@ -96,7 +105,7 @@ describe('getPaymentData', () => {
     const yesOrNoPiHunt = 'noPiHunt'
     const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(
+    const paymentData = getPaymentDataLivestock(
       typeOfLivestock,
       testResults,
       isEndemics,
@@ -118,7 +127,7 @@ describe('getPaymentData', () => {
     const yesOrNoPiHunt = 'noPiHunt'
     const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(
+    const paymentData = getPaymentDataLivestock(
       typeOfLivestock,
       testResults,
       isEndemics,
@@ -140,7 +149,7 @@ describe('getPaymentData', () => {
     const yesOrNoPiHunt = 'yesPiHunt'
     const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(
+    const paymentData = getPaymentDataLivestock(
       typeOfLivestock,
       testResults,
       isEndemics,
@@ -162,7 +171,7 @@ describe('getPaymentData', () => {
     const yesOrNoPiHunt = 'yesPiHunt'
     const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(
+    const paymentData = getPaymentDataLivestock(
       typeOfLivestock,
       testResults,
       isEndemics,
@@ -184,7 +193,7 @@ describe('getPaymentData', () => {
     const yesOrNoPiHunt = 'yesPiHunt'
     const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(
+    const paymentData = getPaymentDataLivestock(
       typeOfLivestock,
       testResults,
       isEndemics,
@@ -206,7 +215,7 @@ describe('getPaymentData', () => {
     const yesOrNoPiHunt = 'yesPiHunt'
     const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(
+    const paymentData = getPaymentDataLivestock(
       typeOfLivestock,
       testResults,
       isEndemics,
@@ -228,7 +237,7 @@ describe('getPaymentData', () => {
     const yesOrNoPiHunt = 'yesPiHunt'
     const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(
+    const paymentData = getPaymentDataLivestock(
       typeOfLivestock,
       testResults,
       isEndemics,
@@ -250,7 +259,7 @@ describe('getPaymentData', () => {
     const yesOrNoPiHunt = 'yesPiHunt'
     const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(
+    const paymentData = getPaymentDataLivestock(
       typeOfLivestock,
       testResults,
       isEndemics,
@@ -271,7 +280,7 @@ describe('getPaymentData', () => {
     const isEndemics = true
     const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(
+    const paymentData = getPaymentDataLivestock(
       typeOfLivestock,
       testResults,
       isEndemics,
@@ -290,7 +299,7 @@ describe('getPaymentData', () => {
     const isEndemics = true
     const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(
+    const paymentData = getPaymentDataLivestock(
       typeOfLivestock,
       testResults,
       isEndemics,
@@ -310,7 +319,7 @@ describe('getPaymentData', () => {
     const isEndemics = true
     const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(
+    const paymentData = getPaymentDataLivestock(
       typeOfLivestock,
       testResults,
       isEndemics,
@@ -330,7 +339,7 @@ describe('getPaymentData', () => {
     const isEndemics = true
     const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(
+    const paymentData = getPaymentDataLivestock(
       typeOfLivestock,
       testResults,
       isEndemics,
@@ -350,7 +359,7 @@ describe('getPaymentData', () => {
     const isEndemics = false
     const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(
+    const paymentData = getPaymentDataLivestock(
       typeOfLivestock,
       testResults,
       isEndemics,
@@ -370,7 +379,7 @@ describe('getPaymentData', () => {
     const isEndemics = false
     const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(
+    const paymentData = getPaymentDataLivestock(
       typeOfLivestock,
       testResults,
       isEndemics,
@@ -390,7 +399,7 @@ describe('getPaymentData', () => {
     const isEndemics = false
     const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(
+    const paymentData = getPaymentDataLivestock(
       typeOfLivestock,
       testResults,
       isEndemics,
@@ -410,7 +419,7 @@ describe('getPaymentData', () => {
     const isEndemics = false
     const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentData(
+    const paymentData = getPaymentDataLivestock(
       typeOfLivestock,
       testResults,
       isEndemics,
@@ -431,7 +440,7 @@ describe('getPaymentData', () => {
     const yesOrNoPiHunt = 'noPiHunt'
     const dateOfVisit = '2026-01-22T00:00:00.000Z'
 
-    const paymentData = getPaymentData(
+    const paymentData = getPaymentDataLivestock(
       typeOfLivestock,
       testResults,
       isEndemics,

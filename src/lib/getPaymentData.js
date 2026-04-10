@@ -16,7 +16,6 @@ export const isPostPaymentRateUplift = (dateOfVisit) => {
 }
 
 export const getPaymentDataPoultry = () => {
-  console.log('We are here')
   return { standardCode: poultryPrice.code, value: poultryPrice.value }
 }
 

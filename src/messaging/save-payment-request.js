@@ -23,8 +23,6 @@ const buildPaymentRequest = async (applicationPaymentRequest) => {
     paymentRequestValues
   const marketingYear = new Date().getFullYear()
 
-  console.log({ agreementNumber })
-  console.log(getPaymentDataPoultry())
   const { standardCode, value } = agreementNumber.startsWith(
     APPLICATION_REFERENCE_PREFIX_POULTRY
   )

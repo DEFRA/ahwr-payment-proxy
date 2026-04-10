@@ -9,7 +9,10 @@ jest.mock('./payment-request-schema')
 
 const paymentRepoGetSpy = jest.spyOn(paymentRepo, 'get')
 const paymentRepoSetSpy = jest.spyOn(paymentRepo, 'set')
-const getPaymentDataSpy = jest.spyOn(getPayment, 'getPaymentData')
+const getPaymentDataLivestockSpy = jest.spyOn(
+  getPayment,
+  'getPaymentDataLivestock'
+)
 
 const mockErrorLogger = jest.fn()
 
@@ -35,7 +38,10 @@ const applicationPaymentRequest = {
 describe('Save payment request', () => {
   beforeEach(async () => {
     jest.clearAllMocks()
-    getPaymentDataSpy.mockReturnValue({ standardCode: 'AHWR-Beef', value: 522 })
+    getPaymentDataLivestockSpy.mockReturnValue({
+      standardCode: 'AHWR-Beef',
+      value: 522
+    })
   })
 
   test('Set creates record for payment', async () => {
@@ -80,7 +86,10 @@ describe('Save payment request', () => {
 describe('Save payment request part 2', () => {
   beforeEach(async () => {
     jest.clearAllMocks()
-    getPaymentDataSpy.mockReturnValue({ standardCode: 'AHWR-Beef', value: 522 })
+    getPaymentDataLivestockSpy.mockReturnValue({
+      standardCode: 'AHWR-Beef',
+      value: 522
+    })
   })
 
   test('throws error if payment request is undefined', async () => {

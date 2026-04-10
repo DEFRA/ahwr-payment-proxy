@@ -2,7 +2,7 @@ import { paymentRequest as paymentRequestValues } from '../constants/index.js'
 import { get, set } from '../repositories/payment-repository.js'
 import { validateApplicationPaymentRequest } from './application-payment-request-schema.js'
 import { validatePaymentRequest } from './payment-request-schema.js'
-import { getPaymentData } from '../lib/getPaymentData.js'
+import { getPaymentDataLivestock } from '../lib/getPaymentData.js'
 
 const buildPaymentRequest = async (applicationPaymentRequest) => {
   const {
@@ -19,7 +19,7 @@ const buildPaymentRequest = async (applicationPaymentRequest) => {
     paymentRequestValues
   const marketingYear = new Date().getFullYear()
 
-  const { standardCode, value } = getPaymentData(
+  const { standardCode, value } = getPaymentDataLivestock(
     species,
     reviewTestResults,
     isEndemics,

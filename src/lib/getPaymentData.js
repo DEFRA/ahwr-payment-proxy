@@ -14,7 +14,7 @@ export const isPostPaymentRateUplift = (dateOfVisit) => {
   return new Date(dateOfVisit) >= PIGS_AND_PAYMENTS_RELEASE_DATE
 }
 
-export const getPaymentData = (
+export const getPaymentDataLivestock = (
   typeOfLivestock,
   testResults,
   isEndemics,

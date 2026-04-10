@@ -3,6 +3,7 @@ import {
   PIGS_AND_PAYMENTS_RELEASE_DATE
 } from '../constants/index.js'
 import {
+  poultryPrice,
   pricesOriginal,
   pricesUplifted,
   claimType as CLAIM_TYPE,
@@ -12,6 +13,11 @@ import {
 
 export const isPostPaymentRateUplift = (dateOfVisit) => {
   return new Date(dateOfVisit) >= PIGS_AND_PAYMENTS_RELEASE_DATE
+}
+
+export const getPaymentDataPoultry = () => {
+  console.log('We are here')
+  return { standardCode: poultryPrice.code, value: poultryPrice.value }
 }
 
 export const getPaymentDataLivestock = (

@@ -4,7 +4,10 @@ import * as getPayment from '../lib/getPaymentData'
 import * as paymentRepo from '../repositories/payment-repository'
 
 jest.mock('../repositories/payment-repository')
-jest.mock('../lib/getPaymentData')
+jest.mock('../lib/getPaymentData', () => ({
+  ...jest.requireActual('../lib/getPaymentData'),
+  getPaymentDataLivestock: jest.fn()
+}))
 jest.mock('./payment-request-schema')
 
 const paymentRepoGetSpy = jest.spyOn(paymentRepo, 'get')
@@ -32,6 +35,12 @@ const applicationPaymentRequestMissingFrn = {
 }
 const applicationPaymentRequest = {
   ...applicationPaymentRequestMissingFrn,
+  frn: '923456789'
+}
+
+const applicationPaymentRequestPoultry = {
+  ...applicationPaymentRequestMissingFrn,
+  reference: 'POUL-134-456',
   frn: '923456789'
 }
 
@@ -81,16 +90,6 @@ describe('Save payment request', () => {
       savePaymentRequest(mockDb, mockedLogger, { reference })
     ).rejects.toEqual(new Error('Application payment request schema not valid'))
   })
-})
-
-describe('Save payment request part 2', () => {
-  beforeEach(async () => {
-    jest.clearAllMocks()
-    getPaymentDataLivestockSpy.mockReturnValue({
-      standardCode: 'AHWR-Beef',
-      value: 522
-    })
-  })
 
   test('throws error if payment request is undefined', async () => {
     await expect(
@@ -139,7 +138,7 @@ describe('Save payment request part 2', () => {
     ).rejects.toThrow('Payment request schema not valid')
   })
 
-  test('saves payment request if valid', async () => {
+  test('saves payment request when valid', async () => {
     paymentRepoGetSpy.mockResolvedValueOnce()
     validatePaymentRequest.mockReturnValueOnce(true)
     const expectedYear = new Date().getFullYear()
@@ -164,6 +163,40 @@ describe('Save payment request part 2', () => {
         sbi: '123456789',
         sourceSystem: 'AHWR',
         value: 522
+      },
+      '923456789'
+    )
+  })
+
+  test('saves poultry payment request', async () => {
+    paymentRepoGetSpy.mockResolvedValueOnce()
+    validatePaymentRequest.mockReturnValueOnce(true)
+    const expectedYear = new Date().getFullYear()
+
+    await savePaymentRequest(
+      mockDb,
+      mockedLogger,
+      applicationPaymentRequestPoultry
+    )
+
+    expect(paymentRepoSetSpy).toHaveBeenCalledTimes(1)
+    expect(paymentRepoSetSpy).toHaveBeenCalledWith(
+      mockDb,
+      'POUL-134-456',
+      {
+        agreementNumber: 'POUL-134-456',
+        invoiceLines: [
+          {
+            description: 'G00 - Gross value of claim',
+            standardCode: 'AHWR-Poultry',
+            value: 430
+          }
+        ],
+        marketingYear: expectedYear,
+        paymentRequestNumber: 1,
+        sbi: '123456789',
+        sourceSystem: 'AHWR',
+        value: 430
       },
       '923456789'
     )

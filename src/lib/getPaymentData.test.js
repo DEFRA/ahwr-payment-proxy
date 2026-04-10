@@ -1,4 +1,13 @@
-import { getPaymentDataLivestock } from './getPaymentData.js'
+import {
+  getPaymentDataLivestock,
+  getPaymentDataPoultry
+} from './getPaymentData.js'
+
+describe('getPaymentDataPoultry', () => {
+  const paymentData = getPaymentDataPoultry()
+
+  expect(paymentData).toEqual({ standardCode: 'AHWR-Poultry', value: 430 })
+})
 
 describe('getPaymentDataLivestock', () => {
   test('returns correct payment data for beef review with test result', () => {

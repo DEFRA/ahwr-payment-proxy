@@ -2,7 +2,11 @@ import { paymentRequest as paymentRequestValues } from '../constants/index.js'
 import { get, set } from '../repositories/payment-repository.js'
 import { validateApplicationPaymentRequest } from './application-payment-request-schema.js'
 import { validatePaymentRequest } from './payment-request-schema.js'
-import { getPaymentDataLivestock } from '../lib/getPaymentData.js'
+import {
+  getPaymentDataLivestock,
+  getPaymentDataPoultry
+} from '../lib/getPaymentData.js'
+import { APPLICATION_REFERENCE_PREFIX_POULTRY } from 'ffc-ahwr-common-library'
 
 const buildPaymentRequest = async (applicationPaymentRequest) => {
   const {
@@ -19,14 +23,20 @@ const buildPaymentRequest = async (applicationPaymentRequest) => {
     paymentRequestValues
   const marketingYear = new Date().getFullYear()
 
-  const { standardCode, value } = getPaymentDataLivestock(
-    species,
-    reviewTestResults,
-    isEndemics,
-    claimType,
-    dateOfVisit,
-    optionalPiHuntValue
+  console.log({ agreementNumber })
+  console.log(getPaymentDataPoultry())
+  const { standardCode, value } = agreementNumber.startsWith(
+    APPLICATION_REFERENCE_PREFIX_POULTRY
   )
+    ? getPaymentDataPoultry()
+    : getPaymentDataLivestock(
+        species,
+        reviewTestResults,
+        isEndemics,
+        claimType,
+        dateOfVisit,
+        optionalPiHuntValue
+      )
 
   return {
     sourceSystem,

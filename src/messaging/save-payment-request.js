@@ -6,7 +6,6 @@ import {
   getPaymentDataLivestock,
   getPaymentDataPoultry
 } from '../lib/getPaymentData.js'
-import { APPLICATION_REFERENCE_PREFIX_POULTRY } from 'ffc-ahwr-common-library'
 
 const buildPaymentRequest = async (applicationPaymentRequest) => {
   const {
@@ -23,9 +22,9 @@ const buildPaymentRequest = async (applicationPaymentRequest) => {
     paymentRequestValues
   const marketingYear = new Date().getFullYear()
 
-  const { standardCode, value } = agreementNumber.startsWith(
-    APPLICATION_REFERENCE_PREFIX_POULTRY
-  )
+  // in old world agreementNumber and claim are kind of interchangeable
+  // in new world and poultry, agreementNumber is the claim reference
+  const { standardCode, value } = agreementNumber.startsWith('PORE')
     ? getPaymentDataPoultry()
     : getPaymentDataLivestock(
         species,

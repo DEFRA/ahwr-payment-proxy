@@ -22,6 +22,8 @@ const buildPaymentRequest = async (applicationPaymentRequest) => {
     paymentRequestValues
   const marketingYear = new Date().getFullYear()
 
+  // in old world agreementNumber and claim are kind of interchangeable
+  // in new world and poultry, agreementNumber is the claim reference
   const { standardCode, value } = agreementNumber.startsWith('PORE')
     ? getPaymentDataPoultry()
     : getPaymentDataLivestock(

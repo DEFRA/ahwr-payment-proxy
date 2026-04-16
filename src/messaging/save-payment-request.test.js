@@ -40,7 +40,7 @@ const applicationPaymentRequest = {
 
 const applicationPaymentRequestPoultry = {
   ...applicationPaymentRequestMissingFrn,
-  reference: 'POUL-134-456',
+  reference: 'PORE-134-456',
   frn: '923456789'
 }
 
@@ -182,9 +182,9 @@ describe('Save payment request', () => {
     expect(paymentRepoSetSpy).toHaveBeenCalledTimes(1)
     expect(paymentRepoSetSpy).toHaveBeenCalledWith(
       mockDb,
-      'POUL-134-456',
+      'PORE-134-456',
       {
-        agreementNumber: 'POUL-134-456',
+        agreementNumber: 'PORE-134-456',
         invoiceLines: [
           {
             description: 'G00 - Gross value of claim',

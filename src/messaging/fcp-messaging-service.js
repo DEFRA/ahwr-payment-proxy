@@ -48,7 +48,7 @@ export const sendPaymentRequest = async (paymentRequest, sessionId, logger) => {
     const message = createMessage(paymentRequest, submitPaymentRequestMsgType, {
       sessionId
     })
-    fcpMessageClient.sendMessage(message, paymentRequestTopic)
+    await fcpMessageClient.sendMessage(message, paymentRequestTopic)
     logger.info('Payment request sent.')
   } else {
     logger.info(
@@ -74,7 +74,7 @@ export const sendPaymentDataRequest = async (
     submitPaymentDataRequestMsgType,
     { sessionId, messageId }
   )
-  fcpMessageClient.sendMessage(message, paymentDataRequestTopic)
+  await fcpMessageClient.sendMessage(message, paymentDataRequestTopic)
 
   logger.info(
     `Sent payment data request. MessageId: ${messageId}, SessionId: ${sessionId}`

@@ -85,7 +85,7 @@ describe('fcp-messaging-service', () => {
     it('creates and sends message', async () => {
       const mockSendMessage = jest.fn()
       const mockClient = {
-        sendMessage: mockSendMessage,
+        sendMessage: mockSendMessage.mockResolvedValue(),
         close: jest.fn(),
         subscribeTopic: jest.fn()
       }
@@ -116,6 +116,36 @@ describe('fcp-messaging-service', () => {
         'ffc-pay-request'
       )
     })
+
+    it('propagates errors from sendMessage', async () => {
+      const sendError = new Error('Service Bus send failed')
+      const mockSendMessage = jest.fn()
+      const mockClient = {
+        sendMessage: mockSendMessage.mockRejectedValueOnce(sendError),
+        close: jest.fn(),
+        subscribeTopic: jest.fn()
+      }
+      const mockLogger = {
+        info: jest.fn()
+      }
+      const request = {
+        reference: 'IAHW-G3CL-V59P',
+        sbi: '123456789',
+        whichReview: 'beef'
+      }
+      createServiceBusClient.mockReturnValueOnce(mockClient)
+
+      await startMessagingService(mockLogger, mockDb)
+
+      await expect(
+        sendPaymentRequest(
+          request,
+          '498064a3-f967-4a98-9d8f-57152e7cbe64',
+          mockLogger
+        )
+      ).rejects.toThrow('Service Bus send failed')
+      expect(mockLogger.info).not.toHaveBeenCalledWith('Payment request sent.')
+    })
   })
 
   describe('sendPaymentDataRequest', () => {
@@ -124,7 +154,7 @@ describe('fcp-messaging-service', () => {
     it('creates and sends message', async () => {
       const mockSendMessage = jest.fn()
       const mockClient = {
-        sendMessage: mockSendMessage,
+        sendMessage: mockSendMessage.mockResolvedValue(),
         close: jest.fn(),
         subscribeTopic: jest.fn()
       }
@@ -152,6 +182,32 @@ describe('fcp-messaging-service', () => {
         },
         'ffc-pay-data-request'
       )
+    })
+
+    it('propagates errors from sendMessage', async () => {
+      const sendError = new Error('Service Bus send failed')
+      const mockSendMessage = jest.fn()
+      const mockClient = {
+        sendMessage: mockSendMessage.mockRejectedValueOnce(sendError),
+        close: jest.fn(),
+        subscribeTopic: jest.fn()
+      }
+      const mockLogger = {
+        info: jest.fn()
+      }
+      const request = { category: 'frn', value: '1234567890' }
+      createServiceBusClient.mockReturnValueOnce(mockClient)
+
+      await startMessagingService(mockLogger, mockDb)
+
+      await expect(
+        sendPaymentDataRequest(
+          request,
+          '498064a3-f967-4a98-9d8f-57152e7cbe64',
+          mockLogger,
+          'f1e5a2c4-8d9b-4f73-a1e6-b9d2e0c8a5f4'
+        )
+      ).rejects.toThrow('Service Bus send failed')
     })
   })
 

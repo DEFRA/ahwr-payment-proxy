@@ -71,6 +71,12 @@ Install application dependencies:
 npm install
 ```
 
+After a fresh clone, run `npx husky` once to wire up local git hooks. This used to happen automatically via the `postinstall` script, but `ignore-scripts=true` in `.npmrc` now blocks all lifecycle scripts on install, so husky setup must be invoked manually:
+
+```bash
+npx husky
+```
+
 Copy `.env.example` to `.env` and populate the secrets
 
 ### Development

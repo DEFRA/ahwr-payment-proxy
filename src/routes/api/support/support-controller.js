@@ -36,7 +36,14 @@ export const requestPaymentStatusHandler = async (request, h) => {
 
     return h.response(response).code(StatusCodes.OK)
   } catch (error) {
-    request.logger.error({ error }, 'Failed to request payment status')
+    const isExpectedNotFound =
+      Boom.isBoom(error) && error.output.statusCode === StatusCodes.NOT_FOUND
+
+    if (isExpectedNotFound) {
+      request.logger.warn({ error }, 'Failed to request payment status')
+    } else {
+      request.logger.error({ error }, 'Failed to request payment status')
+    }
 
     if (Boom.isBoom(error)) {
       throw error
@@ -59,16 +66,28 @@ export const supportQueueMessagesHandler = async (request, h) => {
 
     return h.response(messages).code(StatusCodes.OK)
   } catch (error) {
-    request.logger.error({ error }, 'Failed to get queue messages')
+    const normalised =
+      error instanceof QueueDoesNotExist
+        ? Boom.notFound(`Queue not found: ${queueUrl}`)
+        : error
 
-    if (error instanceof QueueDoesNotExist) {
-      throw Boom.notFound(`Queue not found: ${queueUrl}`)
+    const isExpectedNotFound =
+      Boom.isBoom(normalised) &&
+      normalised.output.statusCode === StatusCodes.NOT_FOUND
+
+    if (isExpectedNotFound) {
+      request.logger.warn({ error: normalised }, 'Failed to get queue messages')
+    } else {
+      request.logger.error(
+        { error: normalised },
+        'Failed to get queue messages'
+      )
     }
 
-    if (Boom.isBoom(error)) {
-      throw error
+    if (Boom.isBoom(normalised)) {
+      throw normalised
     }
 
-    throw Boom.internal(error)
+    throw Boom.internal(normalised)
   }
 }

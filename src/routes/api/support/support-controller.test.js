@@ -106,7 +106,7 @@ describe('updatePaymentHandler', () => {
     expect(mockLogger.warn).not.toHaveBeenCalled()
   })
 
-  test('should rethrow boom error and log at warn when repo throws Boom 4xx', async () => {
+  test('should rethrow boom error and log at error when repo throws Boom 400', async () => {
     get.mockRejectedValueOnce(
       Boom.badRequest('Failed to request payment status')
     )
@@ -114,11 +114,37 @@ describe('updatePaymentHandler', () => {
     await expect(requestPaymentStatusHandler(request, mockH)).rejects.toThrow(
       'Failed to request payment status'
     )
-    expect(mockLogger.warn).toHaveBeenCalledWith(
+    expect(mockLogger.error).toHaveBeenCalledWith(
       { error: expect.objectContaining({ isBoom: true }) },
       'Failed to request payment status'
     )
-    expect(mockLogger.error).not.toHaveBeenCalled()
+    expect(mockLogger.warn).not.toHaveBeenCalled()
+  })
+
+  test('should rethrow boom error and log at error when repo throws Boom 401', async () => {
+    get.mockRejectedValueOnce(Boom.unauthorized('Auth failed'))
+
+    await expect(requestPaymentStatusHandler(request, mockH)).rejects.toThrow(
+      'Auth failed'
+    )
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      { error: expect.objectContaining({ isBoom: true }) },
+      'Failed to request payment status'
+    )
+    expect(mockLogger.warn).not.toHaveBeenCalled()
+  })
+
+  test('should rethrow boom error and log at error when repo throws Boom 403', async () => {
+    get.mockRejectedValueOnce(Boom.forbidden('Access denied'))
+
+    await expect(requestPaymentStatusHandler(request, mockH)).rejects.toThrow(
+      'Access denied'
+    )
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      { error: expect.objectContaining({ isBoom: true }) },
+      'Failed to request payment status'
+    )
+    expect(mockLogger.warn).not.toHaveBeenCalled()
   })
 
   test('should rethrow boom error and log at error when repo throws Boom 5xx', async () => {
@@ -217,7 +243,7 @@ describe('supportQueueMessagesHandler', () => {
     expect(mockH.response).toHaveBeenCalledWith([])
   })
 
-  it('rethrows Boom 4xx errors and logs at warn', async () => {
+  it('rethrows Boom 400 errors and logs at error', async () => {
     const boomError = Boom.badRequest('Invalid queue')
     sqsClient.peekMessages.mockRejectedValue(boomError)
 
@@ -225,11 +251,41 @@ describe('supportQueueMessagesHandler', () => {
       supportQueueMessagesHandler(mockRequest, mockH)
     ).rejects.toThrow(boomError)
 
-    expect(mockLogger.warn).toHaveBeenCalledWith(
+    expect(mockLogger.error).toHaveBeenCalledWith(
       { error: boomError },
       'Failed to get queue messages'
     )
-    expect(mockLogger.error).not.toHaveBeenCalled()
+    expect(mockLogger.warn).not.toHaveBeenCalled()
+  })
+
+  it('rethrows Boom 401 (unauthorized) errors and logs at error', async () => {
+    const boomError = Boom.unauthorized('Auth failed')
+    sqsClient.peekMessages.mockRejectedValue(boomError)
+
+    await expect(
+      supportQueueMessagesHandler(mockRequest, mockH)
+    ).rejects.toThrow(boomError)
+
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      { error: boomError },
+      'Failed to get queue messages'
+    )
+    expect(mockLogger.warn).not.toHaveBeenCalled()
+  })
+
+  it('rethrows Boom 403 (forbidden) errors and logs at error', async () => {
+    const boomError = Boom.forbidden('Access denied')
+    sqsClient.peekMessages.mockRejectedValue(boomError)
+
+    await expect(
+      supportQueueMessagesHandler(mockRequest, mockH)
+    ).rejects.toThrow(boomError)
+
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      { error: boomError },
+      'Failed to get queue messages'
+    )
+    expect(mockLogger.warn).not.toHaveBeenCalled()
   })
 
   it('rethrows Boom 5xx errors and logs at error', async () => {

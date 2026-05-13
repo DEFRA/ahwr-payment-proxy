@@ -36,11 +36,10 @@ export const requestPaymentStatusHandler = async (request, h) => {
 
     return h.response(response).code(StatusCodes.OK)
   } catch (error) {
-    const isExpectedClientError =
-      Boom.isBoom(error) &&
-      error.output.statusCode < StatusCodes.INTERNAL_SERVER_ERROR
+    const isExpectedNotFound =
+      Boom.isBoom(error) && error.output.statusCode === StatusCodes.NOT_FOUND
 
-    if (isExpectedClientError) {
+    if (isExpectedNotFound) {
       request.logger.warn({ error }, 'Failed to request payment status')
     } else {
       request.logger.error({ error }, 'Failed to request payment status')
@@ -72,11 +71,11 @@ export const supportQueueMessagesHandler = async (request, h) => {
         ? Boom.notFound(`Queue not found: ${queueUrl}`)
         : error
 
-    const isExpectedClientError =
+    const isExpectedNotFound =
       Boom.isBoom(normalised) &&
-      normalised.output.statusCode < StatusCodes.INTERNAL_SERVER_ERROR
+      normalised.output.statusCode === StatusCodes.NOT_FOUND
 
-    if (isExpectedClientError) {
+    if (isExpectedNotFound) {
       request.logger.warn({ error: normalised }, 'Failed to get queue messages')
     } else {
       request.logger.error(

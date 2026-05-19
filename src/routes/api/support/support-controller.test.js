@@ -34,7 +34,8 @@ jest.mock('../../../config.js', () => {
 describe('updatePaymentHandler', () => {
   const mockH = {
     response: jest.fn().mockReturnThis(),
-    code: jest.fn().mockReturnThis()
+    code: jest.fn().mockReturnThis(),
+    takeover: jest.fn().mockReturnThis()
   }
   const mockDb = jest.fn()
   const mockLogger = {
@@ -160,18 +161,21 @@ describe('updatePaymentHandler', () => {
     expect(mockLogger.warn).not.toHaveBeenCalled()
   })
 
-  test('should return 404 and log at warn when payment does not exist for reference', async () => {
+  test('should return 404 directly (no throw) and log at warn without an error field when payment does not exist', async () => {
     get.mockResolvedValueOnce(undefined)
 
-    await expect(requestPaymentStatusHandler(request, mockH)).rejects.toThrow(
-      'Payment not found'
-    )
+    await requestPaymentStatusHandler(request, mockH)
+
     expect(get).toHaveBeenCalledWith(mockDb, 'REBC-J9AR-KILQ')
+    expect(mockH.response).toHaveBeenCalledWith('Payment not found')
+    expect(mockH.code).toHaveBeenCalledWith(404)
+    expect(mockH.takeover).toHaveBeenCalled()
     expect(mockLogger.warn).toHaveBeenCalledWith(
-      { error: expect.objectContaining({ isBoom: true }) },
-      'Failed to request payment status'
+      { claimReference: 'REBC-J9AR-KILQ' },
+      'Payment not found for support lookup'
     )
     expect(mockLogger.error).not.toHaveBeenCalled()
+    expect(processFrnRequest).not.toHaveBeenCalled()
   })
 })
 
@@ -187,7 +191,8 @@ describe('supportQueueMessagesHandler', () => {
   }
   const mockH = {
     response: jest.fn().mockReturnThis(),
-    code: jest.fn().mockReturnThis()
+    code: jest.fn().mockReturnThis(),
+    takeover: jest.fn().mockReturnThis()
   }
 
   afterEach(() => {
@@ -318,27 +323,23 @@ describe('supportQueueMessagesHandler', () => {
     expect(mockLogger.warn).not.toHaveBeenCalled()
   })
 
-  it('returns 404 and logs at warn when queue does not exist', async () => {
+  it('returns 404 directly (no throw) and logs at warn without an error field when queue does not exist', async () => {
     const error = new QueueDoesNotExist({
       message: 'The specified queue does not exist.',
       $metadata: {}
     })
     sqsClient.peekMessages.mockRejectedValue(error)
 
-    await expect(
-      supportQueueMessagesHandler(mockRequest, mockH)
-    ).rejects.toThrow(
-      Boom.notFound('Queue not found: http://localhost:45666/queueName')
-    )
+    await supportQueueMessagesHandler(mockRequest, mockH)
 
+    expect(mockH.response).toHaveBeenCalledWith(
+      'Queue not found: http://localhost:45666/queueName'
+    )
+    expect(mockH.code).toHaveBeenCalledWith(404)
+    expect(mockH.takeover).toHaveBeenCalled()
     expect(mockLogger.warn).toHaveBeenCalledWith(
-      {
-        error: expect.objectContaining({
-          isBoom: true,
-          output: expect.objectContaining({ statusCode: 404 })
-        })
-      },
-      'Failed to get queue messages'
+      { queueUrl: 'http://localhost:45666/queueName' },
+      'Queue not found for support lookup'
     )
     expect(mockLogger.error).not.toHaveBeenCalled()
   })

@@ -26,8 +26,10 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
+      
 
       # Ensure tests pass. Add more checks if required
+      - run: npm install -g npm@11.10.0
       - run: npm ci
       - run: npm test
 

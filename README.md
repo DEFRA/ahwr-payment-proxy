@@ -3,12 +3,12 @@
 Created from the Core delivery platform Node.js Backend Template.
 
 - [Requirements](#requirements)
+  - [pre-commit](#pre-commit)
   - [Node.js](#nodejs)
 - [Local development](#local-development)
   - [Setup](#setup)
   - [Development](#development)
   - [Testing](#testing)
-  - [Production](#production)
   - [Npm scripts](#npm-scripts)
   - [Update dependencies](#update-dependencies)
   - [Formatting](#formatting)
@@ -181,25 +181,7 @@ Helper methods are also available in `/src/helpers/mongo-lock.js`.
 
 ### Proxy
 
-We are using forward-proxy which is set up by default. To make use of this: `import { fetch } from 'undici'` then
-because of the `setGlobalDispatcher(new ProxyAgent(proxyUrl))` calls will use the ProxyAgent Dispatcher
-
-If you are not using Wreck, Axios or Undici or a similar http that uses `Request`. Then you may have to provide the
-proxy dispatcher:
-
-To add the dispatcher to your own client:
-
-```javascript
-import { ProxyAgent } from 'undici'
-
-return await fetch(url, {
-  dispatcher: new ProxyAgent({
-    uri: proxyUrl,
-    keepAliveTimeout: 10,
-    keepAliveMaxTimeout: 10
-  })
-})
-```
+We are using forward-proxy which is set up by default.
 
 ## Docker
 

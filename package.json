@@ -46,18 +46,17 @@
     "convict": "6.2.5",
     "convict-format-with-validator": "6.2.0",
     "date-fns": "4.1.0",
-    "ffc-ahwr-common-library": "3.8.2",
+    "ffc-ahwr-common-library": "3.8.3",
     "global-agent": "3.0.0",
     "hapi-pino": "13.0.0",
-    "hapi-pulse": "3.0.1",
+    "hapi-pulse": "4.0.0",
     "http-status-codes": "2.3.0",
     "joi": "18.2.1",
     "mongo-locks": "3.1.2",
     "mongodb": "6.21.0",
     "pino": "9.7.0",
     "pino-pretty": "13.0.0",
-    "undici": "7.24.4",
-    "uuid": "8.3.2"
+    "uuid": "11.1.1"
   },
   "overrides": {
     "brace-expansion": "2.0.2",

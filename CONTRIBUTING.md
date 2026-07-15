@@ -14,3 +14,10 @@ By default, a commit into the trunk will cause a `minor` version increment. If y
 ## Environment Variables
 
 When adding environment variables make sure to add them to `.env.example`
+
+## Documentation
+
+- Documentation should be accessible by both humans and agents
+- Agent specific documentation should be avoided
+- Use Mermaid for creating diagrams
+- Where appropriate, capture architecture decision records in the folder `docs/adr/`

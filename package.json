@@ -30,7 +30,7 @@
   "author": "Defra DDTS",
   "license": "OGL-UK-3.0",
   "dependencies": {
-    "@agendajs/mongo-backend": "3.2.0",
+    "@agendajs/mongo-backend": "4.0.3",
     "@aws-sdk/client-cognito-identity": "3.1099.0",
     "@aws-sdk/client-sqs": "3.1099.0",
     "@azure/identity": "4.13.1",
@@ -40,7 +40,7 @@
     "@elastic/ecs-pino-format": "1.5.0",
     "@hapi/boom": "10.0.1",
     "@hapi/hapi": "21.4.10",
-    "agenda": "6.2.3",
+    "agenda": "6.2.6",
     "aws-embedded-metrics": "4.2.1",
     "aws4": "1.13.2",
     "convict": "6.2.5",

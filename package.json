@@ -30,7 +30,7 @@
   "author": "Defra DDTS",
   "license": "OGL-UK-3.0",
   "dependencies": {
-    "@agendajs/mongo-backend": "3.2.0",
+    "@agendajs/mongo-backend": "4.0.3",
     "@aws-sdk/client-cognito-identity": "3.1099.0",
     "@aws-sdk/client-sqs": "3.1099.0",
     "@azure/identity": "4.13.1",

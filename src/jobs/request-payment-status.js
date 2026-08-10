@@ -5,7 +5,7 @@ import {
   incrementPaymentCheckCount,
   updatePaymentStatusByClaimRef
 } from '../repositories/payment-repository.js'
-import { v4 as uuid } from 'uuid'
+import { randomUUID } from 'node:crypto'
 import { PaymentHubStatus, Status } from '../constants/index.js'
 import {
   sendPaymentDataRequest,
@@ -157,8 +157,8 @@ export const processFrnRequest = async (db, frn, logger, claimReferences) => {
     `Processing frn request. frn: ${frn}, claimReferences: ${[...claimReferences].join(',')}`
   )
 
-  const requestMessageId = uuid()
-  const sessionId = uuid()
+  const requestMessageId = randomUUID()
+  const sessionId = randomUUID()
   const requestMessage = createPaymentDataRequest(frn)
   let receiver, responseMessage, blobUri, blobClient, statusByClaimReference
 

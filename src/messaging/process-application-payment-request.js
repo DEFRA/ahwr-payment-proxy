@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid'
+import { randomUUID } from 'node:crypto'
 import { savePaymentRequest } from './save-payment-request.js'
 import { sendPaymentRequest } from './fcp-messaging-service.js'
 import { trackError, trackEvent } from '../common/helpers/logging/logger.js'
@@ -14,7 +14,7 @@ export const processApplicationPaymentRequest = async (logger, message, db) => {
 
     const paymentRequest = await savePaymentRequest(db, logger, message)
 
-    await sendPaymentRequest(paymentRequest, uuidv4(), logger)
+    await sendPaymentRequest(paymentRequest, randomUUID(), logger)
 
     logger.info('Message processing successful')
 

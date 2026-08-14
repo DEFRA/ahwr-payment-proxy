@@ -12,7 +12,7 @@ describe('streamToBuffer', () => {
   test('should handle empty stream', async () => {
     const stream = Readable.from('')
     const buffer = await streamToBuffer(stream)
-    expect(buffer.length).toBe(0)
+    expect(buffer).toHaveLength(0)
   })
 
   test('should handle binary data', async () => {

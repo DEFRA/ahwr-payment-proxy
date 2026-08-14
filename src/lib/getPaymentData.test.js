@@ -4,454 +4,248 @@ import {
 } from './getPaymentData.js'
 
 describe('getPaymentDataPoultry', () => {
-  const paymentData = getPaymentDataPoultry()
+  test('we can retrieve data', () => {
+    const paymentData = getPaymentDataPoultry()
 
-  expect(paymentData).toEqual({ standardCode: 'AHWR-Poultry', value: 430 })
+    expect(paymentData).toEqual({ standardCode: 'AHWR-Poultry', value: 430 })
+  })
 })
 
 describe('getPaymentDataLivestock', () => {
-  test('returns correct payment data for beef review with test result', () => {
-    const typeOfLivestock = 'beef'
-    const testResults = 'positive'
-    const isEndemics = true
-    const yesOrNoPiHunt = 'noPiHunt'
-    const dateOfVisit = '2025-04-24T00:00:00.000Z'
+  const dateOfVisit = '2025-04-24T00:00:00.000Z'
 
-    const paymentData = getPaymentDataLivestock(
-      typeOfLivestock,
-      testResults,
-      isEndemics,
-      'REVIEW',
+  test.each([
+    {
+      description: 'beef review with noPiHunt test result',
+      typeOfLivestock: 'beef',
+      testResults: 'positive',
+      isEndemics: true,
+      typeOfClaim: 'REVIEW',
       dateOfVisit,
-      yesOrNoPiHunt
-    )
-
-    expect(paymentData).toEqual({
-      standardCode: 'AHWR-Beef',
-      value: 522
-    })
-  })
-
-  test('returns correct payment data for beef positive follow up with test result', () => {
-    const typeOfLivestock = 'beef'
-    const testResults = 'positive'
-    const isEndemics = true
-    const yesOrNoPiHunt = 'noPiHunt'
-    const dateOfVisit = '2025-04-24T00:00:00.000Z'
-
-    const paymentData = getPaymentDataLivestock(
-      typeOfLivestock,
-      testResults,
-      isEndemics,
-      'FOLLOW_UP',
+      yesOrNoPiHunt: 'noPiHunt',
+      expected: { standardCode: 'AHWR-Beef', value: 522 }
+    },
+    {
+      description: 'beef positive follow up with noPiHunt test result',
+      typeOfLivestock: 'beef',
+      testResults: 'positive',
+      isEndemics: true,
+      typeOfClaim: 'FOLLOW_UP',
       dateOfVisit,
-      yesOrNoPiHunt
-    )
-
-    expect(paymentData).toEqual({
-      standardCode: 'AHWR-Beef',
-      value: 837
-    })
-  })
-
-  test('returns correct payment data for beef negative follow up with test result', () => {
-    const typeOfLivestock = 'beef'
-    const testResults = 'negative'
-    const isEndemics = true
-    const yesOrNoPiHunt = 'noPiHunt'
-    const dateOfVisit = '2025-04-24T00:00:00.000Z'
-
-    const paymentData = getPaymentDataLivestock(
-      typeOfLivestock,
-      testResults,
-      isEndemics,
-      'FOLLOW_UP',
+      yesOrNoPiHunt: 'noPiHunt',
+      expected: { standardCode: 'AHWR-Beef', value: 837 }
+    },
+    {
+      description: 'beef negative follow up with noPiHunt test result',
+      typeOfLivestock: 'beef',
+      testResults: 'negative',
+      isEndemics: true,
+      typeOfClaim: 'FOLLOW_UP',
       dateOfVisit,
-      yesOrNoPiHunt
-    )
-
-    expect(paymentData).toEqual({
-      standardCode: 'AHWR-Beef',
-      value: 215
-    })
-  })
-
-  test('returns correct payment data for review dairy with negative test result', () => {
-    const typeOfLivestock = 'dairy'
-    const testResults = 'negative'
-    const isEndemics = true
-    const yesOrNoPiHunt = 'noPiHunt'
-    const dateOfVisit = '2025-04-24T00:00:00.000Z'
-
-    const paymentData = getPaymentDataLivestock(
-      typeOfLivestock,
-      testResults,
-      isEndemics,
-      'REVIEW',
+      yesOrNoPiHunt: 'noPiHunt',
+      expected: { standardCode: 'AHWR-Beef', value: 215 }
+    },
+    {
+      description: 'dairy review with noPiHunt negative test result',
+      typeOfLivestock: 'dairy',
+      testResults: 'negative',
+      isEndemics: true,
+      typeOfClaim: 'REVIEW',
       dateOfVisit,
-      yesOrNoPiHunt
-    )
-
-    expect(paymentData).toEqual({
-      standardCode: 'AHWR-Dairy',
-      value: 372
-    })
-  })
-
-  test('returns correct payment data for dairy positive follow up with test result', () => {
-    const typeOfLivestock = 'dairy'
-    const testResults = 'positive'
-    const isEndemics = true
-    const yesOrNoPiHunt = 'noPiHunt'
-    const dateOfVisit = '2025-04-24T00:00:00.000Z'
-
-    const paymentData = getPaymentDataLivestock(
-      typeOfLivestock,
-      testResults,
-      isEndemics,
-      'FOLLOW_UP',
+      yesOrNoPiHunt: 'noPiHunt',
+      expected: { standardCode: 'AHWR-Dairy', value: 372 }
+    },
+    {
+      description: 'dairy positive follow up with noPiHunt test result',
+      typeOfLivestock: 'dairy',
+      testResults: 'positive',
+      isEndemics: true,
+      typeOfClaim: 'FOLLOW_UP',
       dateOfVisit,
-      yesOrNoPiHunt
-    )
-
-    expect(paymentData).toEqual({
-      standardCode: 'AHWR-Dairy',
-      value: 1714
-    })
-  })
-
-  test('returns correct payment data for dairy negative follow up with test result', () => {
-    const typeOfLivestock = 'dairy'
-    const testResults = 'negative'
-    const isEndemics = true
-    const yesOrNoPiHunt = 'noPiHunt'
-    const dateOfVisit = '2025-04-24T00:00:00.000Z'
-
-    const paymentData = getPaymentDataLivestock(
-      typeOfLivestock,
-      testResults,
-      isEndemics,
-      'FOLLOW_UP',
+      yesOrNoPiHunt: 'noPiHunt',
+      expected: { standardCode: 'AHWR-Dairy', value: 1714 }
+    },
+    {
+      description: 'dairy negative follow up with noPiHunt test result',
+      typeOfLivestock: 'dairy',
+      testResults: 'negative',
+      isEndemics: true,
+      typeOfClaim: 'FOLLOW_UP',
       dateOfVisit,
-      yesOrNoPiHunt
-    )
-
-    expect(paymentData).toEqual({
-      standardCode: 'AHWR-Dairy',
-      value: 215
-    })
-  })
-
-  test('returns correct payment data for beef review with test result', () => {
-    const typeOfLivestock = 'beef'
-    const testResults = 'positive'
-    const isEndemics = true
-    const yesOrNoPiHunt = 'yesPiHunt'
-    const dateOfVisit = '2025-04-24T00:00:00.000Z'
-
-    const paymentData = getPaymentDataLivestock(
-      typeOfLivestock,
-      testResults,
-      isEndemics,
-      'REVIEW',
+      yesOrNoPiHunt: 'noPiHunt',
+      expected: { standardCode: 'AHWR-Dairy', value: 215 }
+    },
+    {
+      description: 'beef review with yesPiHunt test result',
+      typeOfLivestock: 'beef',
+      testResults: 'positive',
+      isEndemics: true,
+      typeOfClaim: 'REVIEW',
       dateOfVisit,
-      yesOrNoPiHunt
-    )
-
-    expect(paymentData).toEqual({
-      standardCode: 'AHWR-Beef',
-      value: 522
-    })
-  })
-
-  test('returns correct payment data for beef positive follow up with test result', () => {
-    const typeOfLivestock = 'beef'
-    const testResults = 'positive'
-    const isEndemics = true
-    const yesOrNoPiHunt = 'yesPiHunt'
-    const dateOfVisit = '2025-04-24T00:00:00.000Z'
-
-    const paymentData = getPaymentDataLivestock(
-      typeOfLivestock,
-      testResults,
-      isEndemics,
-      'FOLLOW_UP',
+      yesOrNoPiHunt: 'yesPiHunt',
+      expected: { standardCode: 'AHWR-Beef', value: 522 }
+    },
+    {
+      description: 'beef positive follow up with yesPiHunt test result',
+      typeOfLivestock: 'beef',
+      testResults: 'positive',
+      isEndemics: true,
+      typeOfClaim: 'FOLLOW_UP',
       dateOfVisit,
-      yesOrNoPiHunt
-    )
-
-    expect(paymentData).toEqual({
-      standardCode: 'AHWR-Beef',
-      value: 837
-    })
-  })
-
-  test('returns correct payment data for beef negative follow up with test result', () => {
-    const typeOfLivestock = 'beef'
-    const testResults = 'negative'
-    const isEndemics = true
-    const yesOrNoPiHunt = 'yesPiHunt'
-    const dateOfVisit = '2025-04-24T00:00:00.000Z'
-
-    const paymentData = getPaymentDataLivestock(
-      typeOfLivestock,
-      testResults,
-      isEndemics,
-      'FOLLOW_UP',
+      yesOrNoPiHunt: 'yesPiHunt',
+      expected: { standardCode: 'AHWR-Beef', value: 837 }
+    },
+    {
+      description: 'beef negative follow up with yesPiHunt test result',
+      typeOfLivestock: 'beef',
+      testResults: 'negative',
+      isEndemics: true,
+      typeOfClaim: 'FOLLOW_UP',
       dateOfVisit,
-      yesOrNoPiHunt
-    )
-
-    expect(paymentData).toEqual({
-      standardCode: 'AHWR-Beef',
-      value: 837
-    })
-  })
-
-  test('returns correct payment data for review dairy with negative test result', () => {
-    const typeOfLivestock = 'dairy'
-    const testResults = 'negative'
-    const isEndemics = true
-    const yesOrNoPiHunt = 'yesPiHunt'
-    const dateOfVisit = '2025-04-24T00:00:00.000Z'
-
-    const paymentData = getPaymentDataLivestock(
-      typeOfLivestock,
-      testResults,
-      isEndemics,
-      'REVIEW',
+      yesOrNoPiHunt: 'yesPiHunt',
+      expected: { standardCode: 'AHWR-Beef', value: 837 }
+    },
+    {
+      description: 'dairy review with yesPiHunt negative test result',
+      typeOfLivestock: 'dairy',
+      testResults: 'negative',
+      isEndemics: true,
+      typeOfClaim: 'REVIEW',
       dateOfVisit,
-      yesOrNoPiHunt
-    )
-
-    expect(paymentData).toEqual({
-      standardCode: 'AHWR-Dairy',
-      value: 372
-    })
-  })
-
-  test('returns correct payment data for dairy positive follow up with test result', () => {
-    const typeOfLivestock = 'dairy'
-    const testResults = 'positive'
-    const isEndemics = true
-    const yesOrNoPiHunt = 'yesPiHunt'
-    const dateOfVisit = '2025-04-24T00:00:00.000Z'
-
-    const paymentData = getPaymentDataLivestock(
-      typeOfLivestock,
-      testResults,
-      isEndemics,
-      'FOLLOW_UP',
+      yesOrNoPiHunt: 'yesPiHunt',
+      expected: { standardCode: 'AHWR-Dairy', value: 372 }
+    },
+    {
+      description: 'dairy positive follow up with yesPiHunt test result',
+      typeOfLivestock: 'dairy',
+      testResults: 'positive',
+      isEndemics: true,
+      typeOfClaim: 'FOLLOW_UP',
       dateOfVisit,
-      yesOrNoPiHunt
-    )
-
-    expect(paymentData).toEqual({
-      standardCode: 'AHWR-Dairy',
-      value: 1714
-    })
-  })
-
-  test('returns correct payment data for dairy negative follow up with test result', () => {
-    const typeOfLivestock = 'dairy'
-    const testResults = 'negative'
-    const isEndemics = true
-    const yesOrNoPiHunt = 'yesPiHunt'
-    const dateOfVisit = '2025-04-24T00:00:00.000Z'
-
-    const paymentData = getPaymentDataLivestock(
-      typeOfLivestock,
-      testResults,
-      isEndemics,
-      'FOLLOW_UP',
+      yesOrNoPiHunt: 'yesPiHunt',
+      expected: { standardCode: 'AHWR-Dairy', value: 1714 }
+    },
+    {
+      description: 'dairy negative follow up with yesPiHunt test result',
+      typeOfLivestock: 'dairy',
+      testResults: 'negative',
+      isEndemics: true,
+      typeOfClaim: 'FOLLOW_UP',
       dateOfVisit,
-      yesOrNoPiHunt
-    )
-
-    expect(paymentData).toEqual({
-      standardCode: 'AHWR-Dairy',
-      value: 1714
-    })
-  })
-
-  test('returns correct payment data for pigs review', () => {
-    const typeOfLivestock = 'pigs'
-    const testResults = null
-    const isEndemics = true
-    const dateOfVisit = '2025-04-24T00:00:00.000Z'
-
-    const paymentData = getPaymentDataLivestock(
-      typeOfLivestock,
-      testResults,
-      isEndemics,
-      'REVIEW',
-      dateOfVisit
-    )
-
-    expect(paymentData).toEqual({
-      standardCode: 'AHWR-Pigs',
-      value: 557
-    })
-  })
-  test('returns correct payment data for pigs follow up', () => {
-    const typeOfLivestock = 'pigs'
-    const testResults = null
-    const isEndemics = true
-    const dateOfVisit = '2025-04-24T00:00:00.000Z'
-
-    const paymentData = getPaymentDataLivestock(
-      typeOfLivestock,
-      testResults,
-      isEndemics,
-      'FOLLOW_UP',
-      dateOfVisit
-    )
-
-    expect(paymentData).toEqual({
-      standardCode: 'AHWR-Pigs',
-      value: 923
-    })
-  })
-
-  test('returns correct payment data for sheep review without test result', () => {
-    const typeOfLivestock = 'sheep'
-    const testResults = null
-    const isEndemics = true
-    const dateOfVisit = '2025-04-24T00:00:00.000Z'
-
-    const paymentData = getPaymentDataLivestock(
-      typeOfLivestock,
-      testResults,
-      isEndemics,
-      'REVIEW',
-      dateOfVisit
-    )
-
-    expect(paymentData).toEqual({
-      standardCode: 'AHWR-Sheep',
-      value: 436
-    })
-  })
-
-  test('returns correct payment data for sheep follow up without test result', () => {
-    const typeOfLivestock = 'sheep'
-    const testResults = null
-    const isEndemics = true
-    const dateOfVisit = '2025-04-24T00:00:00.000Z'
-
-    const paymentData = getPaymentDataLivestock(
-      typeOfLivestock,
-      testResults,
-      isEndemics,
-      'FOLLOW_UP',
-      dateOfVisit
-    )
-
-    expect(paymentData).toEqual({
-      standardCode: 'AHWR-Sheep',
-      value: 639
-    })
-  })
-
-  test('returns correct payment data for beef without endemics', () => {
-    const typeOfLivestock = 'beef'
-    const testResults = null
-    const isEndemics = false
-    const dateOfVisit = '2025-04-24T00:00:00.000Z'
-
-    const paymentData = getPaymentDataLivestock(
-      typeOfLivestock,
-      testResults,
-      isEndemics,
-      undefined,
-      dateOfVisit
-    )
-
-    expect(paymentData).toEqual({
-      standardCode: 'AHWR-Beef',
-      value: 522
-    })
-  })
-
-  test('returns correct payment data for dairy without endemics', () => {
-    const typeOfLivestock = 'dairy'
-    const testResults = null
-    const isEndemics = false
-    const dateOfVisit = '2025-04-24T00:00:00.000Z'
-
-    const paymentData = getPaymentDataLivestock(
-      typeOfLivestock,
-      testResults,
-      isEndemics,
-      undefined,
-      dateOfVisit
-    )
-
-    expect(paymentData).toEqual({
-      standardCode: 'AHWR-Dairy',
-      value: 372
-    })
-  })
-
-  test('returns correct payment data for pigs without endemics', () => {
-    const typeOfLivestock = 'pigs'
-    const testResults = null
-    const isEndemics = false
-    const dateOfVisit = '2025-04-24T00:00:00.000Z'
-
-    const paymentData = getPaymentDataLivestock(
-      typeOfLivestock,
-      testResults,
-      isEndemics,
-      undefined,
-      dateOfVisit
-    )
-
-    expect(paymentData).toEqual({
-      standardCode: 'AHWR-Pigs',
-      value: 557
-    })
-  })
-
-  test('returns correct payment data for sheep without endemics', () => {
-    const typeOfLivestock = 'sheep'
-    const testResults = null
-    const isEndemics = false
-    const dateOfVisit = '2025-04-24T00:00:00.000Z'
-
-    const paymentData = getPaymentDataLivestock(
-      typeOfLivestock,
-      testResults,
-      isEndemics,
-      undefined,
-      dateOfVisit
-    )
-
-    expect(paymentData).toEqual({
-      standardCode: 'AHWR-Sheep',
-      value: 436
-    })
-  })
-
-  test('returns correct payment data for beef review with payment rate uplift', () => {
-    const typeOfLivestock = 'beef'
-    const testResults = 'positive'
-    const isEndemics = true
-    const yesOrNoPiHunt = 'noPiHunt'
-    const dateOfVisit = '2026-01-22T00:00:00.000Z'
-
-    const paymentData = getPaymentDataLivestock(
-      typeOfLivestock,
-      testResults,
-      isEndemics,
-      'REVIEW',
+      yesOrNoPiHunt: 'yesPiHunt',
+      expected: { standardCode: 'AHWR-Dairy', value: 1714 }
+    },
+    {
+      description: 'pigs review',
+      typeOfLivestock: 'pigs',
+      testResults: null,
+      isEndemics: true,
+      typeOfClaim: 'REVIEW',
       dateOfVisit,
-      yesOrNoPiHunt
-    )
+      yesOrNoPiHunt: undefined,
+      expected: { standardCode: 'AHWR-Pigs', value: 557 }
+    },
+    {
+      description: 'pigs follow up',
+      typeOfLivestock: 'pigs',
+      testResults: null,
+      isEndemics: true,
+      typeOfClaim: 'FOLLOW_UP',
+      dateOfVisit,
+      yesOrNoPiHunt: undefined,
+      expected: { standardCode: 'AHWR-Pigs', value: 923 }
+    },
+    {
+      description: 'sheep review without test result',
+      typeOfLivestock: 'sheep',
+      testResults: null,
+      isEndemics: true,
+      typeOfClaim: 'REVIEW',
+      dateOfVisit,
+      yesOrNoPiHunt: undefined,
+      expected: { standardCode: 'AHWR-Sheep', value: 436 }
+    },
+    {
+      description: 'sheep follow up without test result',
+      typeOfLivestock: 'sheep',
+      testResults: null,
+      isEndemics: true,
+      typeOfClaim: 'FOLLOW_UP',
+      dateOfVisit,
+      yesOrNoPiHunt: undefined,
+      expected: { standardCode: 'AHWR-Sheep', value: 639 }
+    },
+    {
+      description: 'beef without endemics',
+      typeOfLivestock: 'beef',
+      testResults: null,
+      isEndemics: false,
+      typeOfClaim: undefined,
+      dateOfVisit,
+      yesOrNoPiHunt: undefined,
+      expected: { standardCode: 'AHWR-Beef', value: 522 }
+    },
+    {
+      description: 'dairy without endemics',
+      typeOfLivestock: 'dairy',
+      testResults: null,
+      isEndemics: false,
+      typeOfClaim: undefined,
+      dateOfVisit,
+      yesOrNoPiHunt: undefined,
+      expected: { standardCode: 'AHWR-Dairy', value: 372 }
+    },
+    {
+      description: 'pigs without endemics',
+      typeOfLivestock: 'pigs',
+      testResults: null,
+      isEndemics: false,
+      typeOfClaim: undefined,
+      dateOfVisit,
+      yesOrNoPiHunt: undefined,
+      expected: { standardCode: 'AHWR-Pigs', value: 557 }
+    },
+    {
+      description: 'sheep without endemics',
+      typeOfLivestock: 'sheep',
+      testResults: null,
+      isEndemics: false,
+      typeOfClaim: undefined,
+      dateOfVisit,
+      yesOrNoPiHunt: undefined,
+      expected: { standardCode: 'AHWR-Sheep', value: 436 }
+    },
+    {
+      description: 'beef review with payment rate uplift',
+      typeOfLivestock: 'beef',
+      testResults: 'positive',
+      isEndemics: true,
+      typeOfClaim: 'REVIEW',
+      dateOfVisit: '2026-01-22T00:00:00.000Z',
+      yesOrNoPiHunt: 'noPiHunt',
+      expected: { standardCode: 'AHWR-Beef', value: 647 }
+    }
+  ])(
+    'returns correct payment data for $description',
+    ({
+      typeOfLivestock,
+      testResults,
+      isEndemics,
+      typeOfClaim,
+      dateOfVisit,
+      yesOrNoPiHunt,
+      expected
+    }) => {
+      const paymentData = getPaymentDataLivestock(
+        typeOfLivestock,
+        testResults,
+        isEndemics,
+        typeOfClaim,
+        dateOfVisit,
+        yesOrNoPiHunt
+      )
 
-    expect(paymentData).toEqual({
-      standardCode: 'AHWR-Beef',
-      value: 647
-    })
-  })
+      expect(paymentData).toEqual(expected)
+    }
+  )
 })

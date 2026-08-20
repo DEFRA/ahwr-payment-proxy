@@ -31,9 +31,9 @@
   "license": "OGL-UK-3.0",
   "dependencies": {
     "@agendajs/mongo-backend": "4.0.3",
-    "@aws-sdk/client-cognito-identity": "3.1106.0",
-    "@aws-sdk/client-sqs": "3.1106.0",
-    "@aws-sdk/credential-providers": "3.1106.0",
+    "@aws-sdk/client-cognito-identity": "3.1109.0",
+    "@aws-sdk/client-sqs": "3.1109.0",
+    "@aws-sdk/credential-providers": "3.1109.0",
     "@azure/identity": "4.13.1",
     "@azure/storage-blob": "12.33.0",
     "@defra/hapi-secure-context": "0.4.0",

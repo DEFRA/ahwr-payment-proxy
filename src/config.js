@@ -45,21 +45,6 @@ const config = convict({
       env: 'BACKOFFICE_UI_API_KEY'
     }
   },
-  cdpEnvironment: {
-    doc: 'The CDP environment the app is running in. With the addition of "local" for local development',
-    format: [
-      'local',
-      'infra-dev',
-      'management',
-      'dev',
-      'test',
-      'perf-test',
-      'ext-test',
-      'prod'
-    ],
-    default: 'local',
-    env: 'ENVIRONMENT'
-  },
   aws: {
     region: {
       doc: 'AWS region',
@@ -209,12 +194,6 @@ const config = convict({
     }
   },
   cognito: {
-    audience: {
-      doc: 'Audience for the cognito instance',
-      format: String,
-      default: '',
-      env: 'COGNITO_AUDIENCE'
-    },
     poolId: {
       doc: 'Pool ID for the cognito instance',
       format: String,

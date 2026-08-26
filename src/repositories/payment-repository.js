@@ -24,7 +24,7 @@ export async function set(db, reference, data, frn) {
     frn,
     createdAt: new Date(),
     updatedAt: new Date(),
-    paymentCheckCount: 0,
+    paymentCheckCount: 0, // Change me back
     status: Status.REQUESTED
   })
 }
@@ -42,7 +42,7 @@ export async function updatePaymentResponse(
         status,
         paymentResponse,
         frn: paymentResponse.frn,
-        updatedAt: new Date()
+        updatedAt: new Date(Date.now())
       }
     }
   )

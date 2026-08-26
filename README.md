@@ -28,9 +28,9 @@ Created from the Core delivery platform Node.js Backend Template.
 
 # Service Purpose
 
-The payment proxy service is responsible for proxying payment requests to the FCP Payment component,
-which is used to send payment requests to the GOV.UK Pay service. It is invoked by input messages on it's input SQS queue,
-and outputs requests to the FCP Payment hub via an output Servicebus topic.
+The payment proxy service is responsible for proxying payment requests to the FCP Payment component, which is used to
+send payment requests to the GOV.UK Pay service. It is invoked by input messages on it's input SQS queue, and outputs
+requests to the FCP Payment hub via an output Servicebus topic.
 
 # Service features
 

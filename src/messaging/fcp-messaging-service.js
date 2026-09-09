@@ -10,14 +10,20 @@ export const startMessagingService = async (logger, db) => {
     username,
     password,
     paymentResponseTopic,
-    paymentResponseSubscription
+    paymentResponseSubscription,
+    useLocalEmulator
   } = config.get('serviceBus')
+
+  if (useLocalEmulator) {
+    logger.info('Connecting to the local Azure Service Bus Emulator')
+  }
 
   fcpMessageClient = createServiceBusClient({
     host,
     username,
     password,
-    proxyUrl: config.get('httpProxy')
+    proxyUrl: config.get('httpProxy'),
+    useDevelopmentEmulator: useLocalEmulator
   })
 
   fcpMessageClient.subscribeTopic({

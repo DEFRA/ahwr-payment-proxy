@@ -44,6 +44,21 @@ describe('fcp-messaging-service', () => {
       expect(mockClient.close).toHaveBeenCalledTimes(1)
     })
 
+    it('should connect to the local emulator when useLocalEmulator is true', async () => {
+      config.set('serviceBus.useLocalEmulator', true)
+
+      await startMessagingService(mockLogger, mockDb)
+
+      expect(createServiceBusClient).toHaveBeenCalledWith(
+        expect.objectContaining({ useDevelopmentEmulator: true })
+      )
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Connecting to the local Azure Service Bus Emulator (SERVICE_BUS_USE_EMULATOR=true), not the real FCP Payment hub.'
+      )
+
+      config.set('serviceBus.useLocalEmulator', false)
+    })
+
     it('should log errors when subscribe topic throws', async () => {
       await startMessagingService(mockLogger, mockDb)
 

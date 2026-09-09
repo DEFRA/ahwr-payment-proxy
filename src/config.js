@@ -61,6 +61,12 @@ const config = convict({
     }
   },
   serviceBus: {
+    useLocalEmulator: {
+      doc: 'Whether to connect to a local Azure Service Bus Emulator (see compose.yml) instead of a real Service Bus namespace.',
+      format: Boolean,
+      default: false,
+      env: 'SERVICE_BUS_USE_EMULATOR'
+    },
     host: {
       doc: 'Host name for the service bus instance',
       format: String,

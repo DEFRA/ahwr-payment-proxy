@@ -32,7 +32,7 @@ const tryConnect = () =>
     })
   })
 
-async function main () {
+async function main() {
   const deadline = Date.now() + maxWaitMs
 
   while (Date.now() < deadline) {

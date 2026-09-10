@@ -21,8 +21,8 @@ Created from the Core delivery platform Node.js Backend Template.
   - [Development image](#development-image)
   - [Production image](#production-image)
   - [Docker Compose](#docker-compose)
-  - [Dependabot](#dependabot)
-  - [SonarCloud](#sonarcloud)
+- [Dependabot](#dependabot)
+- [SonarCloud](#sonarcloud)
 - [Licence](#licence)
   - [About the licence](#about-the-licence)
 
@@ -225,15 +225,15 @@ A local environment with:
 docker compose up --build -d
 ```
 
-### Dependabot
+## Dependabot
 
-We have added an example dependabot configuration file to the repository. You can enable it by renaming
-the [.github/example.dependabot.yml](.github/example.dependabot.yml) to `.github/dependabot.yml`
+Currently setup to work into four groups, so we don't have PRs per package. The updates run once a week, on a Monday. Except for the security group, which is advisory-triggered and ignores the schedule.
 
-### SonarCloud
+## SonarCloud
 
-Sonarcloud is active for this repository. All pull requests will be analysed and the results can be seen in the SonarCloud dashboard for this repository.
-The DEFRA standard quality gates are applied, so if the new code does not meet the standards the quality gate will fail and this will be visible in the pull request checks.
+This project is set up to integrate with sonarcloud, and scans will be performed on all pull requests, and on
+publish to main branch. We follow the quality gates as per DEFRA standards, and if coverage falls below the
+acceptable level, or new issues are introduced the build will fail.
 
 ## Licence
 

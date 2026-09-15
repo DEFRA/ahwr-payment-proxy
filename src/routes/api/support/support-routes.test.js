@@ -4,7 +4,8 @@ import { authPlugin } from '../../../plugins/auth.js'
 import { supportRoutes } from './support-routes.js'
 import {
   requestPaymentStatusHandler,
-  supportQueueMessagesHandler
+  supportQueueMessagesHandler,
+  supportApplyQueueActionsHandler
 } from './support-controller.js'
 
 jest.mock('./support-controller.js')
@@ -75,6 +76,41 @@ describe('support-routes', () => {
 
       expect(res.statusCode).toBe(StatusCodes.OK)
       expect(supportQueueMessagesHandler).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('POST /api/support/queue-messages/actions', () => {
+    it('should validate request and call correct handler', async () => {
+      supportApplyQueueActionsHandler.mockImplementation(async (_, h) => {
+        return h.response().code(StatusCodes.OK)
+      })
+
+      const res = await server.inject({
+        method: 'POST',
+        url: '/api/support/queue-messages/actions',
+        headers: { 'x-api-key': 'not-set' },
+        payload: {
+          queueUrl: 'localhost:4566/payment-status-dlq',
+          actions: [{ id: '1', action: 'delete' }]
+        }
+      })
+
+      expect(res.statusCode).toBe(StatusCodes.OK)
+      expect(supportApplyQueueActionsHandler).toHaveBeenCalledTimes(1)
+    })
+
+    it('should reject an invalid action value', async () => {
+      const res = await server.inject({
+        method: 'POST',
+        url: '/api/support/queue-messages/actions',
+        headers: { 'x-api-key': 'not-set' },
+        payload: {
+          queueUrl: 'localhost:4566/payment-status-dlq',
+          actions: [{ id: '1', action: 'explode' }]
+        }
+      })
+
+      expect(res.statusCode).toBe(StatusCodes.BAD_REQUEST)
     })
   })
 })

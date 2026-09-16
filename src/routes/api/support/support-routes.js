@@ -2,7 +2,8 @@ import Joi from 'joi'
 import {
   requestPaymentStatusHandler,
   supportQueueMessagesHandler,
-  supportApplyQueueActionsHandler
+  supportApplyQueueActionsHandler,
+  supportIsDeadLetterQueueHandler
 } from './support-controller.js'
 
 export const supportRoutes = [
@@ -53,6 +54,19 @@ export const supportRoutes = [
         })
       },
       handler: supportApplyQueueActionsHandler
+    }
+  },
+  {
+    method: 'GET',
+    path: '/api/support/queue-messages/is-dlq',
+    options: {
+      description: 'Check whether a queue is a dead-letter queue',
+      validate: {
+        query: Joi.object({
+          queueUrl: Joi.string().required()
+        })
+      },
+      handler: supportIsDeadLetterQueueHandler
     }
   }
 ]

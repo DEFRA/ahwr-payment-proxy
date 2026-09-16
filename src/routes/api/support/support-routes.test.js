@@ -5,7 +5,8 @@ import { supportRoutes } from './support-routes.js'
 import {
   requestPaymentStatusHandler,
   supportQueueMessagesHandler,
-  supportApplyQueueActionsHandler
+  supportApplyQueueActionsHandler,
+  supportIsDeadLetterQueueHandler
 } from './support-controller.js'
 
 jest.mock('./support-controller.js')
@@ -108,6 +109,33 @@ describe('support-routes', () => {
           queueUrl: 'localhost:4566/payment-status-dlq',
           actions: [{ id: '1', action: 'explode' }]
         }
+      })
+
+      expect(res.statusCode).toBe(StatusCodes.BAD_REQUEST)
+    })
+  })
+
+  describe('GET /api/support/queue-messages/is-dlq', () => {
+    it('should validate request and call correct handler', async () => {
+      supportIsDeadLetterQueueHandler.mockImplementation(async (_, h) => {
+        return h.response(true).code(StatusCodes.OK)
+      })
+
+      const res = await server.inject({
+        method: 'GET',
+        url: '/api/support/queue-messages/is-dlq?queueUrl=localhost:4566/payment-status-dlq',
+        headers: { 'x-api-key': 'not-set' }
+      })
+
+      expect(res.statusCode).toBe(StatusCodes.OK)
+      expect(supportIsDeadLetterQueueHandler).toHaveBeenCalledTimes(1)
+    })
+
+    it('should reject when queueUrl is missing', async () => {
+      const res = await server.inject({
+        method: 'GET',
+        url: '/api/support/queue-messages/is-dlq',
+        headers: { 'x-api-key': 'not-set' }
       })
 
       expect(res.statusCode).toBe(StatusCodes.BAD_REQUEST)

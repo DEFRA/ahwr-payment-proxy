@@ -1,7 +1,8 @@
 import {
   requestPaymentStatusHandler,
   supportQueueMessagesHandler,
-  supportApplyQueueActionsHandler
+  supportApplyQueueActionsHandler,
+  supportIsDeadLetterQueueHandler
 } from './support-controller.js'
 import { get } from '../../../repositories/payment-repository.js'
 import Boom from '@hapi/boom'
@@ -473,6 +474,87 @@ describe('supportApplyQueueActionsHandler', () => {
     expect(mockLogger.error).toHaveBeenCalledWith(
       { error },
       'Failed to apply queue message actions'
+    )
+    expect(mockLogger.warn).not.toHaveBeenCalled()
+  })
+})
+
+describe('supportIsDeadLetterQueueHandler', () => {
+  const queueUrl = 'http://localhost:45666/queueName-dlq'
+  const mockLogger = {
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn()
+  }
+  const mockRequest = {
+    logger: mockLogger,
+    query: { queueUrl }
+  }
+  const mockH = {
+    response: jest.fn().mockReturnThis(),
+    code: jest.fn().mockReturnThis(),
+    takeover: jest.fn().mockReturnThis()
+  }
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it('returns true when the queue is a dead-letter queue', async () => {
+    sqsClient.isDeadLetterQueue.mockResolvedValue(true)
+
+    await supportIsDeadLetterQueueHandler(mockRequest, mockH)
+
+    expect(sqsClient.setupClient).toHaveBeenCalledWith(
+      'eu-west-2',
+      'http://localhost:4566',
+      mockLogger
+    )
+    expect(sqsClient.isDeadLetterQueue).toHaveBeenCalledWith(queueUrl)
+    expect(mockH.response).toHaveBeenCalledWith({ isDlq: true })
+    expect(mockH.code).toHaveBeenCalledWith(200)
+  })
+
+  it('returns false when the queue is not a dead-letter queue', async () => {
+    sqsClient.isDeadLetterQueue.mockResolvedValue(false)
+
+    await supportIsDeadLetterQueueHandler(mockRequest, mockH)
+
+    expect(mockH.response).toHaveBeenCalledWith({ isDlq: false })
+    expect(mockH.code).toHaveBeenCalledWith(200)
+  })
+
+  it('returns 404 directly (no throw) and logs at warn without an error field when queue does not exist', async () => {
+    sqsClient.isDeadLetterQueue.mockRejectedValue(
+      new QueueDoesNotExist({
+        message: 'The specified queue does not exist.',
+        $metadata: {}
+      })
+    )
+
+    await supportIsDeadLetterQueueHandler(mockRequest, mockH)
+
+    expect(mockH.response).toHaveBeenCalledWith(`Queue not found: ${queueUrl}`)
+    expect(mockH.code).toHaveBeenCalledWith(404)
+    expect(mockH.takeover).toHaveBeenCalled()
+    expect(mockLogger.warn).toHaveBeenCalledWith(
+      { queueUrl },
+      'Queue not found for support lookup'
+    )
+    expect(mockLogger.error).not.toHaveBeenCalled()
+  })
+
+  it('wraps unknown errors in Boom.internal and logs at error', async () => {
+    const error = new Error('Unexpected')
+    sqsClient.isDeadLetterQueue.mockRejectedValue(error)
+
+    await expect(
+      supportIsDeadLetterQueueHandler(mockRequest, mockH)
+    ).rejects.toThrow(Boom.internal(error))
+
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      { error },
+      'Failed to check if queue is a dead-letter queue'
     )
     expect(mockLogger.warn).not.toHaveBeenCalled()
   })

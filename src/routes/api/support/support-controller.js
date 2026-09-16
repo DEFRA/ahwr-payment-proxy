@@ -125,3 +125,37 @@ export const supportApplyQueueActionsHandler = async (request, h) => {
     throw Boom.internal(error)
   }
 }
+
+export const supportIsDeadLetterQueueHandler = async (request, h) => {
+  const { queueUrl } = request.query
+
+  try {
+    const region = config.get('aws.region')
+    const endpointUrl = config.get('aws.endpointUrl')
+
+    sqsClient.setupClient(region, endpointUrl, request.logger)
+
+    const isDlq = await sqsClient.isDeadLetterQueue(queueUrl)
+
+    return h.response({ isDlq }).code(StatusCodes.OK)
+  } catch (error) {
+    if (error instanceof QueueDoesNotExist) {
+      request.logger.warn({ queueUrl }, 'Queue not found for support lookup')
+      return h
+        .response(`Queue not found: ${queueUrl}`)
+        .code(StatusCodes.NOT_FOUND)
+        .takeover()
+    }
+
+    request.logger.error(
+      { error },
+      'Failed to check if queue is a dead-letter queue'
+    )
+
+    if (Boom.isBoom(error)) {
+      throw error
+    }
+
+    throw Boom.internal(error)
+  }
+}

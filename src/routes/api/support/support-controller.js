@@ -7,6 +7,9 @@ import { config } from '../../../config.js'
 import { sqsClient } from 'ffc-ahwr-common-library'
 import { QueueDoesNotExist } from '@aws-sdk/client-sqs'
 
+const AWS_REGION = 'aws.region'
+const AWS_ENDPOINT = 'aws.endpointUrl'
+
 export const requestPaymentStatusHandler = async (request, h) => {
   try {
     const {
@@ -54,8 +57,8 @@ export const supportQueueMessagesHandler = async (request, h) => {
   const { queueUrl, limit } = request.query
 
   try {
-    const region = config.get('aws.region')
-    const endpointUrl = config.get('aws.endpointUrl')
+    const region = config.get(AWS_REGION)
+    const endpointUrl = config.get(AWS_ENDPOINT)
 
     sqsClient.setupClient(region, endpointUrl, request.logger)
 
@@ -85,8 +88,8 @@ export const supportApplyQueueActionsHandler = async (request, h) => {
   const { queueUrl, actions } = request.payload
 
   try {
-    const region = config.get('aws.region')
-    const endpointUrl = config.get('aws.endpointUrl')
+    const region = config.get(AWS_REGION)
+    const endpointUrl = config.get(AWS_ENDPOINT)
 
     sqsClient.setupClient(region, endpointUrl, request.logger)
 
@@ -130,8 +133,8 @@ export const supportIsDeadLetterQueueHandler = async (request, h) => {
   const { queueUrl } = request.query
 
   try {
-    const region = config.get('aws.region')
-    const endpointUrl = config.get('aws.endpointUrl')
+    const region = config.get(AWS_REGION)
+    const endpointUrl = config.get(AWS_ENDPOINT)
 
     sqsClient.setupClient(region, endpointUrl, request.logger)
 

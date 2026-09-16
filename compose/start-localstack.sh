@@ -16,7 +16,7 @@ function create_queue() {
   # Create the DLQ
   local dlq_url=$(
     awslocal sqs create-queue \
-    --queue-name "$queue_name-dead-letter-queue" \
+    --queue-name "$queue_name-deadletter" \
     --query "QueueUrl" --output text
   )
 
@@ -65,6 +65,25 @@ function create_topic_and_queue() {
   subscribe_queue_to_topic $topic_arn $queue_arn
 }
 
+# Puts each message body directly onto a queue (by name), tagged with an eventType
+# attribute so it looks like a real message. Used to seed test data.
+function seed_messages() {
+  local queue_name=$1
+  local event_type=$2
+  shift 2
+
+  local queue_url=$(
+    awslocal sqs get-queue-url --queue-name "$queue_name" --query "QueueUrl" --output text
+  )
+
+  for body in "$@"; do
+    awslocal sqs send-message \
+      --queue-url "$queue_url" \
+      --message-body "$body" \
+      --message-attributes '{"eventType":{"DataType":"String","StringValue":"'"$event_type"'"}}'
+  done
+}
+
 create_topic_and_queue "ahwr_payment_request" "ahwr_payment_request_queue" &
 create_topic_and_queue "ahwr_payment_update" "ahwr_application_backend_queue" &
 
@@ -74,3 +93,15 @@ echo "SNS/SQS/S3 ready"
 
 # Send payment request
 awslocal sns publish --topic-arn arn:aws:sns:eu-west-2:000000000000:ahwr_payment_request --message '{ "reference": "IAHW-G3CL-V59P", "sbi": "123456789", "isEndemics": false, "reviewTestResults": "positive", "whichReview": "beef", "frn": "987654321", "claimType": "REVIEW", "dateOfVisit": "2025-04-24T00:00:00.000Z" }' --message-attributes '{"eventType":{"DataType":"String","StringValue":"uk.gov.ffc.ahwr.submit.payment.request"}}'
+
+# Seed messages for testing (like the backoffice support page):
+#  - a couple on a normal queue (shows the plain "queue messages" view)
+#  - a couple on its dead-letter queue (shows the per-message delete / reapply actions)
+# payment proxy doesn't run locally so the messages on the normal queue stay there.
+seed_messages "ahwr_payment_request_queue" "uk.gov.ffc.ahwr.submit.payment.request" \
+  '{ "reference": "IAHW-Q001-0001", "sbi": "123456789", "frn": "987654321", "claimType": "REVIEW", "whichReview": "beef", "dateOfVisit": "2025-04-24T00:00:00.000Z" }' \
+  '{ "reference": "IAHW-Q001-0002", "sbi": "223456789", "frn": "887654321", "claimType": "ENDEMICS", "whichReview": "sheep", "dateOfVisit": "2025-05-01T00:00:00.000Z" }'
+
+seed_messages "ahwr_payment_request_queue-deadletter" "uk.gov.ffc.ahwr.submit.payment.request" \
+  '{ "reference": "IAHW-DLQ1-0001", "sbi": "123456789", "frn": "987654321", "claimType": "REVIEW", "whichReview": "beef", "dateOfVisit": "2025-04-24T00:00:00.000Z" }' \
+  '{ "reference": "IAHW-DLQ1-0002", "sbi": "223456789", "frn": "887654321", "claimType": "ENDEMICS", "whichReview": "sheep", "dateOfVisit": "2025-05-01T00:00:00.000Z" }'

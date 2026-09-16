@@ -20,6 +20,7 @@ describe('PaymentRequestQueueSubscriber', () => {
     )
     config.set('aws.region', 'eu-west-2')
     config.set('aws.endpointUrl', 'http://localhost:4576')
+    config.set('sqs.processMessages', true)
   })
   describe('configureAndStart', () => {
     it('should configure and start the SQS subscriber', async () => {
@@ -43,6 +44,23 @@ describe('PaymentRequestQueueSubscriber', () => {
       })
       expect(SqsSubscriber.mock.instances[0].start).toHaveBeenCalledTimes(1)
     })
+    it('should not start the subscriber when processing is disabled', async () => {
+      config.set('sqs.processMessages', false)
+      const mockLogger = {
+        info: jest.fn(),
+        child: jest.fn().mockReturnValue({ info: jest.fn() })
+      }
+      getLogger.mockReturnValue(mockLogger)
+
+      const result = await configureAndStart({})
+
+      expect(result).toBeUndefined()
+      expect(SqsSubscriber).not.toHaveBeenCalled()
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'SQS message processing disabled; subscriber not started'
+      )
+    })
+
     it('should pass message on via OnMessage function', async () => {
       const mockLogger = {
         child: jest.fn().mockReturnValue({

@@ -134,6 +134,12 @@ const config = convict({
       format: String,
       default: '#',
       env: 'APPLICATIONPAYMENTREQUEST_QUEUE_ADDRESS_URL'
+    },
+    processMessages: {
+      doc: 'Whether to consume and process messages from the application payment request SQS queue',
+      format: Boolean,
+      default: true,
+      env: 'PROCESS_SQS_MESSAGES'
     }
   },
   log: {

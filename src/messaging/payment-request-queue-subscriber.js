@@ -6,6 +6,11 @@ import { processApplicationPaymentRequest } from './process-application-payment-
 let applicationPaymentRequestSubscriber
 
 export async function configureAndStart(db) {
+  if (!config.get('sqs.processMessages')) {
+    getLogger().info('SQS message processing disabled; subscriber not started')
+    return
+  }
+
   const onMessage = async (message, attributes) => {
     const logger = getLogger().child({})
     logger.info(attributes, 'Received incoming message')

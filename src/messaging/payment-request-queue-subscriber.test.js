@@ -52,9 +52,8 @@ describe('PaymentRequestQueueSubscriber', () => {
       }
       getLogger.mockReturnValue(mockLogger)
 
-      const result = await configureAndStart({})
+      await configureAndStart({})
 
-      expect(result).toBeUndefined()
       expect(SqsSubscriber).not.toHaveBeenCalled()
       expect(mockLogger.info).toHaveBeenCalledWith(
         'SQS message processing disabled; subscriber not started'

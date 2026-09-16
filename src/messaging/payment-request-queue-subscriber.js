@@ -6,25 +6,24 @@ import { processApplicationPaymentRequest } from './process-application-payment-
 let applicationPaymentRequestSubscriber
 
 export async function configureAndStart(db) {
-  if (!config.get('sqs.processMessages')) {
-    getLogger().info('SQS message processing disabled; subscriber not started')
-    return
-  }
-
   const onMessage = async (message, attributes) => {
     const logger = getLogger().child({})
     logger.info(attributes, 'Received incoming message')
     await processApplicationPaymentRequest(logger, message, db)
   }
 
-  applicationPaymentRequestSubscriber = new SqsSubscriber({
-    queueUrl: config.get('sqs.applicationPaymentRequestQueueUrl'),
-    logger: getLogger().child({}),
-    region: config.get('aws.region'),
-    awsEndpointUrl: config.get('aws.endpointUrl'),
-    onMessage
-  })
-  await applicationPaymentRequestSubscriber.start()
+  if (config.get('sqs.processMessages')) {
+    applicationPaymentRequestSubscriber = new SqsSubscriber({
+      queueUrl: config.get('sqs.applicationPaymentRequestQueueUrl'),
+      logger: getLogger().child({}),
+      region: config.get('aws.region'),
+      awsEndpointUrl: config.get('aws.endpointUrl'),
+      onMessage
+    })
+    await applicationPaymentRequestSubscriber.start()
+  } else {
+    getLogger().info('SQS message processing disabled; subscriber not started')
+  }
 
   return onMessage
 }

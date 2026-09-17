@@ -12,14 +12,18 @@ export async function configureAndStart(db) {
     await processApplicationPaymentRequest(logger, message, db)
   }
 
-  applicationPaymentRequestSubscriber = new SqsSubscriber({
-    queueUrl: config.get('sqs.applicationPaymentRequestQueueUrl'),
-    logger: getLogger().child({}),
-    region: config.get('aws.region'),
-    awsEndpointUrl: config.get('aws.endpointUrl'),
-    onMessage
-  })
-  await applicationPaymentRequestSubscriber.start()
+  if (config.get('sqs.processMessages')) {
+    applicationPaymentRequestSubscriber = new SqsSubscriber({
+      queueUrl: config.get('sqs.applicationPaymentRequestQueueUrl'),
+      logger: getLogger().child({}),
+      region: config.get('aws.region'),
+      awsEndpointUrl: config.get('aws.endpointUrl'),
+      onMessage
+    })
+    await applicationPaymentRequestSubscriber.start()
+  } else {
+    getLogger().info('SQS message processing disabled; subscriber not started')
+  }
 
   return onMessage
 }

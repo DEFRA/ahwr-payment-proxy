@@ -112,6 +112,9 @@ services:
       MESSAGE_QUEUE_USER: RootManageSharedAccessKey
       MESSAGE_QUEUE_PASSWORD: SAS_KEY_VALUE
       SEND_PAYMENT_REQUEST: true
+      # Don't consume the SQS queue locally, so seeded messages stay put for
+      # inspecting/testing the backoffice support queue routes.
+      PROCESS_SQS_MESSAGES: false
     networks:
       - ahwr-local
     volumes:

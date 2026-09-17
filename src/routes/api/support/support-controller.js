@@ -7,6 +7,9 @@ import { config } from '../../../config.js'
 import { sqsClient } from 'ffc-ahwr-common-library'
 import { QueueDoesNotExist } from '@aws-sdk/client-sqs'
 
+const AWS_REGION = 'aws.region'
+const AWS_ENDPOINT = 'aws.endpointUrl'
+
 export const requestPaymentStatusHandler = async (request, h) => {
   try {
     const {
@@ -54,8 +57,8 @@ export const supportQueueMessagesHandler = async (request, h) => {
   const { queueUrl, limit } = request.query
 
   try {
-    const region = config.get('aws.region')
-    const endpointUrl = config.get('aws.endpointUrl')
+    const region = config.get(AWS_REGION)
+    const endpointUrl = config.get(AWS_ENDPOINT)
 
     sqsClient.setupClient(region, endpointUrl, request.logger)
 
@@ -72,6 +75,85 @@ export const supportQueueMessagesHandler = async (request, h) => {
     }
 
     request.logger.error({ error }, 'Failed to get queue messages')
+
+    if (Boom.isBoom(error)) {
+      throw error
+    }
+
+    throw Boom.internal(error)
+  }
+}
+
+export const supportApplyQueueActionsHandler = async (request, h) => {
+  const { queueUrl, actions } = request.payload
+
+  try {
+    const region = config.get(AWS_REGION)
+    const endpointUrl = config.get(AWS_ENDPOINT)
+
+    sqsClient.setupClient(region, endpointUrl, request.logger)
+
+    if (!(await sqsClient.isDeadLetterQueue(queueUrl))) {
+      request.logger.warn(
+        { queueUrl },
+        'Queue actions requested on a non-dead-letter queue'
+      )
+      return h
+        .response(`Not a dead-letter queue: ${queueUrl}`)
+        .code(StatusCodes.BAD_REQUEST)
+        .takeover()
+    }
+
+    const actionsById = Object.fromEntries(
+      actions.map(({ id, action }) => [id, action])
+    )
+    const result = await sqsClient.applyDlqActions(queueUrl, actionsById)
+
+    return h.response(result).code(StatusCodes.OK)
+  } catch (error) {
+    if (error instanceof QueueDoesNotExist) {
+      request.logger.warn({ queueUrl }, 'Queue not found for support action')
+      return h
+        .response(`Queue not found: ${queueUrl}`)
+        .code(StatusCodes.NOT_FOUND)
+        .takeover()
+    }
+
+    request.logger.error({ error }, 'Failed to apply queue message actions')
+
+    if (Boom.isBoom(error)) {
+      throw error
+    }
+
+    throw Boom.internal(error)
+  }
+}
+
+export const supportIsDeadLetterQueueHandler = async (request, h) => {
+  const { queueUrl } = request.query
+
+  try {
+    const region = config.get(AWS_REGION)
+    const endpointUrl = config.get(AWS_ENDPOINT)
+
+    sqsClient.setupClient(region, endpointUrl, request.logger)
+
+    const isDlq = await sqsClient.isDeadLetterQueue(queueUrl)
+
+    return h.response({ isDlq }).code(StatusCodes.OK)
+  } catch (error) {
+    if (error instanceof QueueDoesNotExist) {
+      request.logger.warn({ queueUrl }, 'Queue not found for support lookup')
+      return h
+        .response(`Queue not found: ${queueUrl}`)
+        .code(StatusCodes.NOT_FOUND)
+        .takeover()
+    }
+
+    request.logger.error(
+      { error },
+      'Failed to check if queue is a dead-letter queue'
+    )
 
     if (Boom.isBoom(error)) {
       throw error

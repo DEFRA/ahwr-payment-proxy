@@ -7,6 +7,7 @@ on:
 jobs:
   lint-pr-title:
     runs-on: ubuntu-latest
+    
     steps:
       - name: Check PR title
         env:

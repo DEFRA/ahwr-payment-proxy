@@ -27,27 +27,18 @@ jobs:
 
     # Explicit least-privilege permissions.
     permissions:
-      # Required to upload CodeQL SARIF results
       security-events: write
-
-      # Required for private/internal CodeQL packs
       packages: read
-
-      # Required by CodeQL for workflow information
       actions: read
-
-      # Required to checkout/read the repository
       contents: read
 
     strategy:
       fail-fast: false
       matrix:
         include:
-          # Scan GitHub Actions workflow files
           - language: actions
             build-mode: none
 
-          # Scan the Node.js / JavaScript / TypeScript application
           - language: javascript-typescript
             build-mode: none
 
@@ -67,5 +58,3 @@ jobs:
         uses: github/codeql-action/analyze@v4
         with:
           category: "/language:${{ matrix.language }}"
-          upload: always
-          wait-for-processing: true

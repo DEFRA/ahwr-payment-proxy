@@ -15,46 +15,45 @@ on:
 permissions:
   contents: read
 
-# Prevent multiple CodeQL scans for the same ref from running
-# unnecessarily at the same time.
 concurrency:
   group: codeql-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   analyze:
-    name: Analyze (${{ matrix.language }})
-
-    runs-on:
-      group: cdp-default
-      labels:
-        - stable
-
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
     timeout-minutes: 120
 
     # Explicit least-privilege permissions.
     permissions:
+      # Required to upload CodeQL SARIF results
       security-events: write
+
+      # Required for private/internal CodeQL packs
       packages: read
+
+      # Required by CodeQL for workflow information
       actions: read
+
+      # Required to checkout/read the repository
       contents: read
 
     strategy:
       fail-fast: false
-
       matrix:
         include:
-          # Scan GitHub Actions workflows for security issues.
+          # Scan GitHub Actions workflow files
           - language: actions
             build-mode: none
 
-          # Scan the Node.js / JavaScript / TypeScript application.
+          # Scan the Node.js / JavaScript / TypeScript application
           - language: javascript-typescript
             build-mode: none
 
     steps:
       - name: Checkout repository
-        uses: DEFRA/cdp-build-action/checkout@stable
+        uses: actions/checkout@v7
         with:
           persist-credentials: false
 

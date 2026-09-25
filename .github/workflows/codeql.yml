@@ -25,7 +25,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
 
-    # Explicit least-privilege permissions.
     permissions:
       security-events: write
       packages: read

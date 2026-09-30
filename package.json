@@ -64,7 +64,7 @@
     "autoprefixer": "10.6.1",
     "babel-jest": "30.5.1",
     "babel-plugin-transform-import-meta": "2.3.3",
-    "dotenv": "17.4.2",
+    "dotenv": "18.0.3",
     "eslint": "9.39.5",
     "eslint-plugin-sonarjs": "4.2.1",
     "husky": "9.1.7",

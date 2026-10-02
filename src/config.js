@@ -121,6 +121,18 @@ const config = convict({
       default: 'ffc-ahwr-application',
       env: 'PAYMENTRESPONSE_SUBSCRIPTION_ADDRESS'
     },
+    paymentUpdateTopic: {
+      doc: 'Topic to receive payment updates',
+      format: String,
+      default: 'ffc-pay-return-response',
+      env: 'PAYMENT_UPDATE_TOPIC_ADDRESS'
+    },
+    paymentUpdateSubscription: {
+      doc: 'Topic subscription name to receive payment updates',
+      format: String,
+      default: 'ffc-ahwr-application',
+      env: 'PAYMENT_UPDATE_SUBSCRIPTION_ADDRESS'
+    },
     paymentDataRequestResponseQueue: {
       doc: 'Queue name to receive payment data responses',
       format: String,

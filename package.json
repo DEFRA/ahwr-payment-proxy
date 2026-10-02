@@ -85,5 +85,10 @@
     "*.{json,md}": [
       "prettier --write"
     ]
+  },
+  "overrides": {
+    "ffc-ahwr-common-library": {
+      "joi": "$joi"
+    }
   }
 }

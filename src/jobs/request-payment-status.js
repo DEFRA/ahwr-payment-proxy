@@ -34,7 +34,7 @@ const createPaymentDataRequest = (frn) => ({
   value: `${frn}`
 })
 
-const processPaidClaim = async (db, claimReference, logger) => {
+export const processPaidClaim = async (db, claimReference, logger) => {
   const updatedPayment = await updatePaymentStatusByClaimRef(
     db,
     claimReference,

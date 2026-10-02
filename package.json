@@ -62,20 +62,20 @@
     "@babel/core": "7.29.7",
     "@babel/preset-env": "7.29.7",
     "autoprefixer": "10.6.1",
-    "babel-jest": "30.5.1",
+    "babel-jest": "30.5.2",
     "babel-plugin-transform-import-meta": "2.3.3",
     "dotenv": "17.4.2",
     "eslint": "9.39.5",
     "eslint-plugin-sonarjs": "4.2.1",
     "husky": "9.1.7",
-    "jest": "30.5.1",
+    "jest": "30.5.2",
     "jest-junit": "17.0.0",
-    "knip": "6.35.1",
+    "knip": "6.38.0",
     "nano-staged": "1.0.2",
     "neostandard": "0.13.0",
     "nodemon": "3.1.14",
     "npm-run-all": "4.1.5",
-    "prettier": "3.9.7"
+    "prettier": "3.9.9"
   },
   "nano-staged": {
     "*.js": [

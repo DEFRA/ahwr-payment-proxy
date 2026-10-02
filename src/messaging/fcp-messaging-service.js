@@ -11,8 +11,8 @@ export const startMessagingService = async (logger, db) => {
     password,
     paymentResponseTopic,
     paymentResponseSubscription,
-    paymentUpdateTopic,
-    paymentUpdateSubscription,
+    paymentStatusTopic,
+    paymentStatusSubscription,
     useLocalEmulator
   } = config.get('serviceBus')
 
@@ -41,8 +41,8 @@ export const startMessagingService = async (logger, db) => {
   })
 
   fcpMessageClient.subscribeTopic({
-    topicName: paymentUpdateTopic,
-    subscriptionName: paymentUpdateSubscription,
+    topicName: paymentStatusTopic,
+    subscriptionName: paymentStatusSubscription,
     processMessage: (message, receiver) =>
       processUpdatePaymentStatus(logger.child({}), db, message, receiver),
     processError: (args) => {

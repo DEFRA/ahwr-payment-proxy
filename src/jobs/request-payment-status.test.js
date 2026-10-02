@@ -6,14 +6,17 @@ import {
 import { createBlobClient } from '../storage.js'
 import {
   requestPaymentStatus,
-  processFrnRequest
+  processFrnRequest,
+  processPaidClaim
 } from './request-payment-status.js'
 import {
   receivePaymentDataResponseMessages,
   sendPaymentDataRequest
 } from '../messaging/fcp-messaging-service.js'
 import { trackError } from '../common/helpers/logging/logger.js'
+import { publishPaymentUpdateEvent } from '../messaging/publish-outbound-notification.js'
 import { config } from '../config.js'
+import { Status } from '../constants/index.js'
 
 jest.mock('../repositories/payment-repository')
 jest.mock('../messaging/publish-outbound-notification.js')
@@ -372,6 +375,44 @@ describe('requestPaymentStatus', () => {
       expect(getBlobMock).toHaveBeenCalled()
       expect(createBlobClient).toHaveBeenCalledWith(loggerMock, expectedBlobUri)
       expect(result).toEqual(new Map([['RESH-F99F-E09F', 'Settled']]))
+    })
+  })
+
+  describe('processPaidClaim', () => {
+    test('updates payment to paid and publishes payment update event', async () => {
+      await processPaidClaim(dbMock, 'RESH-F99F-E09F', loggerMock)
+
+      expect(updatePaymentStatusByClaimRef).toHaveBeenCalledWith(
+        dbMock,
+        'RESH-F99F-E09F',
+        Status.PAID
+      )
+      expect(publishPaymentUpdateEvent).toHaveBeenCalledWith(
+        loggerMock,
+        { claimRef: 'RESH-F99F-E09F', sbi: '107021978' },
+        config.get('messageTypes').moveClaimToPaidMsgType
+      )
+      expect(loggerMock.error).not.toHaveBeenCalled()
+    })
+
+    test('logs error and does not publish event when payment is not found', async () => {
+      updatePaymentStatusByClaimRef.mockResolvedValue(undefined)
+
+      await processPaidClaim(dbMock, 'RESH-F99F-E09F', loggerMock)
+
+      expect(publishPaymentUpdateEvent).not.toHaveBeenCalled()
+      expect(loggerMock.error).toHaveBeenCalledWith(
+        'Payment not found to update paid status. claimReference: RESH-F99F-E09F'
+      )
+    })
+
+    test('propagates errors from updating payment status', async () => {
+      updatePaymentStatusByClaimRef.mockRejectedValue(new Error('db down'))
+
+      await expect(
+        processPaidClaim(dbMock, 'RESH-F99F-E09F', loggerMock)
+      ).rejects.toThrow('db down')
+      expect(publishPaymentUpdateEvent).not.toHaveBeenCalled()
     })
   })
 })

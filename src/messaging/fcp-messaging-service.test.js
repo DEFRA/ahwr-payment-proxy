@@ -8,9 +8,11 @@ import {
 } from './fcp-messaging-service.js'
 import { config } from '../config.js'
 import { processPaymentResponse } from './process-payment-response.js'
+import { processUpdatePaymentStatus } from './process-payment-status.js'
 
 jest.mock('ffc-ahwr-common-library')
 jest.mock('./process-payment-response.js')
+jest.mock('./process-payment-status.js')
 
 describe('fcp-messaging-service', () => {
   describe('start and stop service', () => {
@@ -91,6 +93,100 @@ describe('fcp-messaging-service', () => {
         mockMessage,
         mockReceiver
       )
+    })
+
+    it('should subscribe to the payment status topic', async () => {
+      await startMessagingService(mockLogger, mockDb)
+
+      expect(mockClient.subscribeTopic).toHaveBeenCalledTimes(2)
+      expect(mockClient.subscribeTopic).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({
+          topicName: 'ffc-pay-return-response',
+          subscriptionName: 'ffc-ahwr'
+        })
+      )
+    })
+
+    it('should process payment status when payment status topic receives message', async () => {
+      await startMessagingService(mockLogger, mockDb)
+
+      const processMessage =
+        mockClient.subscribeTopic.mock.calls[1][0].processMessage
+      const mockMessage = {}
+      const mockReceiver = {}
+
+      processMessage(mockMessage, mockReceiver)
+
+      expect(processUpdatePaymentStatus).toHaveBeenCalledWith(
+        mockChildLogger,
+        mockDb,
+        mockMessage,
+        mockReceiver
+      )
+      expect(processPaymentResponse).not.toHaveBeenCalled()
+    })
+
+    it('should log errors when payment status subscribe topic throws', async () => {
+      await startMessagingService(mockLogger, mockDb)
+
+      const processError =
+        mockClient.subscribeTopic.mock.calls[1][0].processError
+
+      const mockError = new Error('Mock Service Bus failure')
+      mockError.code = 'ServiceCommunicationError'
+
+      processError({ error: mockError })
+
+      expect(mockLogger.error).toHaveBeenCalledWith({
+        message: expect.stringContaining('Mock Service Bus failure')
+      })
+    })
+
+    it('should not send local payment status message when not using the local emulator', async () => {
+      await startMessagingService(mockLogger, mockDb)
+
+      expect(mockClient.sendMessage).not.toHaveBeenCalled()
+    })
+
+    it('should send local payment status message when using the local emulator', async () => {
+      config.set('serviceBus.useLocalEmulator', true)
+      mockClient.sendMessage.mockResolvedValueOnce()
+
+      await startMessagingService(mockLogger, mockDb)
+
+      expect(mockClient.sendMessage).toHaveBeenCalledWith(
+        {
+          body: {
+            agreementNumber: 'IAHW-Q001-0001',
+            type: 'uk.gov.defra.ffc.pay.settled'
+          },
+          type: 'uk.gov.defra.ffc.pay.settled',
+          source: 'ahwr-payment-proxy'
+        },
+        'ffc-pay-return-response'
+      )
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Sent local payment status message to ffc-pay-return-response'
+      )
+
+      config.set('serviceBus.useLocalEmulator', false)
+    })
+
+    it('should log error and not throw when sending local payment status message fails', async () => {
+      config.set('serviceBus.useLocalEmulator', true)
+      mockClient.sendMessage.mockRejectedValueOnce(new Error('send failed'))
+
+      await expect(
+        startMessagingService(mockLogger, mockDb)
+      ).resolves.toBeUndefined()
+
+      expect(mockLogger.error).toHaveBeenCalledWith({
+        message:
+          'Failed to send local payment status message to ffc-pay-return-response: send failed'
+      })
+
+      config.set('serviceBus.useLocalEmulator', false)
     })
   })
 

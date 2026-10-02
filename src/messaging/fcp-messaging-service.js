@@ -1,6 +1,7 @@
 import { createServiceBusClient } from 'ffc-ahwr-common-library'
 import { config } from '../config.js'
 import { processPaymentResponse } from './process-payment-response.js'
+import { processUpdatePaymentStatus } from './process-payment-status.js'
 
 let fcpMessageClient
 

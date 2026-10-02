@@ -52,6 +52,29 @@ export const startMessagingService = async (logger, db) => {
       })
     }
   })
+
+  if (useLocalEmulator) {
+    await sendLocalPaymentStatusMessage(paymentStatusTopic, logger)
+  }
+}
+
+const sendLocalPaymentStatusMessage = async (topic, logger) => {
+  try {
+    const message = createMessage(
+      {
+        agreementNumber: 'IAHW-Q001-0001',
+        type: 'uk.gov.defra.ffc.pay.settled'
+      },
+      'uk.gov.defra.ffc.pay.settled',
+      {}
+    )
+    await fcpMessageClient.sendMessage(message, topic)
+    logger.info(`Sent local payment status message to ${topic}`)
+  } catch (err) {
+    logger.error({
+      message: `Failed to send local payment status message to ${topic}: ${err.message}`
+    })
+  }
 }
 
 export const stopMessagingService = async () => {

@@ -4,25 +4,30 @@ import { trackError } from '../common/helpers/logging/logger.js'
 import { processPaidClaim } from '../jobs/request-payment-status.js'
 
 const retrievePaymentTypeFromMessage = (messageType) => {
-  const totalSegments = messageType.split('.')
-  const lastSegment = messageType[totalSegments-1]
-  return lastSegment
+  const segments = messageType.split('.')
+  return segments[segments.length - 1]
 }
 
-export const processUpdatePaymentStatus = async (logger, db, message, receiver) => {
+export const processUpdatePaymentStatus = async (
+  logger,
+  db,
+  message,
+  receiver
+) => {
   try {
     const messageBody = message.body
     const claimReference = messageBody?.agreementNumber
     const messageType = messageBody?.type
 
     if (claimReference && messageType) {
-      logger.info(
-        `received payment status: ${messageType} - ${claimReference}`
-      )
-      
+      logger.info(`Received payment status: ${messageType} - ${claimReference}`)
+
       const retrievedMessageType = retrievePaymentTypeFromMessage(messageType)
 
-      if (retrievedMessageType.toLowerCase() === PaymentHubStatus.SETTLED.toLowerCase()){
+      if (
+        retrievedMessageType?.toLowerCase() ===
+        PaymentHubStatus.SETTLED.toLowerCase()
+      ) {
         await processPaidClaim(db, claimReference, logger)
       }
 
@@ -30,7 +35,9 @@ export const processUpdatePaymentStatus = async (logger, db, message, receiver) 
     } else {
       trackError(
         logger,
-        new Error('Claim reference and/or message type not added in payment status'),
+        new Error(
+          'Claim reference and/or message type not added in payment status'
+        ),
         'failed-process',
         'No claim reference or message type in payments response',
         {
@@ -40,7 +47,6 @@ export const processUpdatePaymentStatus = async (logger, db, message, receiver) 
         }
       )
       await receiver.deadLetterMessage(message)
-      return
     }
   } catch (err) {
     trackError(

@@ -16,7 +16,8 @@ describe('fcp-messaging-service', () => {
   describe('start and stop service', () => {
     const mockClient = {
       close: jest.fn(),
-      subscribeTopic: jest.fn()
+      subscribeTopic: jest.fn(),
+      sendMessage: jest.fn()
     }
     const mockChildLogger = jest.fn()
     const mockLogger = {
@@ -57,6 +58,44 @@ describe('fcp-messaging-service', () => {
       )
 
       config.set('serviceBus.useLocalEmulator', false)
+    })
+
+    it('should send a payment status message to the emulator when useLocalEmulator is true', async () => {
+      config.set('serviceBus.useLocalEmulator', true)
+
+      await startMessagingService(mockLogger, mockDb)
+
+      expect(mockClient.sendMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          body: expect.objectContaining({ agreementNumber: 'FUSH-1234-5678' }),
+          source: 'ahwr-payment-proxy'
+        }),
+        'ffc-pay-return-response'
+      )
+
+      config.set('serviceBus.useLocalEmulator', false)
+    })
+
+    it('should log an error and not throw when sending the emulator message fails', async () => {
+      config.set('serviceBus.useLocalEmulator', true)
+      mockClient.sendMessage.mockRejectedValueOnce(new Error('boom'))
+
+      await expect(
+        startMessagingService(mockLogger, mockDb)
+      ).resolves.toBeUndefined()
+
+      expect(mockLogger.error).toHaveBeenCalledWith({
+        message:
+          'Failed to send local payment status message to ffc-pay-return-response: boom'
+      })
+
+      config.set('serviceBus.useLocalEmulator', false)
+    })
+
+    it('should not send a payment status message when useLocalEmulator is false', async () => {
+      await startMessagingService(mockLogger, mockDb)
+
+      expect(mockClient.sendMessage).not.toHaveBeenCalled()
     })
 
     it('should log errors when subscribe topic throws', async () => {

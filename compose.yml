@@ -104,6 +104,7 @@ services:
       PORT: 3001
       NODE_ENV: development
       AWS_ENDPOINT_URL: http://localstack:4566
+      PAYMENT_UPDATE_TOPIC_ARN: arn:aws:sns:eu-west-2:000000000000:ahwr_payment_update
       MONGO_URI: mongodb://mongodb:27017/
       USE_PRETTY_PRINT: true
       BACKOFFICE_UI_API_KEY: ${BACKOFFICE_UI_API_KEY:-446dcdbe-e02c-4d16-a266-001bbbd5f089}
@@ -114,7 +115,7 @@ services:
       SEND_PAYMENT_REQUEST: true
       # Don't consume the SQS queue locally, so seeded messages stay put for
       # inspecting/testing the backoffice support queue routes.
-      PROCESS_SQS_MESSAGES: false
+      PROCESS_SQS_MESSAGES: true
     networks:
       - ahwr-local
     volumes:

@@ -16,7 +16,8 @@ describe('fcp-messaging-service', () => {
   describe('start and stop service', () => {
     const mockClient = {
       close: jest.fn(),
-      subscribeTopic: jest.fn()
+      subscribeTopic: jest.fn(),
+      sendMessage: jest.fn()
     }
     const mockChildLogger = jest.fn()
     const mockLogger = {

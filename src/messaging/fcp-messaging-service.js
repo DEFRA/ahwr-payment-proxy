@@ -1,6 +1,7 @@
 import { createServiceBusClient } from 'ffc-ahwr-common-library'
 import { config } from '../config.js'
 import { processPaymentResponse } from './process-payment-response.js'
+import { processUpdatePaymentStatus } from './process-payment-status.js'
 
 let fcpMessageClient
 
@@ -11,6 +12,8 @@ export const startMessagingService = async (logger, db) => {
     password,
     paymentResponseTopic,
     paymentResponseSubscription,
+    paymentStatusTopic,
+    paymentStatusSubscription,
     useLocalEmulator
   } = config.get('serviceBus')
 
@@ -37,6 +40,41 @@ export const startMessagingService = async (logger, db) => {
       })
     }
   })
+
+  fcpMessageClient.subscribeTopic({
+    topicName: paymentStatusTopic,
+    subscriptionName: paymentStatusSubscription,
+    processMessage: (message, receiver) =>
+      processUpdatePaymentStatus(logger.child({}), db, message, receiver),
+    processError: (args) => {
+      logger.error({
+        message: `Error subscribing to topic: ${JSON.stringify(args.error, Object.getOwnPropertyNames(args.error))}`
+      })
+    }
+  })
+
+  if (useLocalEmulator) {
+    await sendLocalPaymentStatusMessage(paymentStatusTopic, logger)
+  }
+}
+
+const sendLocalPaymentStatusMessage = async (topic, logger) => {
+  try {
+    const message = createMessage(
+      {
+        agreementNumber: 'IAHW-Q001-0001',
+        type: 'uk.gov.defra.ffc.pay.settled'
+      },
+      'uk.gov.defra.ffc.pay.settled',
+      {}
+    )
+    await fcpMessageClient.sendMessage(message, topic)
+    logger.info(`Sent local payment status message to ${topic}`)
+  } catch (err) {
+    logger.error({
+      message: `Failed to send local payment status message to ${topic}: ${err.message}`
+    })
+  }
 }
 
 export const stopMessagingService = async () => {

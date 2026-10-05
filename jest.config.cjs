@@ -29,6 +29,6 @@ module.exports = {
     '^.+\\.[j]sx?$': 'babel-jest'
   },
   transformIgnorePatterns: [
-    '/node_modules/(?!(ffc-ahwr-common-library|@defra/hapi-tracing|@defra/hapi-secure-context|agenda|@agendajs/mongo-backend)/)'
+    '/node_modules/(?!(ffc-ahwr-common-library|@defra/hapi-tracing|@defra/hapi-secure-context|agenda|@agendajs/mongo-backend|https-proxy-agent|agent-base|proxy-agent-negotiate)/)'
   ]
 }

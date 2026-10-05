@@ -115,7 +115,7 @@ services:
       SEND_PAYMENT_REQUEST: true
       # Don't consume the SQS queue locally, so seeded messages stay put for
       # inspecting/testing the backoffice support queue routes.
-      PROCESS_SQS_MESSAGES: true
+      PROCESS_SQS_MESSAGES: false
     networks:
       - ahwr-local
     volumes:

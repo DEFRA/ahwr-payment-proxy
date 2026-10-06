@@ -125,8 +125,10 @@ describe('fcp-messaging-service', () => {
       expect(mockSendMessage).toHaveBeenCalledWith(
         {
           body: request,
-          type: 'uk.gov.ffc.ahwr.submit.payment.request',
-          source: 'ahwr-payment-proxy',
+          applicationProperties: {
+            type: 'uk.gov.ffc.ahwr.submit.payment.request',
+            source: 'ahwr-payment-proxy'
+          },
           sessionId: '498064a3-f967-4a98-9d8f-57152e7cbe64'
         },
         'ffc-pay-request'
@@ -191,8 +193,10 @@ describe('fcp-messaging-service', () => {
       expect(mockSendMessage).toHaveBeenCalledWith(
         {
           body: request,
-          type: 'uk.gov.ffc.ahwr.submit.payment.data.request',
-          source: 'ahwr-payment-proxy',
+          applicationProperties: {
+            type: 'uk.gov.ffc.ahwr.submit.payment.data.request',
+            source: 'ahwr-payment-proxy'
+          },
           sessionId: '498064a3-f967-4a98-9d8f-57152e7cbe64',
           messageId: 'f1e5a2c4-8d9b-4f73-a1e6-b9d2e0c8a5f4'
         },

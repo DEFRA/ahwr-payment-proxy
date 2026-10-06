@@ -17,7 +17,7 @@ export const processUpdatePaymentStatus = async (
   try {
     const messageBody = message.body
     const claimReference = messageBody?.agreementNumber
-    const messageType = messageBody?.type
+    const messageType = message.applicationProperties?.type
 
     if (claimReference && messageType) {
       logger.info(`Received payment status: ${messageType} - ${claimReference}`)

@@ -24,7 +24,9 @@ describe('Process payment status', () => {
   test('processes paid claim and completes message when status is settled', async () => {
     const message = {
       body: {
-        agreementNumber: 'FUSH-1234-5678',
+        agreementNumber: 'FUSH-1234-5678'
+      },
+      applicationProperties: {
         type: 'uk.gov.defra.ffc.pay.settled'
       }
     }
@@ -43,7 +45,9 @@ describe('Process payment status', () => {
   test('completes message without processing paid claim when status is not settled', async () => {
     const message = {
       body: {
-        agreementNumber: 'FUSH-1234-5678',
+        agreementNumber: 'FUSH-1234-5678'
+      },
+      applicationProperties: {
         type: 'uk.gov.defra.ffc.pay.ack'
       }
     }
@@ -64,11 +68,27 @@ describe('Process payment status', () => {
     expect(mockReceiver.completeMessage).not.toHaveBeenCalled()
   })
 
+  test('dead letters message when type is only in the body', async () => {
+    const message = {
+      body: {
+        agreementNumber: 'FUSH-1234-5678',
+        type: 'uk.gov.defra.ffc.pay.settled'
+      }
+    }
+
+    await processUpdatePaymentStatus(mockLogger, mockDb, message, mockReceiver)
+
+    expect(processPaidClaim).not.toHaveBeenCalled()
+    expect(mockReceiver.deadLetterMessage).toHaveBeenCalledWith(message)
+  })
+
   test('dead letters message when processing fails', async () => {
     processPaidClaim.mockRejectedValueOnce(new Error('boom'))
     const message = {
       body: {
-        agreementNumber: 'FUSH-1234-5678',
+        agreementNumber: 'FUSH-1234-5678'
+      },
+      applicationProperties: {
         type: 'uk.gov.defra.ffc.pay.settled'
       }
     }

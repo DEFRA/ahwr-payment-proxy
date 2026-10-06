@@ -62,8 +62,7 @@ const sendLocalPaymentStatusMessage = async (topic, logger) => {
   try {
     const message = createMessage(
       {
-        agreementNumber: 'IAHW-Q001-0001',
-        type: 'uk.gov.defra.ffc.pay.settled'
+        agreementNumber: 'IAHW-Q001-0001'
       },
       'uk.gov.defra.ffc.pay.settled',
       {}
@@ -138,8 +137,10 @@ export const receivePaymentDataResponseMessages = async (sessionId, count) => {
 const createMessage = (body, type, options) => {
   return {
     body,
-    type,
-    source: 'ahwr-payment-proxy',
+    applicationProperties: {
+      type,
+      source: 'ahwr-payment-proxy'
+    },
     ...options
   }
 }

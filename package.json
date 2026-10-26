@@ -85,5 +85,10 @@
     "*.{json,md}": [
       "prettier --write"
     ]
+  },
+  "overrides": {
+    "@azure/identity": {
+      "@azure/msal-node": "7.1.0"
+    }
   }
 }

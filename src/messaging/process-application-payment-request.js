@@ -12,31 +12,28 @@ export const processApplicationPaymentRequest = async (logger, message, db) => {
     )
     await metricsCounter(`application_payment_request_message_received`)
 
-    const session = db.getMongo().startSession();
+    const session = db.getMongo().startSession()
     const transactionOptions = {
       readPreference: 'primary',
-      readConcern: {level: 'local'},
-      writeConcern: {w: 'majority'}
-    };
+      readConcern: { level: 'local' },
+      writeConcern: { w: 'majority' }
+    }
 
     try {
-      await session.withTransaction(
-        async () => {
-          try {
-            const paymentRequest = await savePaymentRequest(db, logger, message);
-            await sendPaymentRequest(paymentRequest, randomUUID(), logger);
-            session.commitTransaction();
-          } catch (err) {
-            await session.abortTransaction();
-            throw err;
-          }
-        },
-        transactionOptions
-      );
-    } catch(err) {
-      throw err;
+      await session.withTransaction(async () => {
+        try {
+          const paymentRequest = await savePaymentRequest(db, logger, message)
+          await sendPaymentRequest(paymentRequest, randomUUID(), logger)
+          session.commitTransaction()
+        } catch (err) {
+          await session.abortTransaction()
+          throw err
+        }
+      }, transactionOptions)
+    } catch (err) {
+      throw err
     } finally {
-      await session.endSession();
+      await session.endSession()
     }
 
     logger.info('Message processing successful')

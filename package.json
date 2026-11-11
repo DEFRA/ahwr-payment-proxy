@@ -92,6 +92,9 @@
     },
     "ffc-ahwr-common-library": {
       "joi": "$joi"
+    },
+    "hapi-pulse": {
+      "joi": "$joi"
     }
   }
 }

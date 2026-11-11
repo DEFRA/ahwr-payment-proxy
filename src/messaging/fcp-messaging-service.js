@@ -88,13 +88,9 @@ export const sendPaymentRequest = async (paymentRequest, sessionId, logger) => {
   const sendPaymentRequestOutbound = config.get('sendPaymentRequestOutbound')
 
   if (sendPaymentRequestOutbound) {
-    const message = createMessage(
-      paymentRequest,
-      submitPaymentRequestMsgType,
-      {
-        sessionId
-      }
-    )
+    const message = createMessage(paymentRequest, submitPaymentRequestMsgType, {
+      sessionId
+    })
     await fcpMessageClient.sendMessage(message, paymentRequestTopic)
     logger.info('Payment request sent.')
   } else {

@@ -16,9 +16,9 @@ export const processApplicationPaymentRequest = async (logger, message, db) => {
   }
 
   let paymentRequest
+  const session = db.getMongo().startSession()
 
   try {
-    const session = db.getMongo().startSession()
     await session.withTransaction(async () => {
       try {
         paymentRequest = await savePaymentRequest(db, logger, message)

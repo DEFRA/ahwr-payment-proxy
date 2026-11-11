@@ -83,31 +83,27 @@ export const stopMessagingService = async () => {
 }
 
 export const sendPaymentRequest = async (paymentRequest, sessionId, logger) => {
-  try {
-    const { submitPaymentRequestMsgType, paymentRequestTopic } =
-      config.get('serviceBus')
-    const sendPaymentRequestOutbound = config.get('sendPaymentRequestOutbound')
+  const { submitPaymentRequestMsgType, paymentRequestTopic } =
+    config.get('serviceBus')
+  const sendPaymentRequestOutbound = config.get('sendPaymentRequestOutbound')
 
-    if (sendPaymentRequestOutbound) {
-      const message = createMessage(
-        paymentRequest,
-        submitPaymentRequestMsgType,
-        {
-          sessionId
-        }
-      )
-      await fcpMessageClient.sendMessage(message, paymentRequestTopic)
-      logger.info('Payment request sent.')
-    } else {
-      logger.info(
-        `Payment integration is disabled, not sending payment request out.\n ${JSON.stringify(paymentRequest)}`
-      )
-      throw new Error(
-        'Payment integration is disabled, not sending payment request out.'
-      )
-    }
-  } catch (err) {
-    throw err
+  if (sendPaymentRequestOutbound) {
+    const message = createMessage(
+      paymentRequest,
+      submitPaymentRequestMsgType,
+      {
+        sessionId
+      }
+    )
+    await fcpMessageClient.sendMessage(message, paymentRequestTopic)
+    logger.info('Payment request sent.')
+  } else {
+    logger.info(
+      `Payment integration is disabled, not sending payment request out.\n ${JSON.stringify(paymentRequest)}`
+    )
+    throw new Error(
+      'Payment integration is disabled, not sending payment request out.'
+    )
   }
 }
 

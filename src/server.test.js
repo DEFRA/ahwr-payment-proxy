@@ -31,7 +31,10 @@ describe('Server test', () => {
 
     expect(startAgendaScheduling).toHaveBeenCalledWith(server.db)
     expect(startMessagingService).toHaveBeenCalledWith(server.logger, server.db)
-    expect(configureAndStart).toHaveBeenCalledWith(server.db)
+    expect(configureAndStart).toHaveBeenCalledWith(
+      server.db,
+      server.mongoClient
+    )
 
     await server.stop()
   })

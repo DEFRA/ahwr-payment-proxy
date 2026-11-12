@@ -31,6 +31,15 @@ describe('Process application payment request', () => {
     deadLetterMessage: jest.fn()
   }
 
+  const mockedClient = {
+    startSession: jest.fn().mockReturnValue({
+      withTransaction: jest.fn(),
+      commitTransaction: jest.fn(),
+      abortTransaction: jest.fn(),
+      endSession: jest.fn()
+    })
+  }
+
   beforeEach(async () => {
     jest.clearAllMocks()
   })
@@ -46,9 +55,12 @@ describe('Process application payment request', () => {
       receiver
     )
 
+    expect(mockedClient.startSession).toHaveBeenCalledTimes(1)
+    expect(mockedClient.startSession.withTransaction).toHaveBeenCalledTimes(1)
     expect(savePaymentRequest).toHaveBeenCalledTimes(1)
     expect(sendPaymentRequest).toHaveBeenCalledTimes(1)
     expect(mockedLogger.setBindings).toHaveBeenCalledTimes(1)
+    expect(mockedClient.startSession.commitTransaction).toHaveBeenCalledTimes(1)
     expect(mockedLogger.info).toHaveBeenCalledTimes(2)
     expect(trackEvent).toHaveBeenCalledWith(
       mockedLogger,

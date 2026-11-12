@@ -4,7 +4,7 @@ import { sendPaymentRequest } from './fcp-messaging-service.js'
 import { trackError, trackEvent } from '../common/helpers/logging/logger.js'
 import { metricsCounter } from '../common/helpers/metrics.js'
 
-export const processApplicationPaymentRequest = async (logger, message, db) => {
+export const processApplicationPaymentRequest = async (logger, message, db, mongoClient) => {
   logger.setBindings({ sbi: message.sbi, reference: message.reference })
   logger.info(`Received application payment request ${JSON.stringify(message)}`)
   await metricsCounter(`application_payment_request_message_received`)
@@ -16,7 +16,7 @@ export const processApplicationPaymentRequest = async (logger, message, db) => {
   }
 
   let paymentRequest
-  const session = db.getMongo().startSession()
+  const session = mongoClient.startSession()
 
   try {
     await session.withTransaction(async () => {

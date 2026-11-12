@@ -71,7 +71,7 @@ export async function createServer() {
   server.events.on('start', async () => {
     await startAgendaScheduling(server.db)
     await startMessagingService(server.logger, server.db)
-    await configureAndStart(server.db)
+    await configureAndStart(server.db, server.mongoClient)
   })
 
   server.events.on('stop', async () => {

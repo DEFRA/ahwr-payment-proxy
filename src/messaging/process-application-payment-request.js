@@ -14,12 +14,11 @@ export const processApplicationPaymentRequest = async (
   logger.info(`Received application payment request ${JSON.stringify(message)}`)
   await metricsCounter(`application_payment_request_message_received`)
 
-
   let paymentRequest
   const session = mongoClient.startSession()
 
   try {
-    await session.startTransaction();
+    await session.startTransaction()
 
     paymentRequest = await savePaymentRequest(db, logger, message)
     await sendPaymentRequest(paymentRequest, randomUUID(), logger)

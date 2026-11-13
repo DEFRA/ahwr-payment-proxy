@@ -97,6 +97,9 @@ export const sendPaymentRequest = async (paymentRequest, sessionId, logger) => {
     logger.info(
       `Payment integration is disabled, not sending payment request out.\n ${JSON.stringify(paymentRequest)}`
     )
+    throw new Error(
+      'Payment integration is disabled, not sending payment request out.'
+    )
   }
 }
 

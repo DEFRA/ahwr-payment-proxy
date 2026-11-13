@@ -31,6 +31,17 @@ describe('Process application payment request', () => {
     deadLetterMessage: jest.fn()
   }
 
+  const mockedSession = {
+    startTransaction: jest.fn(),
+    commitTransaction: jest.fn(),
+    abortTransaction: jest.fn(),
+    endSession: jest.fn()
+  }
+
+  const mockedClient = {
+    startSession: jest.fn().mockReturnValue(mockedSession)
+  }
+
   beforeEach(async () => {
     jest.clearAllMocks()
   })
@@ -43,11 +54,15 @@ describe('Process application payment request', () => {
     await processApplicationPaymentRequest(
       mockedLogger,
       applicationPaymentRequest,
-      receiver
+      receiver,
+      mockedClient
     )
 
+    expect(mockedClient.startSession).toHaveBeenCalledTimes(1)
+    expect(mockedSession.startTransaction).toHaveBeenCalledTimes(1)
     expect(savePaymentRequest).toHaveBeenCalledTimes(1)
     expect(sendPaymentRequest).toHaveBeenCalledTimes(1)
+    expect(mockedSession.commitTransaction).toHaveBeenCalledTimes(1)
     expect(mockedLogger.setBindings).toHaveBeenCalledTimes(1)
     expect(mockedLogger.info).toHaveBeenCalledTimes(2)
     expect(trackEvent).toHaveBeenCalledWith(
@@ -59,6 +74,7 @@ describe('Process application payment request', () => {
         kind: 'paymentRequest: {"id":1}'
       }
     )
+    expect(mockedSession.endSession).toHaveBeenCalledTimes(1)
   })
 
   test('error event raised due to error thrown in updateByReference', async () => {
@@ -74,9 +90,12 @@ describe('Process application payment request', () => {
           },
           id: 'msg-001'
         },
-        receiver
+        receiver,
+        mockedClient
       )
     ).rejects.toThrow('Error saving payment')
+
+    expect(mockedSession.abortTransaction).toHaveBeenCalledTimes(1)
 
     expect(trackError).toHaveBeenCalledWith(
       mockedLogger,
@@ -88,6 +107,7 @@ describe('Process application payment request', () => {
         reference: 'agreementNo: ABC123 messageId: msg-001'
       }
     )
+    expect(mockedSession.endSession).toHaveBeenCalledTimes(1)
   })
 
   test('error event raised due to error thrown in updateByReference - optional info missing', async () => {
@@ -95,8 +115,10 @@ describe('Process application payment request', () => {
     savePaymentRequest.mockRejectedValueOnce(error)
 
     await expect(
-      processApplicationPaymentRequest(mockedLogger, {}, receiver)
+      processApplicationPaymentRequest(mockedLogger, {}, receiver, mockedClient)
     ).rejects.toThrow('Error saving payment')
+
+    expect(mockedSession.abortTransaction).toHaveBeenCalledTimes(1)
 
     expect(trackError).toHaveBeenCalledWith(
       mockedLogger,
@@ -108,5 +130,6 @@ describe('Process application payment request', () => {
         reference: 'agreementNo:  messageId: '
       }
     )
+    expect(mockedSession.endSession).toHaveBeenCalledTimes(1)
   })
 })

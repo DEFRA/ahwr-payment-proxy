@@ -14,34 +14,24 @@ export const processApplicationPaymentRequest = async (
   logger.info(`Received application payment request ${JSON.stringify(message)}`)
   await metricsCounter(`application_payment_request_message_received`)
 
-  const transactionOptions = {
-    readPreference: 'primary',
-    readConcern: { level: 'local' },
-    writeConcern: { w: 'majority' }
-  }
 
   let paymentRequest
   const session = mongoClient.startSession()
 
   try {
-    await session.withTransaction(async () => {
-      try {
-        paymentRequest = await savePaymentRequest(db, logger, message)
-        await sendPaymentRequest(paymentRequest, randomUUID(), logger)
-        session.commitTransaction()
+    await session.startTransaction();
 
-        logger.info('Message processing successful')
+    paymentRequest = await savePaymentRequest(db, logger, message)
+    await sendPaymentRequest(paymentRequest, randomUUID(), logger)
+    session.commitTransaction()
+    logger.info('Message processing successful')
 
-        trackEvent(logger, 'process-payment', 'payment-request', {
-          reason: JSON.stringify(message),
-          kind: `paymentRequest: ${JSON.stringify(paymentRequest)}`
-        })
-      } catch (err) {
-        await session.abortTransaction()
-        throw err
-      }
-    }, transactionOptions)
+    trackEvent(logger, 'process-payment', 'payment-request', {
+      reason: JSON.stringify(message),
+      kind: `paymentRequest: ${JSON.stringify(paymentRequest)}`
+    })
   } catch (err) {
+    await session.abortTransaction()
     trackError(
       logger,
       err,
@@ -52,7 +42,6 @@ export const processApplicationPaymentRequest = async (
         reason: message.body ? JSON.stringify(message.body) : ''
       }
     )
-
     throw err
   } finally {
     await session.endSession()

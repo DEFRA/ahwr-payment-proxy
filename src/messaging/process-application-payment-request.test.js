@@ -31,13 +31,15 @@ describe('Process application payment request', () => {
     deadLetterMessage: jest.fn()
   }
 
+  const mockedSession = {
+    withTransaction: jest.fn(),
+    commitTransaction: jest.fn(),
+    abortTransaction: jest.fn(),
+    endSession: jest.fn()
+  }
+
   const mockedClient = {
-    startSession: jest.fn().mockReturnValue({
-      withTransaction: jest.fn(),
-      commitTransaction: jest.fn(),
-      abortTransaction: jest.fn(),
-      endSession: jest.fn()
-    })
+    startSession: jest.fn().mockReturnValue(mockedSession)
   }
 
   beforeEach(async () => {
@@ -52,15 +54,16 @@ describe('Process application payment request', () => {
     await processApplicationPaymentRequest(
       mockedLogger,
       applicationPaymentRequest,
-      receiver
+      receiver,
+      mockedClient
     )
 
     expect(mockedClient.startSession).toHaveBeenCalledTimes(1)
-    expect(mockedClient.startSession.withTransaction).toHaveBeenCalledTimes(1)
+    expect(mockedSession.withTransaction).toHaveBeenCalledTimes(1)
     expect(savePaymentRequest).toHaveBeenCalledTimes(1)
     expect(sendPaymentRequest).toHaveBeenCalledTimes(1)
     expect(mockedLogger.setBindings).toHaveBeenCalledTimes(1)
-    expect(mockedClient.startSession.commitTransaction).toHaveBeenCalledTimes(1)
+    expect(mockedSession.commitTransaction).toHaveBeenCalledTimes(1)
     expect(mockedLogger.info).toHaveBeenCalledTimes(2)
     expect(trackEvent).toHaveBeenCalledWith(
       mockedLogger,
@@ -71,6 +74,7 @@ describe('Process application payment request', () => {
         kind: 'paymentRequest: {"id":1}'
       }
     )
+    expect(mockedSession.endSession).toHaveBeenCalledTimes(1)
   })
 
   test('error event raised due to error thrown in updateByReference', async () => {

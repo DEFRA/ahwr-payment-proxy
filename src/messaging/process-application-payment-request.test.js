@@ -77,6 +77,39 @@ describe('Process application payment request', () => {
     expect(mockedSession.endSession).toHaveBeenCalledTimes(1)
   })
 
+    test('error event raised due to error thrown in sendPaymentRequest', async () => {
+    const error = new Error('Error sending payment')
+    sendPaymentRequest.mockRejectedValueOnce(error)
+
+    await expect(
+      processApplicationPaymentRequest(
+        mockedLogger,
+        {
+          body: {
+            reference: 'ABC123'
+          },
+          id: 'msg-001'
+        },
+        receiver,
+        mockedClient
+      )
+    ).rejects.toThrow('Error sending payment')
+
+    expect(mockedSession.abortTransaction).toHaveBeenCalledTimes(1)
+
+    expect(trackError).toHaveBeenCalledWith(
+      mockedLogger,
+      error,
+      'failed-process',
+      'Failed to process application payment request',
+      {
+        reason: '{"reference":"ABC123"}',
+        reference: 'agreementNo: ABC123 messageId: msg-001'
+      }
+    )
+    expect(mockedSession.endSession).toHaveBeenCalledTimes(1)
+  })
+
   test('error event raised due to error thrown in updateByReference', async () => {
     const error = new Error('Error saving payment')
     savePaymentRequest.mockRejectedValueOnce(error)

@@ -95,10 +95,11 @@ describe('fcp-messaging-service', () => {
   })
 
   describe('sendPaymentRequest', () => {
-    config.set('sendPaymentRequestOutbound', true)
     const mockDb = jest.fn()
 
     it('creates and sends message', async () => {
+      config.set('sendPaymentRequestOutbound', true)
+
       const mockSendMessage = jest.fn()
       const mockClient = {
         sendMessage: mockSendMessage.mockResolvedValue(),
@@ -136,6 +137,8 @@ describe('fcp-messaging-service', () => {
     })
 
     it('propagates errors from sendMessage', async () => {
+      config.set('sendPaymentRequestOutbound', true)
+
       const sendError = new Error('Service Bus send failed')
       const mockSendMessage = jest.fn()
       const mockClient = {
@@ -162,6 +165,37 @@ describe('fcp-messaging-service', () => {
           mockLogger
         )
       ).rejects.toThrow('Service Bus send failed')
+      expect(mockLogger.info).not.toHaveBeenCalledWith('Payment request sent.')
+    })
+
+    it('propagates errors if config[sendPaymentRequestOutbound] is not set', async () => {
+      config.set('sendPaymentRequestOutbound', false)
+
+      const mockClient = {
+        sendMessage: '',
+        close: jest.fn(),
+        subscribeTopic: jest.fn()
+      }
+
+      const mockLogger = {
+        info: jest.fn()
+      }
+      const request = {
+        reference: 'IAHW-G3CL-V59P',
+        sbi: '123456789',
+        whichReview: 'beef'
+      }
+      createServiceBusClient.mockReturnValueOnce(mockClient)
+
+      await startMessagingService(mockLogger, mockDb)
+
+      await expect(
+        sendPaymentRequest(
+          request,
+          '498064a3-f967-4a98-9d8f-57152e7cbe64',
+          mockLogger
+        )
+      ).rejects.toThrow()
       expect(mockLogger.info).not.toHaveBeenCalledWith('Payment request sent.')
     })
   })

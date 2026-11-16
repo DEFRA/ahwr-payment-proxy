@@ -31,8 +31,9 @@ describe('PaymentRequestQueueSubscriber', () => {
       }
       getLogger.mockReturnValueOnce(mockLogger)
       const mockDb = {}
+      const mockSession = {}
 
-      await configureAndStart(mockDb)
+      await configureAndStart(mockDb, mockSession)
 
       expect(SqsSubscriber).toHaveBeenCalledTimes(1)
       expect(SqsSubscriber).toHaveBeenCalledWith({
@@ -69,8 +70,9 @@ describe('PaymentRequestQueueSubscriber', () => {
       getLogger.mockReturnValue(mockLogger)
       processApplicationPaymentRequest.mockResolvedValueOnce()
       const mockDb = {}
+      const mockSession = {}
 
-      const onMessage = await configureAndStart(mockDb)
+      const onMessage = await configureAndStart(mockDb, mockSession)
 
       await onMessage({ Message: 'test' }, { Attribute: 'value' })
 
@@ -86,8 +88,9 @@ describe('PaymentRequestQueueSubscriber', () => {
       }
       getLogger.mockReturnValueOnce(mockLogger)
       const mockDb = {}
+      const mockSession = {}
 
-      await configureAndStart(mockDb)
+      await configureAndStart(mockDb, mockSession)
 
       await stopSubscriber()
 

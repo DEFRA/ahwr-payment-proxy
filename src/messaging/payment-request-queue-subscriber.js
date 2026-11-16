@@ -5,11 +5,11 @@ import { processApplicationPaymentRequest } from './process-application-payment-
 
 let applicationPaymentRequestSubscriber
 
-export async function configureAndStart(db) {
+export async function configureAndStart(db, mongoClient) {
   const onMessage = async (message, attributes) => {
     const logger = getLogger().child({})
     logger.info(attributes, 'Received incoming message')
-    await processApplicationPaymentRequest(logger, message, db)
+    await processApplicationPaymentRequest(logger, message, db, mongoClient)
   }
 
   if (config.get('sqs.processMessages')) {

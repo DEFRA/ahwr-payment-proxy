@@ -4,18 +4,25 @@ import { sendPaymentRequest } from './fcp-messaging-service.js'
 import { trackError, trackEvent } from '../common/helpers/logging/logger.js'
 import { metricsCounter } from '../common/helpers/metrics.js'
 
-export const processApplicationPaymentRequest = async (logger, message, db) => {
+export const processApplicationPaymentRequest = async (
+  logger,
+  message,
+  db,
+  mongoClient
+) => {
+  logger.setBindings({ sbi: message.sbi, reference: message.reference })
+  logger.info(`Received application payment request ${JSON.stringify(message)}`)
+  await metricsCounter(`application_payment_request_message_received`)
+
+  let paymentRequest
+  const session = mongoClient.startSession()
+
   try {
-    logger.setBindings({ sbi: message.sbi, reference: message.reference })
-    logger.info(
-      `Received application payment request ${JSON.stringify(message)}`
-    )
-    await metricsCounter(`application_payment_request_message_received`)
+    await session.startTransaction()
 
-    const paymentRequest = await savePaymentRequest(db, logger, message)
-
+    paymentRequest = await savePaymentRequest(db, logger, message)
     await sendPaymentRequest(paymentRequest, randomUUID(), logger)
-
+    session.commitTransaction()
     logger.info('Message processing successful')
 
     trackEvent(logger, 'process-payment', 'payment-request', {
@@ -23,6 +30,7 @@ export const processApplicationPaymentRequest = async (logger, message, db) => {
       kind: `paymentRequest: ${JSON.stringify(paymentRequest)}`
     })
   } catch (err) {
+    await session.abortTransaction()
     trackError(
       logger,
       err,
@@ -34,5 +42,7 @@ export const processApplicationPaymentRequest = async (logger, message, db) => {
       }
     )
     throw err
+  } finally {
+    await session.endSession()
   }
 }

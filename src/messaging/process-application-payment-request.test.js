@@ -77,7 +77,7 @@ describe('Process application payment request', () => {
     expect(mockedSession.endSession).toHaveBeenCalledTimes(1)
   })
 
-    test('error event raised due to error thrown in sendPaymentRequest', async () => {
+  test('error event raised due to error thrown in sendPaymentRequest', async () => {
     const error = new Error('Error sending payment')
     sendPaymentRequest.mockRejectedValueOnce(error)
 
